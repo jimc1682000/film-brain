@@ -1,36 +1,40 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>搜尋回放 — Film Brain</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<meta property="og:title" content="搜尋回放 — Film Brain">
-<meta property="og:description" content="AI 片庫大腦 — 語意搜尋、誠實分數、可解釋結果。CATCHPLAY+ Hackathon 2026 原型的公開導覽。">
+<title>Search Replay — Film Brain</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta property="og:title" content="Search Replay — Film Brain">
+<meta property="og:description" content="Real pipeline outputs for 7 queries, replayed — including the honest low-confidence case.">
 <meta property="og:image" content="https://jimc1682000.github.io/film-brain/assets/og.png">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../style.css">
 </head>
 <body>
 <header class="site">
   <a class="brand" href="index.html">🎬 Film Brain</a>
   <nav>
-    <a href="index.html">總覽</a>
-    <a href="search.html" class="active">搜尋回放</a>
-    <a href="decisions.html">技術決策</a>
-    <a href="collab.html">協作方式</a>
-    <a href="mj-case.html">MJ 事件</a>
-    <a href="eval.html">評測迭代</a>
-    <a href="en/search.html" style="color:#f26f21">EN</a>
+    <a href="index.html">Overview</a>
+    <a href="search.html" class="active">Search Replay</a>
+    <a href="decisions.html">Decisions</a>
+    <a href="collab.html">Working with AI</a>
+    <a href="mj-case.html">MJ Case</a>
+    <a href="eval.html">Eval</a>
+    <a href="../search.html" style="color:#f26f21">中文</a>
   </nav>
 </header>
 <main>
-  <h1>搜尋回放</h1>
+  <h1>Search Replay</h1>
   <p style="color:#999">
-    以下是 <b>真實管線</b>(LLM query 理解 → 雙路海選 → 外卡 → cross-encoder 精排 →
-    誠實分數)跑出的完整結果,預存為 JSON 回放 — 靜態站沒有後端,所以只能點預設查詢;
-    分數、警示、可解釋標籤都是當時的真實輸出。
+    These are complete outputs of the <b>real pipeline</b> (LLM query understanding →
+    two-track recall → wildcards → cross-encoder rerank → honest scores), captured
+    as JSON and replayed — the static site has no backend, so only the preset
+    queries are clickable. Scores, warnings and explainability labels are the
+    genuine outputs from capture time. Queries and film data are in Chinese
+    (the product's market); the last chip, Michael Jackson, shows the honest
+    low-confidence behavior.
   </p>
   <div class="chips" id="chips"></div>
   <div id="out"></div>
@@ -38,7 +42,7 @@
 <footer class="site">
   Prototype built at the CATCHPLAY+ Hackathon 2026 · catalog metadata from public sources (CATCHPLAY+ / TMDB)
 </footer>
-<script src="common.js"></script>
+<script src="../common.js"></script>
 <script>
 let DATA = {};
 
@@ -50,24 +54,24 @@ function render(q) {
   let html = "";
 
   if (u.low_confidence) {
-    html += `<div class="banner-warn">⚠ 片庫中沒有高度相關的結果,以下依接近程度排序,分數僅供參考</div>`;
+    html += `<div class="banner-warn">⚠ No highly relevant titles in the library — results below are ordered by closeness; scores are indicative only</div>`;
   }
   const filters = (u.filters || []).map((f) => `<span class="tagchip">${f}</span>`).join("");
-  const kws = (u.keywords || []).length ? `<span style="color:#999">關鍵字: ${u.keywords.join("、")}</span>` : "";
-  const hyde = u.hyde_text ? `<div class="hyde">AI 推想劇情:「${u.hyde_text}」</div>` : "";
-  html += `<div class="understanding"><span class="lbl">🔎 AI 怎麼理解你</span>${filters} ${kws}${hyde}</div>`;
+  const kws = (u.keywords || []).length ? `<span style="color:#999">keywords: ${u.keywords.join(", ")}</span>` : "";
+  const hyde = u.hyde_text ? `<div class="hyde">AI-imagined plot: "${u.hyde_text}"</div>` : "";
+  html += `<div class="understanding"><span class="lbl">🔎 How the AI read you</span>${filters} ${kws}${hyde}</div>`;
 
   html += `<div class="grid">`;
   for (const r of d.results) {
     const ex = r.explain || {};
-    const srcs = (ex.sources || []).filter((s) => SRC_LABEL[s]).map((s) => SRC_LABEL[s]);
+    const srcs = (ex.sources || []).filter((s) => SRC_LABEL_EN[s]).map((s) => SRC_LABEL_EN[s]);
     const prefs = (ex.matched_prefs || []).slice(0, 4).map((p) => `<span class="ptag">${p}</span>`).join("");
     let why = "";
     if (prefs) {
-      const prefix = (ex.sources || []).length ? "符合" : "共同";
+      const prefix = (ex.sources || []).length ? "matches" : "shared";
       why = `${prefix} ${prefs}` + (srcs.length ? ` <span>· ${srcs.join("+")}</span>` : "");
     } else if (srcs.length) {
-      why = `命中 ${srcs.join("+")}`;
+      why = `found via ${srcs.join("+")}`;
     }
     const tags = (r.matched_tags || []).slice(0, 5).map((t) => `<span class="mtag">${t}</span>`).join("");
     html += `
@@ -87,7 +91,9 @@ function render(q) {
   out.innerHTML = html;
 }
 
-fetch("data/searches.json")
+const SRC_LABEL_EN = { vector: "semantic", hyde: "imagined", bm25: "lexical" };
+
+fetch("../data/searches.json")
   .then((r) => r.json())
   .then((j) => {
     DATA = j;
@@ -102,7 +108,7 @@ fetch("data/searches.json")
     });
     render(Object.keys(j)[0]);
   })
-  .catch((e) => (document.getElementById("out").textContent = "載入失敗: " + e));
+  .catch((e) => (document.getElementById("out").textContent = "Failed to load: " + e));
 </script>
 </body>
 </html>

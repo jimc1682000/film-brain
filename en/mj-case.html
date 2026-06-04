@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Michael Jackson Incident — Film Brain</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta property="og:title" content="The Michael Jackson Incident — Film Brain">
+<meta property="og:description" content="A false-100% debugging case study, from symptom to calibrated fix.">
+<meta property="og:image" content="https://jimc1682000.github.io/film-brain/assets/og.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="../style.css">
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+</head>
+<body>
+<header class="site">
+  <a class="brand" href="index.html">🎬 Film Brain</a>
+  <nav>
+    <a href="index.html">Overview</a>
+    <a href="search.html">Search Replay</a>
+    <a href="decisions.html">Decisions</a>
+    <a href="collab.html">Working with AI</a>
+    <a href="mj-case.html" class="active">MJ Case</a>
+    <a href="eval.html">Eval</a>
+    <a href="../mj-case.html" style="color:#f26f21">中文</a>
+  </nav>
+</header>
+<main>
+  <article class="md-body" id="doc">Loading…</article>
+</main>
+<footer class="site">
+  Prototype built at the CATCHPLAY+ Hackathon 2026
+</footer>
+<script src="../common.js"></script>
+<script>
+fetch("mj-case.md")
+  .then((r) => r.text())
+  .then((md) => renderMarkdownInto(document.getElementById("doc"), md))
+  .catch((e) => (document.getElementById("doc").textContent = "Failed to load: " + e));
+</script>
+</body>
+</html>

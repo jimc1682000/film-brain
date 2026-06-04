@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eval Iterations — Film Brain</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta property="og:title" content="Eval Iterations — Film Brain">
+<meta property="og:description" content="The v1–v8 tuning story driven by an LLM-as-judge eval harness, nDCG 0.93 → 0.96.">
+<meta property="og:image" content="https://jimc1682000.github.io/film-brain/assets/og.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="../style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+</head>
+<body>
+<header class="site">
+  <a class="brand" href="index.html">🎬 Film Brain</a>
+  <nav>
+    <a href="index.html">Overview</a>
+    <a href="search.html">Search Replay</a>
+    <a href="decisions.html">Decisions</a>
+    <a href="collab.html">Working with AI</a>
+    <a href="mj-case.html">MJ Case</a>
+    <a href="eval.html" class="active">Eval</a>
+    <a href="../eval.html" style="color:#f26f21">中文</a>
+  </nav>
+</header>
+<main class="md-body">
+  <h1>Eval Iterations v1–v8</h1>
+  <p>
+    No tuning by vibes: an automated harness over 45 real queries
+    (<b>LLM-as-judge</b> grades every query × top-5 result), every change gets
+    scored — winners stay, losers roll back.
+  </p>
+  <div style="background:#121212;border:1px solid #2a2a2a;border-radius:10px;padding:18px">
+    <canvas id="chart" height="130"></canvas>
+  </div>
+
+  <h2>Glossary</h2>
+  <table>
+    <thead><tr><th>Metric</th><th>Plainly</th><th>What 1.0 means</th></tr></thead>
+    <tbody>
+      <tr><td><b>nDCG@5</b></td><td>ranking quality of the top 5 — the more relevant a film, the higher it should sit; position matters, not just presence</td><td>ideal ordering: the most relevant exactly on top</td></tr>
+      <tr><td><b>MRR</b></td><td>where the first relevant result lands on average (reciprocal) — measures "first hit is already right"</td><td>rank #1 is relevant for every query</td></tr>
+      <tr><td><b>P@5</b></td><td>share of relevant films in the top 5 — order-agnostic hit rate</td><td>all five are relevant</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Version overview</h2>
+  <table>
+    <thead><tr><th>Version</th><th>Change</th><th>nDCG@5</th><th>MRR</th><th>P@5</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>v1</td><td>baseline (hybrid + RRF)</td><td>0.9307</td><td>0.925</td><td>0.86</td><td>starting point</td></tr>
+      <tr><td>v2</td><td>several gating ideas at once</td><td>0.9255</td><td>0.9167</td><td>0.84</td><td>regression — changed too much at once</td></tr>
+      <tr><td><b>v3</b></td><td>keep only the parser alias table</td><td><b>0.9512</b></td><td>0.925</td><td><b>0.89</b></td><td>first big win</td></tr>
+      <tr><td>v4</td><td>+ English-domain reranker</td><td>0.9368</td><td>0.925</td><td>0.73</td><td>wrong model, precision dropped</td></tr>
+      <tr><td>v5</td><td>step-back always on</td><td>0.9350</td><td>0.925</td><td>0.85</td><td>helped vague queries, hurt specific ones</td></tr>
+      <tr><td><b>v6</b></td><td>step-back gated conditionally</td><td>0.9623</td><td><b>1.000</b></td><td>0.84</td><td>perfect MRR ⭐</td></tr>
+      <tr><td>v7</td><td>English-domain reranker, retried</td><td>0.9368</td><td>0.9417</td><td>0.79</td><td>confirmed: it's the model</td></tr>
+      <tr><td><b>v8</b></td><td>Chinese-domain reranker (bce)</td><td><b>0.9625</b></td><td>0.975</td><td><b>0.89</b></td><td>best balance ⭐</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Iteration diary — what each version was thinking</h2>
+
+  <details class="note"><summary>v1 — measure before touching anything</summary>
+    <p>Before tuning, plant the yardstick: score the plain pipeline (two-track recall + RRF + weighted boost) as-is — 0.9307. Optimization without a baseline is self-congratulation.</p>
+  </details>
+  <details class="note"><summary>v2 — greed: four ideas at once, overall regression</summary>
+    <p>Query understanding had four obvious improvements (alias table, expansion damping, dimension filtering, expansion skipping) — all individually right, so ship all four. Result: -0.005. Three queries improved, five got worse, and the ideas interfered — impossible to tell credit from blame.</p>
+    <p class="turn">→ The turn: one variable per round, from then on. That discipline is worth more than any single trick.</p>
+  </details>
+  <details class="note"><summary>v3 — unbundle, keep one: the first big win</summary>
+    <p>Take v2 apart, keep only the keyword alias table (English aliases + 50 Chinese genre words + award terms). +0.02 → 0.9512; signals like "Korean crime thriller", "award-winning", "prison" — previously missed entirely — all landed.</p>
+    <p class="turn">→ Learned: extending the alias table is pure profit with no side effects. Keep feeding it.</p>
+  </details>
+  <details class="note"><summary>v4 — first reranker attempt: faceplant</summary>
+    <p>Intuition said "an extra precision layer must help". Plugged in an English-domain reranker: -0.014, top-5 hit rate down to 0.73.</p>
+    <p class="turn">→ Learned: it learned "relevance" from English data and can't read a Chinese library; "more AI" doesn't mean better.</p>
+  </details>
+  <details class="note"><summary>v5 — query abstraction: helps the vague, hurts the specific</summary>
+    <p>Let the LLM abstract the query ("brutal breakup, what heals" → "heartbreak healing drama") and recall on that too. Vague queries +1, but six specific queries ("Hong Kong cop films", "prison"…) got noise injected. Net loss.</p>
+    <p class="turn">→ The turn: it's double-edged — the question isn't whether to use it, but when.</p>
+  </details>
+  <details class="note"><summary>v6 — same trick, plus a switch: perfect MRR ⭐</summary>
+    <p>Enable abstraction only when the query contains no concrete condition the parser can find. 0.9623 — rank #1 correct on every single query (MRR 1.0).</p>
+    <p class="turn">→ Learned: the real shape of v2's lesson — gating isn't wrong, it has to clamp the smallest possible knob.</p>
+  </details>
+  <details class="note"><summary>v7 — one more try at the English reranker: confirmed, it's the model</summary>
+    <p>Gave it year/region/cast context, switched to position-aware score blending — architecturally all correct, still 0.9368.</p>
+    <p class="turn">→ Learned: architectural patches can't rescue the wrong model. Two failures pinned the diagnosis.</p>
+  </details>
+  <details class="note"><summary>v8 — Chinese-domain reranker: best balance ⭐</summary>
+    <p>Same API surface, swapped in a Chinese-IR-trained bce model. nDCG flat at 0.9625, but top-5 hit rate +0.05 and zero eval failures — the precision layer finally pays rent.</p>
+    <p class="turn">→ Learned: a reranker's language domain beats its architecture; the right model made all of v4/v7's architectural work click into place.</p>
+  </details>
+
+  <h2>Representative lessons</h2>
+  <ul>
+    <li><b>One change at a time</b> — v2 shipped four ideas together and regressed; v3 kept one and gained +0.02.</li>
+    <li><b>Step-back query abstraction is double-edged</b> — vague queries benefit, specific ones get polluted; v6's "only when the parser finds nothing concrete" gate reached MRR 1.0.</li>
+    <li><b>A reranker's language domain beats its architecture</b> — the same API lost twice with an English-domain model; the Chinese-domain bce immediately gained nDCG +0.026, P@5 +0.10.</li>
+  </ul>
+
+  <h2>Appendix: a thriftier yardstick — the judge's model and hardware</h2>
+  <p>
+    The grader (LLM judge) was <b>a local model throughout</b>. Why not cloud?
+    One eval round is 45 queries × top-5 = up to 225 gradings; eleven rounds
+    approach 2,500 calls — free cloud tiers hit rate limits instantly and would
+    fight the product itself for quota. A local judge has zero marginal cost,
+    reruns anytime, and is reproducible (same model, same prompt — scores don't
+    drift with a provider's server-side updates).
+  </p>
+  <p>
+    v1–v8 used a larger MoE model (35B-A3B, on GPU); later a smaller
+    <b>8B dense model on an NPU</b> re-scored — <b>a different judge is a
+    different yardstick; the numbers aren't comparable with the table above</b>,
+    so they're listed separately:
+  </p>
+  <table>
+    <thead><tr><th>Round</th><th>Scope</th><th>nDCG@5</th><th>MRR</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>8B judge @ NPU (subset)</td><td>20 queries</td><td>0.9286</td><td>0.9417</td><td>small-model + NPU eval pipeline works</td></tr>
+      <tr><td>8B judge @ NPU (full)</td><td>45 queries</td><td>0.9233</td><td>0.9444</td><td>sustained and stable — evals can run long, low-power, off the GPU</td></tr>
+    </tbody>
+  </table>
+</main>
+<footer class="site">
+  Prototype built at the CATCHPLAY+ Hackathon 2026
+</footer>
+<script>
+const labels = ["v1","v2","v3","v4","v5","v6","v7","v8"];
+const ndcg = [0.9307, 0.9255, 0.9512, 0.9368, 0.935, 0.9623, 0.9368, 0.9625];
+const milestones = { 2: "0.9512", 5: "0.9623 · MRR 1.0", 7: "0.9625 ⭐ P@5+0.10" };
+
+Chart.register(ChartDataLabels);
+new Chart(document.getElementById("chart"), {
+  type: "line",
+  data: {
+    labels,
+    datasets: [
+      {
+        label: "nDCG@5",
+        data: ndcg,
+        borderColor: "#f26f21",
+        backgroundColor: "#f26f21",
+        tension: 0.25,
+        pointRadius: ndcg.map((_, i) => (i in milestones ? 6 : 3)),
+        pointBackgroundColor: ndcg.map((_, i) => (i in milestones ? "#ffb380" : "#f26f21")),
+        datalabels: {
+          display: (ctx) => ctx.dataIndex in milestones,
+          formatter: (_, ctx) => milestones[ctx.dataIndex],
+          align: (ctx) => (ctx.dataIndex === 2 ? "top" : ctx.dataIndex === 7 ? "left" : "bottom"),
+          offset: 8,
+          color: "#ffb380",
+          font: { weight: "bold" },
+        },
+      },
+      {
+        label: "v1 baseline (0.9307)",
+        data: ndcg.map(() => 0.9307),
+        borderColor: "#777",
+        borderDash: [6, 6],
+        borderWidth: 1,
+        pointRadius: 0,
+        datalabels: { display: false },
+      },
+    ],
+  },
+  options: {
+    scales: {
+      y: { min: 0.92, max: 0.97, ticks: { color: "#999" }, grid: { color: "#222" } },
+      x: { ticks: { color: "#999" }, grid: { color: "#222" } },
+    },
+    plugins: { legend: { labels: { color: "#ccc" } } },
+  },
+});
+</script>
+</body>
+</html>

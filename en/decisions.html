@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decisions — Film Brain</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta property="og:title" content="Decisions — Film Brain">
+<meta property="og:description" content="Stack choices with real rationale, collaboration discipline, and the major mid-project pivots.">
+<meta property="og:image" content="https://jimc1682000.github.io/film-brain/assets/og.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="site">
+  <a class="brand" href="index.html">🎬 Film Brain</a>
+  <nav>
+    <a href="index.html">Overview</a>
+    <a href="search.html">Search Replay</a>
+    <a href="decisions.html" class="active">Decisions</a>
+    <a href="collab.html">Working with AI</a>
+    <a href="mj-case.html">MJ Case</a>
+    <a href="eval.html">Eval</a>
+    <a href="../decisions.html" style="color:#f26f21">中文</a>
+  </nav>
+</header>
+<main class="md-body">
+  <h1>Technical Decisions — stack, collaboration, and pivots</h1>
+
+  <h2>Constraints first — every choice grew out of these</h2>
+  <ul>
+    <li><b>Timeline</b>: hackathon scale — measured in weeks, not quarters</li>
+    <li><b>Team</b>: four people — 1 PM, 2 editors, 1 engineer; engineering itself ran as one person + AI</li>
+    <li><b>Hardware</b>: the demo box is a 2-vCPU, GPU-less small VPS; budget $0</li>
+    <li><b>Content</b>: a Chinese film library — every model choice starts with "is it good at Chinese?"</li>
+  </ul>
+  <p>
+    Guiding principle: <b>simplify the choices — spend the entire complexity budget on
+    "how the service integrates AI", and pick the most boring, least
+    likely-to-page-you infrastructure for everything else</b> (boring technology).
+    The point was never stacking tech; it's how search, tagging and operations
+    workflows change once AI is in the loop.
+  </p>
+
+  <h2>Initial stack — what and why</h2>
+  <table>
+    <thead><tr><th>Choice</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>Python + FastAPI</b></td>
+          <td>Auto-generated API docs (Swagger) — zero-cost interface conversations with PM / editors; one language across the project, same ecosystem as the AI tooling</td></tr>
+      <tr><td><b>NiceGUI</b> (pure-Python UI)</td>
+          <td>The framework absorbs the frontend details — no second tech stack; one person covers full stack</td></tr>
+      <tr><td><b>SQLite</b></td>
+          <td>Simple, right-sized for a small project — zero ops, a single portable file</td></tr>
+      <tr><td><b>Qdrant</b></td>
+          <td>Used it before; active community, easy to find answers when things break</td></tr>
+      <tr><td><b>bge-m3</b> (embedding)</td>
+          <td>Mainstream open-source embedding model, strong in Chinese, runs fully local</td></tr>
+      <tr><td><b>Gemini + fallback model</b> (LLM)</td>
+          <td>Free tier; designed assuming rate limits — 429s auto-switch to the fallback</td></tr>
+      <tr><td><b>Docker Compose + Traefik @ VPS</b></td>
+          <td>Own VPS at zero marginal cost, public URL, no cold starts; four services in one compose file</td></tr>
+    </tbody>
+  </table>
+
+  <h2>How we collaborated — not vibe coding</h2>
+  <p>
+    Engineering ran as "one person + AI", but every step had verifiable discipline:
+    AI produces, the human steers and gates:
+  </p>
+  <table>
+    <thead><tr><th>Mechanism</th><th>Practice</th><th>What it prevents</th></tr></thead>
+    <tbody>
+      <tr><td><b>ADRs (decision records)</b></td><td>every major pivot gets one: context, options, reasons, impact (8 in total)</td>
+          <td>amnesia about "why we did it this way"; AI bulldozing old decisions during refactors</td></tr>
+      <tr><td><b>Scored eval loop</b></td><td>45 real queries auto-scored; every change measured — winners stay, losers roll back (see Eval page)</td>
+          <td>tuning by vibes; the "it looks better" illusion</td></tr>
+      <tr><td><b>Commit gates</b></td><td>lint, formatting, secret scanning, tests — even "no hardcoded UI copy" is enforced automatically</td>
+          <td>the low-grade mistakes AI sneaks in when producing code at volume</td></tr>
+      <tr><td><b>Git-based deploys</b></td><td>always commit → push → server pulls → rebuild; no editing files on the box</td>
+          <td>drift between demo box and repo; incidents with no rollback or trace</td></tr>
+      <tr><td><b>Human review loop</b></td><td>AI suggests tags → editors approve/reject each → feedback accumulates into a wiki</td>
+          <td>AI's taste problems sliding through silently</td></tr>
+      <tr><td><b>AI-native workflows</b></td><td>operational chores (importing films, ingesting awards, library health checks) packaged as natural-language commands (agent skills) — AI runs the flow, humans command and review</td>
+          <td>repetitive ops eating engineering time</td></tr>
+    </tbody>
+  </table>
+
+  <h2>The mid-project pivots (ADR digest)</h2>
+
+  <details class="note" open><summary>① Pure vector search → Hybrid (BM25 + vectors + RRF + rerank)</summary>
+    <p><b>Pain:</b> with cosine alone, scores huddled in a narrow 0.55–0.65 band and proper nouns (titles) kept missing.</p>
+    <p><b>Pivot:</b> following the open-source project qmd — lexical (BM25) and semantic (vector) tracks recall independently, RRF fuses the rankings, a reranker finishes.</p>
+    <p class="turn">Why: the two retrievals fail in complementary ways — lexical rescues proper nouns, semantic rescues intent; fusing by rank instead of score sidesteps incomparable score scales.</p>
+  </details>
+
+  <details class="note"><summary>② Hand-written keyword parser → LLM query understanding (with a safety net)</summary>
+    <p><b>Pain:</b> the hand-built keyword table covered 3 dimensions; sentences like "what heals a brutal breakup" had no chance.</p>
+    <p><b>Pivot:</b> one LLM call expands the query into: 14-dim tag signals + an imagined plot (HyDE) + retrieval keywords.</p>
+    <p class="turn">Why: LLMs understand meaning but fail (rate limits / bad output) — so the design falls back to the keyword parser whenever the LLM fails. Search never goes dark because the AI did. Caching makes repeat queries free.</p>
+  </details>
+
+  <details class="note"><summary>③ Knobs hardcoded in code → hot-reloaded config + explainable output</summary>
+    <p><b>Pain:</b> changing one weight meant code changes and rebuilds; search was a black box — no way to debug why an odd film ranked high.</p>
+    <p><b>Pivot:</b> all weights/thresholds in one JSON, effective on save; every result carries "why it surfaced" (matched conditions + retrieval path).</p>
+    <p class="turn">Why: tuning speed = number of experiments; explainability serves debugging and product trust at once.</p>
+  </details>
+
+  <details class="note"><summary>④ Hand-set weights → self-correcting eval loop (LLM-as-judge)</summary>
+    <p><b>Pain:</b> config values were educated guesses; a demo has no real traffic, hence no click data to learn from.</p>
+    <p><b>Pivot:</b> let an LLM judge score search results, build automated evals — the system measures and tunes itself without traffic.</p>
+    <p class="turn">Why: when there's no signal, manufacture signal. This loop later powered the entire v1–v8 tuning story (see Eval page).</p>
+  </details>
+
+  <details class="note"><summary>⑤ The trench series: stabilizing the local LLM judge (a four-ADR saga)</summary>
+    <p>Moving the judge to a local model tripped a chain of pitfalls, one ADR each:</p>
+    <ul>
+      <li><b>Cancellation never reached the server</b> → switch LLM calls to streaming, so client disconnects can actually stop runaway generation</li>
+      <li><b>Hitting the model mid-warmup</b> → first a workaround (readiness polls), then dissecting how a mature open-source agent talks to the same service — settled on "SDK + retries absorb the warmup". Borrowing beats reinventing.</li>
+      <li><b>Responses mysteriously empty</b> → not a crash: the thinking-style model spent its whole output budget on thinking; raising the budget fixed it</li>
+    </ul>
+    <p class="turn">Why (the series' shared lesson): chase infrastructure problems until you find how others solved them — don't settle for the first workaround that runs. Every misdiagnosis was recorded in the ADRs as it happened.</p>
+  </details>
+
+  <p style="margin-top:28px;color:#999">
+    The full ADRs (including the overturned misdiagnoses) live in the private repository; this page is the public digest.
+  </p>
+</main>
+<footer class="site">
+  Prototype built at the CATCHPLAY+ Hackathon 2026
+</footer>
+</body>
+</html>
