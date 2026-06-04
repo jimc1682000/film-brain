@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>技術決策 — Film Brain</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <a class="brand" href="index.html">🎬 Film Brain</a>
+  <nav>
+    <a href="index.html">總覽</a>
+    <a href="search.html">搜尋回放</a>
+    <a href="decisions.html" class="active">技術決策</a>
+    <a href="mj-case.html">MJ 事件</a>
+    <a href="eval.html">評測迭代</a>
+  </nav>
+</header>
+<main class="md-body">
+  <h1>技術決策 — 選型、協作方式、與中途轉向</h1>
+
+  <h2>先講限制 — 選型都是從這裡長出來的</h2>
+  <ul>
+    <li><b>時程</b>:hackathon 等級 — 以「週」為單位,不是「季」</li>
+    <li><b>人力</b>:一人 + AI 協作,沒有分工的餘裕</li>
+    <li><b>硬體</b>:demo 機是 2 vCPU、無 GPU 的小 VPS;預算 $0</li>
+    <li><b>內容</b>:中文片庫 — 所有模型選擇都要先問「中文行不行」</li>
+  </ul>
+  <p>
+    底層原則一句話:<b>把複雜度預算全部花在搜尋品質上,基礎設施一律選最無聊、
+    最不會半夜出事的</b>(boring technology)。
+  </p>
+
+  <h2>初始選型 — 選了什麼、為什麼</h2>
+  <table>
+    <thead><tr><th>選擇</th><th>替代方案</th><th>為什麼選它(底層原因)</th></tr></thead>
+    <tbody>
+      <tr><td><b>Python + FastAPI</b></td><td>Node / Go</td>
+          <td>AI 生態同語言(embedding、reranker、評測全是 Python);Pydantic 型別讓「人 + AI 協作」時介面契約明確,AI 改錯了 validation 先擋下來</td></tr>
+      <tr><td><b>NiceGUI</b>(純 Python UI)</td><td>React / Vue 前端</td>
+          <td>一人全棧 — 不開第二個技術棧。UI 不是這個專案的賣點,省下的時間全部投進搜尋品質</td></tr>
+      <tr><td><b>SQLite</b></td><td>PostgreSQL</td>
+          <td>零維運、單一檔案可備份可搬遷;667 部片的規模殺雞不用牛刀。權威資料一律在這,向量庫只是索引</td></tr>
+      <tr><td><b>Qdrant</b></td><td>pgvector / FAISS</td>
+          <td>輕量 Docker 一鍵起、payload 可過濾;之後要換掉也容易(權威資料不在它身上)</td></tr>
+      <tr><td><b>bge-m3</b>(embedding)</td><td>OpenAI embedding API</td>
+          <td>中文表現強、開源、可完全本地跑 — 零 API 成本、資料不出門</td></tr>
+      <tr><td><b>Gemini + 備援模型</b>(LLM)</td><td>單一供應商</td>
+          <td>免費額度 + 中文好;設計上就假設「會被限流」— 429 自動切備援,不鎖死任何一家</td></tr>
+      <tr><td><b>Docker Compose + Traefik @ VPS</b></td><td>雲端 PaaS</td>
+          <td>$0 邊際成本、公開 URL、無冷啟動;四個 service 一份 compose 檔講完</td></tr>
+    </tbody>
+  </table>
+
+  <h2>怎麼協作 — 不是 vibe coding</h2>
+  <p>
+    這個專案是「一人 + AI」開發,但每一步都有可驗證的紀律,
+    AI 負責產出、人負責方向與把關:
+  </p>
+  <table>
+    <thead><tr><th>機制</th><th>做法</th><th>擋掉什麼</th></tr></thead>
+    <tbody>
+      <tr><td><b>ADR 決策紀錄</b></td><td>每個重要技術轉向寫一篇:背景、選項、理由、影響(共 8 篇)</td>
+          <td>「為什麼當初這樣做」失憶;AI 重構時亂動既有決策</td></tr>
+      <tr><td><b>評測閉環</b></td><td>45 條真實查詢自動評分,每輪改動跑分 — 贏的留、輸的回滾(見「評測迭代」頁)</td>
+          <td>憑感覺調參;「看起來變好了」的錯覺</td></tr>
+      <tr><td><b>pre-commit 關卡</b></td><td>lint、格式、secret 掃描、測試,連「前端不准寫死中文文案」都有自動檢查</td>
+          <td>AI 大量產碼時夾帶的低級錯誤與壞習慣</td></tr>
+      <tr><td><b>git-based 部署</b></td><td>一律 commit → push → 伺服器 pull → rebuild;禁止直接上機改檔</td>
+          <td>demo 機與程式庫漂移;出事無法回滾定位</td></tr>
+      <tr><td><b>人工審核迴圈</b></td><td>AI 建議標籤 → 編輯逐一核可/退回 → 回饋進 wiki 累積成知識庫</td>
+          <td>AI 的品味問題被靜默放行</td></tr>
+    </tbody>
+  </table>
+
+  <h2>中途的重要轉向(ADR 摘要)</h2>
+
+  <details class="note" open><summary>① 純向量搜尋 → Hybrid(BM25 + 向量 + RRF + 精排)</summary>
+    <p><b>痛點:</b>只用向量 cosine 時分數全擠在 0.55–0.65 窄帶、片名等專有名詞抓不準。</p>
+    <p><b>轉向:</b>參考開源專案 qmd 的做法 — 字面(BM25)與語意(向量)兩路各自召回,
+    用 RRF 融合排名,再交給精排模型。</p>
+    <p class="turn">理由:兩種檢索的失敗模式互補 — 字面救專有名詞,語意救意圖;
+    融合用「排名」而非「分數」,迴避兩邊分數尺度不可比的問題。</p>
+  </details>
+
+  <details class="note"><summary>② 手刻關鍵字解析 → LLM 查詢理解(雙保險)</summary>
+    <p><b>痛點:</b>手刻關鍵字表只覆蓋 3 個維度,「被仙人跳分手該看什麼療傷」這種句子完全無解。</p>
+    <p><b>轉向:</b>用一次 LLM 呼叫把查詢展開成:14 維標籤訊號 + 假想劇情(HyDE)+ 檢索關鍵字。</p>
+    <p class="turn">理由:LLM 懂語意但會失敗(限流/壞輸出)— 所以設計成「LLM 失敗就退回手刻 parser」,
+    搜尋永遠不會因為 AI 掛掉而開天窗。快取讓同查詢只花一次。</p>
+  </details>
+
+  <details class="note"><summary>③ 旋鈕寫死在程式裡 → 熱載設定 + 可解釋輸出</summary>
+    <p><b>痛點:</b>調一個權重要改 code 重建;搜尋是黑盒,怪片排高無從 debug。</p>
+    <p><b>轉向:</b>所有權重/門檻集中到一個 JSON,存檔即生效;每個結果帶「為什麼上榜」
+    (符合哪些條件、哪條路找到的)。</p>
+    <p class="turn">理由:調參迭代速度 = 實驗次數;可解釋性同時服務 debug 與產品信任,一魚兩吃。</p>
+  </details>
+
+  <details class="note"><summary>④ 手設權重 → 自我矯正評測閉環(LLM-as-judge)</summary>
+    <p><b>痛點:</b>設定值全是拍腦袋的先驗;demo 沒有真實流量,沒有點擊數據可學。</p>
+    <p><b>轉向:</b>讓 LLM 當裁判對搜尋結果打分,建自動評測 — 系統不靠流量也能自己量、自己調。</p>
+    <p class="turn">理由:沒有訊號就製造訊號。這個閉環後來支撐了 v1–v8 全部的調參敘事
+    (見「評測迭代」頁)。</p>
+  </details>
+
+  <details class="note"><summary>⑤ 戰壕系列:把本地 LLM 裁判跑穩(四篇 ADR 的連續劇)</summary>
+    <p>裁判搬到本地後連環踩坑,每個坑一篇 ADR:</p>
+    <ul>
+      <li><b>取消傳不到伺服器</b> → LLM 呼叫改 streaming,client 斷線才擋得住失控生成</li>
+      <li><b>模型還在熱身就被打</b> → 先繞過(跑前探活),後來拆解成熟開源 agent 怎麼打同一個服務,
+          改成「SDK + 重試吃掉熱身期」— 借鑑比硬造好</li>
+      <li><b>回應神祕變空字串</b> → 不是壞掉,是思考型模型把輸出額度全花在「想」上;加大輸出預算解決</li>
+    </ul>
+    <p class="turn">理由(整個系列的共同教訓):基礎設施問題要追到「別人怎麼解的」為止,
+    不滿足於第一個能跑的 workaround — 每次誤判也照實記錄在 ADR 裡。</p>
+  </details>
+
+  <p style="margin-top:28px;color:#999">
+    完整 ADR(含被推翻的誤判過程)保存在私有程式庫;此頁為對外摘要。
+  </p>
+</main>
+<footer class="site">
+  Prototype built at the CATCHPLAY+ Hackathon 2026
+</footer>
+</body>
+</html>
