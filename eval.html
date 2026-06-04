@@ -53,6 +53,57 @@
     </tbody>
   </table>
 
+  <h2>迭代手記 — 每一版在想什麼</h2>
+  <style>
+    details.note { background:#121212; border:1px solid #2a2a2a; border-radius:8px; margin:10px 0; padding:4px 16px; }
+    details.note summary { cursor:pointer; font-weight:700; padding:8px 0; color:#efefef; }
+    details.note summary:hover { color:#f26f21; }
+    details.note p { margin:.5em 0 1em; font-size:1.05rem; }
+    details.note .turn { color:#ffb380; }
+  </style>
+
+  <details class="note"><summary>v1 — 先量再動</summary>
+    <p>動手調參前先立尺:雙路召回 + RRF + 加權 boost 的素管線直接跑分,0.9307。
+    沒有 baseline 的優化都是自我感覺良好。</p>
+  </details>
+  <details class="note"><summary>v2 — 貪心:四個想法一起上,整體回退</summary>
+    <p>當時覺得 query 理解有四個明顯可改(關鍵字對照表、展開降權、維度過濾、跳過展開),
+    都對就全上。結果 -0.005:3 條變好、5 條變差,而且互相打架,根本分不出誰的功勞誰的鍋。</p>
+    <p class="turn">→ 轉折:從此一輪只動一個變因。這個紀律比任何單一技巧值錢。</p>
+  </details>
+  <details class="note"><summary>v3 — 拆開重來,只留一個:第一個大贏</summary>
+    <p>把 v2 四件事拆開,只留「關鍵字對照表」(英文別名 + 50 個中文類型詞 + 得獎詞)。
+    +0.02 → 0.9512,「韓國犯罪驚悚」「得獎」「監獄」這些之前完全漏接的訊號全接住了。</p>
+    <p class="turn">→ 學到:擴充對照表是純賺,沒有副作用,值得一直補。</p>
+  </details>
+  <details class="note"><summary>v4 — 第一次上精排模型:翻車</summary>
+    <p>直覺上「多一層精排一定更準」。掛上英文域訓練的 reranker,反而 -0.014,
+    前五命中率掉到 0.73。</p>
+    <p class="turn">→ 學到:它是在英文資料上學的「相關」,看不懂中文片庫;
+    「多一層 AI」不保證更好。</p>
+  </details>
+  <details class="note"><summary>v5 — 抽象化查詢:幫了模糊的,傷了具體的</summary>
+    <p>讓 LLM 把查詢「抽象化」(「被仙人跳分手療傷」→「失戀療癒」)再多召回一路。
+    模糊查詢 +1,但 6 條具體查詢(「香港警匪片」「監獄」…)被拉進雜訊,淨輸。</p>
+    <p class="turn">→ 轉折:這招是雙面刃,問題不是「要不要用」,是「什麼時候用」。</p>
+  </details>
+  <details class="note"><summary>v6 — 同一招,加個開關:MRR 滿分 ⭐</summary>
+    <p>只在「查詢裡抓不到任何具體條件」時才啟用抽象化。0.9623,
+    每一條查詢的第一名都對(MRR 1.0)。</p>
+    <p class="turn">→ 學到:v2 教訓真正的形狀 — gating 不是不能做,
+    是要鎖在最小的那顆旋鈕上。</p>
+  </details>
+  <details class="note"><summary>v7 — 不死心再試英文 reranker:確認是模型的鍋</summary>
+    <p>給它補上年份/地區/卡司資訊、改成位置感知混分 — 架構上全對,分數還是 0.9368。</p>
+    <p class="turn">→ 學到:架構修補救不了選錯模型。兩輪失敗把問題定位釘死了。</p>
+  </details>
+  <details class="note"><summary>v8 — 換中文域 reranker:均衡最佳 ⭐</summary>
+    <p>同一個 API 介面,換成中文 IR 訓練的 bce 模型。nDCG 持平 0.9625,
+    但前五命中率 +0.05、評測零失敗 — 精排終於開始賺錢。</p>
+    <p class="turn">→ 學到:reranker 的語言域比架構重要;
+    對的模型讓 v4/v7 全部的架構工作瞬間生效。</p>
+  </details>
+
   <h2>幾個有代表性的教訓</h2>
   <ul>
     <li><b>一次只改一件事</b> — v2 把四個想法一起上,整體回退;v3 拆開只留一個,+0.02。</li>
