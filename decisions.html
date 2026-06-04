@@ -23,33 +23,34 @@
   <h2>先講限制 — 選型都是從這裡長出來的</h2>
   <ul>
     <li><b>時程</b>:hackathon 等級 — 以「週」為單位,不是「季」</li>
-    <li><b>人力</b>:一人 + AI 協作,沒有分工的餘裕</li>
+    <li><b>團隊</b>:4 人 — 1 PM、2 editor、1 engineer;工程實作是一人 + AI 協作</li>
     <li><b>硬體</b>:demo 機是 2 vCPU、無 GPU 的小 VPS;預算 $0</li>
     <li><b>內容</b>:中文片庫 — 所有模型選擇都要先問「中文行不行」</li>
   </ul>
   <p>
-    底層原則一句話:<b>把複雜度預算全部花在搜尋品質上,基礎設施一律選最無聊、
-    最不會半夜出事的</b>(boring technology)。
+    底層原則:<b>簡化選擇 — 把複雜度預算全部花在「服務如何整合 AI」上,
+    基礎設施一律選最無聊、最不會半夜出事的</b>(boring technology)。
+    重點從來不是堆技術,而是 AI 進來之後,搜尋、標籤、營運的工作流程怎麼變。
   </p>
 
   <h2>初始選型 — 選了什麼、為什麼</h2>
   <table>
-    <thead><tr><th>選擇</th><th>替代方案</th><th>為什麼選它(底層原因)</th></tr></thead>
+    <thead><tr><th>選擇</th><th>為什麼選它</th></tr></thead>
     <tbody>
-      <tr><td><b>Python + FastAPI</b></td><td>Node / Go</td>
-          <td>AI 生態同語言(embedding、reranker、評測全是 Python);Pydantic 型別讓「人 + AI 協作」時介面契約明確,AI 改錯了 validation 先擋下來</td></tr>
-      <tr><td><b>NiceGUI</b>(純 Python UI)</td><td>React / Vue 前端</td>
-          <td>一人全棧 — 不開第二個技術棧。UI 不是這個專案的賣點,省下的時間全部投進搜尋品質</td></tr>
-      <tr><td><b>SQLite</b></td><td>PostgreSQL</td>
-          <td>零維運、單一檔案可備份可搬遷;667 部片的規模殺雞不用牛刀。權威資料一律在這,向量庫只是索引</td></tr>
-      <tr><td><b>Qdrant</b></td><td>pgvector / FAISS</td>
-          <td>輕量 Docker 一鍵起、payload 可過濾;之後要換掉也容易(權威資料不在它身上)</td></tr>
-      <tr><td><b>bge-m3</b>(embedding)</td><td>OpenAI embedding API</td>
-          <td>中文表現強、開源、可完全本地跑 — 零 API 成本、資料不出門</td></tr>
-      <tr><td><b>Gemini + 備援模型</b>(LLM)</td><td>單一供應商</td>
-          <td>免費額度 + 中文好;設計上就假設「會被限流」— 429 自動切備援,不鎖死任何一家</td></tr>
-      <tr><td><b>Docker Compose + Traefik @ VPS</b></td><td>雲端 PaaS</td>
-          <td>$0 邊際成本、公開 URL、無冷啟動;四個 service 一份 compose 檔講完</td></tr>
+      <tr><td><b>Python + FastAPI</b></td>
+          <td>自動生 API 文件(Swagger)— 跟 PM / editor 溝通介面零成本;全專案統一 Python,AI 生態同語言</td></tr>
+      <tr><td><b>NiceGUI</b>(純 Python UI)</td>
+          <td>框架包掉前端細節,不用分心管前端 — 同樣 Python-based,一個人顧全棧</td></tr>
+      <tr><td><b>SQLite</b></td>
+          <td>簡單,小專案剛好 — 零維運、單一檔案可備份可搬遷</td></tr>
+      <tr><td><b>Qdrant</b></td>
+          <td>之前用過、社群活躍,踩坑容易查到解法</td></tr>
+      <tr><td><b>bge-m3</b>(embedding)</td>
+          <td>主流開源 embedding model,中文表現好、可完全本地跑</td></tr>
+      <tr><td><b>Gemini + 備援模型</b>(LLM)</td>
+          <td>有免費額度;設計上就假設「會被限流」— 429 自動切備援</td></tr>
+      <tr><td><b>Docker Compose + Traefik @ VPS</b></td>
+          <td>自有 VPS 零邊際成本、公開 URL、無冷啟動;四個 service 一份 compose 檔講完</td></tr>
     </tbody>
   </table>
 
@@ -71,6 +72,8 @@
           <td>demo 機與程式庫漂移;出事無法回滾定位</td></tr>
       <tr><td><b>人工審核迴圈</b></td><td>AI 建議標籤 → 編輯逐一核可/退回 → 回饋進 wiki 累積成知識庫</td>
           <td>AI 的品味問題被靜默放行</td></tr>
+      <tr><td><b>AI-native 工作流</b></td><td>匯入新片、抓獎項、片庫健檢等營運流程包成自然語言指令(agent skills),AI 跑流程、人下指令看結果</td>
+          <td>重複性營運工作吃掉工程時間</td></tr>
     </tbody>
   </table>
 
