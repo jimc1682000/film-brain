@@ -62,16 +62,17 @@
         換中文域訓練的 bce 立刻 nDCG +0.026、P@5 +0.10。</li>
   </ul>
 
-  <h2>附註:把評測的「打分者」搬到本地</h2>
+  <h2>附註:換一把更省電的尺 — judge 的模型與硬體</h2>
   <p>
-    上面的分數都由雲端 LLM judge 評。後來把 judge 換成<b>本地 8B 模型</b>重跑 —
-    <b>不同 judge 是不同的尺,分數不能跟上面直接比</b>,所以分開列:
+    評測的打分者(LLM judge)<b>全程都是本地模型</b>。v1–v8 用較大的 MoE 模型
+    (35B-A3B,跑在 GPU);後來換成小一號的 <b>8B dense 模型跑在 NPU</b> 重評 —
+    <b>模型不同 = 尺不同,分數不能跟上面直接比</b>,所以分開列:
   </p>
   <table>
     <thead><tr><th>輪次</th><th>範圍</th><th>nDCG@5</th><th>MRR</th><th>結論</th></tr></thead>
     <tbody>
-      <tr><td>本地 judge(子集)</td><td>20 條查詢</td><td>0.9286</td><td>0.9417</td><td>本地評測管線跑通</td></tr>
-      <tr><td>本地 judge(全量)</td><td>45 條查詢</td><td>0.9233</td><td>0.9444</td><td>持續穩定 — 之後調參不再依賴雲端配額</td></tr>
+      <tr><td>8B judge @ NPU(子集)</td><td>20 條查詢</td><td>0.9286</td><td>0.9417</td><td>小模型 + NPU 評測管線跑通</td></tr>
+      <tr><td>8B judge @ NPU(全量)</td><td>45 條查詢</td><td>0.9233</td><td>0.9444</td><td>持續穩定 — 評測可低功耗長跑,不佔 GPU</td></tr>
     </tbody>
   </table>
 </main>
