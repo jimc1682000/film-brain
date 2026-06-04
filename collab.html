@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Michael Jackson 事件 — Film Brain</title>
+<title>協作方式 — Film Brain</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
@@ -15,21 +15,20 @@
     <a href="index.html">總覽</a>
     <a href="search.html">搜尋回放</a>
     <a href="decisions.html">技術決策</a>
-    <a href="collab.html">協作方式</a>
-    <a href="mj-case.html" class="active">MJ 事件</a>
+    <a href="collab.html" class="active">協作方式</a>
+    <a href="mj-case.html">MJ 事件</a>
     <a href="eval.html">評測迭代</a>
   </nav>
 </header>
 <main>
   <article class="md-body" id="doc">載入中…</article>
-  <p><a href="search.html" style="color:#00a3d9">→ 到「搜尋回放」點 Michael Jackson,看修完後的真實輸出</a></p>
 </main>
 <footer class="site">
   Prototype built at the CATCHPLAY+ Hackathon 2026
 </footer>
 <script src="common.js"></script>
 <script>
-fetch("mj-case.md")
+fetch("collab.md")
   .then((r) => r.text())
   .then((md) => renderMarkdownInto(document.getElementById("doc"), md))
   .catch((e) => (document.getElementById("doc").textContent = "載入失敗: " + e));
