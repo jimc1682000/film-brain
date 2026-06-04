@@ -5,6 +5,10 @@
 
 ## 1. 現象
 
+<img src="assets/mj-before.png" alt="修正前:Michael Jackson 查詢回傳一戰再戰並標示 100%" style="max-width:360px;border:1px solid #333;border-radius:8px">
+
+*當時的實際畫面:第一名是戰爭犯罪片《一戰再戰》,標 100%。*
+
 - 片庫 667 部全是電影,**沒有任何 MJ 相關內容**(演唱會 / 音樂紀錄片皆無)
 - 查詢卻回了一部戰爭犯罪大片,顯示 **100% 匹配**
 - 卡片上的標籤(驚悚 / 犯罪 / 逃亡)跟 Michael Jackson 毫無關聯 — 使用者完全無從理解
