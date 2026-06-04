@@ -1,0 +1,113 @@
+/* Film Brain — CATCHPLAY+-inspired dark theme */
+:root {
+  --cp: #f26f21;
+  --cp-hover: #ff944c;
+  --bg: #000;
+  --surface: #1f1f1f;
+  --surface-alt: #121212;
+  --text: #efefef;
+  --muted: #999;
+  --border: #525252;
+  --positive: #1ac130;
+  --warning: #f2a93b;
+  --negative: #d0021b;
+  --info: #00a3d9;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  line-height: 1.7;
+}
+header.site {
+  display: flex; align-items: center; gap: 24px;
+  padding: 14px 24px; border-bottom: 1px solid #222;
+  position: sticky; top: 0; background: #000; z-index: 10;
+}
+header.site .brand { color: var(--cp); font-weight: 700; font-size: 1.15rem; text-decoration: none; }
+header.site nav { margin-left: auto; display: flex; gap: 18px; flex-wrap: wrap; }
+header.site nav a { color: #ccc; text-decoration: none; font-size: .95rem; }
+header.site nav a:hover, header.site nav a.active { color: var(--cp); }
+main { max-width: 920px; margin: 0 auto; padding: 32px 20px 80px; }
+
+/* rendered markdown */
+.md-body h1 { font-size: 2.4rem; margin: .4em 0; }
+.md-body h2 { margin-top: 2em; border-bottom: 1px solid #222; padding-bottom: .25em; }
+.md-body p, .md-body li { font-size: 1.15rem; }
+.md-body a { color: var(--info); }
+.md-body img { max-width: 100%; border: 1px solid #333; border-radius: 8px; }
+.md-body pre {
+  background: rgba(242,111,33,.10); border: 1px solid var(--cp);
+  border-radius: 8px; padding: 14px 18px;
+}
+.md-body pre code { color: #ffb380; font-size: 1.05rem; line-height: 1.7; white-space: pre-wrap; }
+.md-body table { border-collapse: collapse; display: block; overflow-x: auto; max-width: 100%; }
+.md-body th, .md-body td { border: 1px solid #333; padding: 6px 12px; font-size: 1rem; }
+.md-body th { background: var(--surface); }
+
+/* mermaid */
+.mermaid { display: flex; justify-content: center; margin: 1.2em 0; }
+/* Cap height so tall TB flow charts don't take over the page; the viewBox
+   keeps text proportional while shrinking to fit. */
+.mermaid svg { max-width: 100% !important; max-height: 720px; width: auto; height: auto; }
+.mermaid p { font-size: inherit; line-height: inherit; margin: 0; }
+
+/* search replay */
+.chips { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0; }
+.chip {
+  background: var(--surface); color: #ddd; border: 1px solid var(--border);
+  border-radius: 999px; padding: 8px 16px; cursor: pointer; font-size: .95rem;
+}
+.chip:hover { border-color: var(--cp); color: var(--cp); }
+.chip.active { background: var(--cp); color: #000; border-color: var(--cp); font-weight: 600; }
+.banner-warn {
+  border: 1px solid var(--warning); background: rgba(242,169,59,.10);
+  border-radius: 8px; padding: 10px 14px; margin: 14px 0; color: var(--warning); font-size: .95rem;
+}
+.understanding {
+  border: 1px solid var(--info); background: rgba(0,163,217,.08);
+  border-radius: 8px; padding: 10px 14px; margin: 14px 0; font-size: .92rem;
+}
+.understanding .lbl { color: var(--info); font-weight: 700; margin-right: 6px; }
+.understanding .hyde { color: #aaa; margin-top: 6px; }
+.tagchip {
+  display: inline-block; border: 1px solid var(--info); color: var(--info);
+  border-radius: 4px; padding: 0 6px; font-size: .8rem; margin: 0 3px 3px 0;
+}
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 18px; }
+.card { background: var(--surface); border-radius: 10px; overflow: hidden; border: 1px solid #2a2a2a; }
+.card img { width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; background: #111; }
+.card .body { padding: 10px 12px 14px; }
+.card .title { font-weight: 700; }
+.card .title-en { color: var(--muted); font-size: .82rem; margin-bottom: 6px; }
+.score { display: inline-block; border-radius: 4px; padding: 0 8px; font-size: .85rem; font-weight: 700; color: #000; margin-bottom: 6px; }
+.score.hi { background: var(--positive); }
+.score.mid { background: var(--warning); }
+.score.lo { background: var(--negative); color: #fff; }
+.mtag {
+  display: inline-block; border: 1px solid var(--cp); color: var(--cp);
+  border-radius: 4px; padding: 0 5px; font-size: .76rem; margin: 0 3px 3px 0;
+}
+.ptag {
+  display: inline-block; border: 1px solid #2bbbad; color: #2bbbad;
+  border-radius: 4px; padding: 0 5px; font-size: .76rem; margin: 0 3px 3px 0;
+}
+.explain { color: #888; font-size: .8rem; margin-top: 6px; }
+
+/* misc */
+.callout {
+  border: 1px solid var(--cp); background: rgba(242,111,33,.10);
+  border-radius: 8px; padding: 14px 18px; margin: 18px 0; color: #ffb380; font-size: 1.05rem;
+}
+.cards-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 28px 0; }
+.navcard {
+  display: block; background: var(--surface); border: 1px solid #2a2a2a; border-radius: 10px;
+  padding: 18px; color: var(--text); text-decoration: none;
+}
+.navcard:hover { border-color: var(--cp); }
+.navcard h3 { margin: 0 0 6px; color: var(--cp); }
+.navcard p { margin: 0; color: var(--muted); font-size: .92rem; }
+footer.site { border-top: 1px solid #222; color: #777; font-size: .85rem; text-align: center; padding: 24px; }
+footer.site a { color: #999; }

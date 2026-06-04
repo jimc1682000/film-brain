@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Film Brain — AI 片庫大腦</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+</head>
+<body>
+<header class="site">
+  <a class="brand" href="index.html">🎬 Film Brain</a>
+  <nav>
+    <a href="index.html" class="active">總覽</a>
+    <a href="search.html">搜尋回放</a>
+    <a href="mj-case.html">MJ 事件</a>
+    <a href="eval.html">評測迭代</a>
+  </nav>
+</header>
+<main>
+  <div class="cards-row">
+    <a class="navcard" href="search.html">
+      <h3>🔍 搜尋回放</h3>
+      <p>7 個真實查詢的完整結果 — 含誠實分數與低信心警示,點了就看。</p>
+    </a>
+    <a class="navcard" href="mj-case.html">
+      <h3>🕵️ Michael Jackson 事件</h3>
+      <p>一次「假滿分 100%」的 debugging 全記錄:從現象到校準到修法。</p>
+    </a>
+    <a class="navcard" href="eval.html">
+      <h3>📈 評測迭代 v1–v11</h3>
+      <p>LLM-judge 自動評測怎麼驅動 11 輪調參,nDCG 0.93 → 0.96。</p>
+    </a>
+  </div>
+  <article class="md-body" id="doc">載入中…</article>
+</main>
+<footer class="site">
+  Prototype built at the CATCHPLAY+ Hackathon 2026 · catalog metadata from public sources (CATCHPLAY+ / TMDB)
+  · <a href="https://github.com/jimc1682000" target="_blank" rel="noopener">Jimmy Chen</a>
+</footer>
+<script src="common.js"></script>
+<script>
+fetch("brief.md")
+  .then((r) => r.text())
+  .then((md) => renderMarkdownInto(document.getElementById("doc"), md))
+  .catch((e) => (document.getElementById("doc").textContent = "載入失敗: " + e));
+</script>
+</body>
+</html>
