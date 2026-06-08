@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Take-away Prompt — Film Brain</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta property="og:title" content="Take-away Prompt — Film Brain">
+<meta property="og:description" content="Packaging an AI capability as a copy-paste prompt — works in any chatbot, no backend. One slice of an AI-native workflow.">
+<meta property="og:image" content="https://jimc1682000.github.io/film-brain/assets/og.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="site">
+  <a class="brand" href="index.html">🎬 Film Brain</a>
+  <nav>
+    <a href="index.html">Overview</a>
+    <a href="search.html">Search Replay</a>
+    <a href="decisions.html">Decisions</a>
+    <a href="collab.html">Working with AI</a>
+    <a href="prompts.html" class="active">Take-away Prompt</a>
+    <a href="ideation.html">Converging Ideas</a>
+    <a href="mj-case.html">MJ Case</a>
+    <a href="eval.html">Eval</a>
+    <a href="../prompts.html" style="color:#f26f21">中文</a>
+  </nav>
+</header>
+<main class="md-body">
+  <h1>A Take-away Prompt</h1>
+  <p>
+    One slice of an AI-native workflow: not every capability needs to become a system.
+    Some can be packaged as a <b>copy-paste prompt</b> — an editor pastes it into any
+    chatbot (ChatGPT / Claude / Gemini) and it just works, zero install, zero backend.
+    The auto-tagging prompt below is the trimmed, public version of what the team uses internally.
+  </p>
+  <p style="color:#999">
+    Note: only <b>representative</b> dimensions and tags are shown here as examples; the
+    team actually uses the full 14-dimension, 400-plus-tag version (internal, not public).
+    The point is to demonstrate "packaging judgment into a portable prompt", not to publish
+    the taxonomy itself.
+  </p>
+
+  <h2>Film auto-tagging prompt</h2>
+  <p>Hit "Copy" top-right, paste into any chatbot, and replace the last two lines with your film's title and plot.</p>
+
+  <div class="codewrap">
+    <button class="copybtn" onclick="copyPrompt(this)">Copy</button>
+    <pre><code id="prompt">You are a film-tagging assistant. I'll give you a film's title and plot;
+pick fitting tags from the dimensions below.
+
+[Rules]
+1. A film can span multiple dimensions, with multiple tags per dimension.
+2. Prefer tags from the list; if something obviously fits but isn't listed, add it and mark it "(extended)".
+3. Pay special attention to the "Emotion" dimension — always pick one if there's a mood signal.
+4. Give a one-line overall read first, then one line per tag: "Dimension · Tag — one-line reason".
+
+[Dimensions and representative tags (examples, extend sensibly)]
+- Genre: comedy, drama, action, romance, horror, sci-fi, crime, documentary…
+- Emotion: healing, tear-jerker, mind-bending, stress-relief, heartwarming, dark, romantic, toxic-romance…
+- Theme: revenge, coming-of-age, family bonds, workplace, survival, comeback…
+- Setting: prison, courtroom, outer space, underwater, haunted house…
+- Era: period, WWII, future, British period…
+- Audience: family, teens, adults, seniors…
+
+[Film to tag]
+Title: (fill here)
+Plot: (fill here)</code></pre>
+  </div>
+
+  <h2>How to use it</h2>
+  <ul>
+    <li>The plot can be a distributor blurb or any synopsis you find — the fuller it is, the better the tags.</li>
+    <li>Want only some dimensions (say emotion + theme)? Add "only output dimensions X and Y" to the rules.</li>
+    <li>Want it stricter? Change rule 2 to "use only tags from the list, no inventing".</li>
+  </ul>
+
+  <h2>Why do it this way</h2>
+  <p>
+    The product itself has full backend auto-tagging (whitelist-validated against the
+    complete taxonomy, written back to the library). But often an editor just wants to
+    "quickly try-tag one film" without opening the backend. Packaging that need as a
+    prompt pushes the AI capability <b>down to the chatbot in everyone's hands</b> —
+    that's the spirit of an AI-native workflow: capability follows the person, instead
+    of being locked inside one system.
+  </p>
+  <p style="color:#999">
+    Want the general principles for "writing judgment into a good prompt"? See <a href="collab.html">Working with AI</a>.
+  </p>
+</main>
+<footer class="site">
+  Prototype built at the CATCHPLAY+ Hackathon 2026
+</footer>
+<script>
+function copyPrompt(btn) {
+  const text = document.getElementById("prompt").innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = "Copied ✓";
+    btn.classList.add("done");
+    setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("done"); }, 2000);
+  });
+}
+</script>
+</body>
+</html>

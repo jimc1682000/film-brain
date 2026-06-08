@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>協作方式 — Film Brain</title>
+<title>駭客松凝聚想法 — Film Brain</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<meta property="og:title" content="協作方式 — Film Brain">
-<meta property="og:description" content="AI 片庫大腦 — 語意搜尋、誠實分數、可解釋結果。CATCHPLAY+ Hackathon 2026 原型的公開導覽。">
+<meta property="og:title" content="駭客松沒方向時,怎麼把想法收斂成題目 — Film Brain">
+<meta property="og:description" content="從一堆零散想法收斂成一個做得完、做得出來的題目 — 一套小團隊能照用的方法。">
 <meta property="og:image" content="https://jimc1682000.github.io/film-brain/assets/og.png">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
@@ -21,26 +21,23 @@
     <a href="index.html">總覽</a>
     <a href="search.html">搜尋回放</a>
     <a href="decisions.html">技術決策</a>
-    <a href="collab.html" class="active">協作方式</a>
+    <a href="collab.html">協作方式</a>
     <a href="prompts.html">可帶走 Prompt</a>
-    <a href="ideation.html">凝聚想法</a>
+    <a href="ideation.html" class="active">凝聚想法</a>
     <a href="mj-case.html">MJ 事件</a>
     <a href="eval.html">評測迭代</a>
-    <a href="en/collab.html" style="color:#f26f21">EN</a>
+    <a href="en/ideation.html" style="color:#f26f21">EN</a>
   </nav>
 </header>
 <main>
   <article class="md-body" id="doc">載入中…</article>
 </main>
-<footer class="site">
-  Prototype built at the CATCHPLAY+ Hackathon 2026
-</footer>
+<footer class="site">Prototype built at the CATCHPLAY+ Hackathon 2026</footer>
 <script src="common.js"></script>
 <script>
-fetch("collab.md")
-  .then((r) => r.text())
-  .then((md) => renderMarkdownInto(document.getElementById("doc"), md))
-  .catch((e) => (document.getElementById("doc").textContent = "載入失敗: " + e));
+fetch("ideation.md").then((r)=>r.text())
+  .then((md)=>renderMarkdownInto(document.getElementById("doc"),md))
+  .catch((e)=>(document.getElementById("doc").textContent="載入失敗: "+e));
 </script>
 </body>
 </html>

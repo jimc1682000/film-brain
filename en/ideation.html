@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Michael Jackson Incident — Film Brain</title>
+<title>Converging Ideas — Film Brain</title>
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-<meta property="og:title" content="The Michael Jackson Incident — Film Brain">
-<meta property="og:description" content="A false-100% debugging case study, from symptom to calibrated fix.">
+<meta property="og:title" content="Converging on a Project When the Hackathon Has No Direction — Film Brain">
+<meta property="og:description" content="From scattered ideas to one doable, worth-doing project — a method any small team can reuse.">
 <meta property="og:image" content="https://jimc1682000.github.io/film-brain/assets/og.png">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
@@ -23,24 +23,21 @@
     <a href="decisions.html">Decisions</a>
     <a href="collab.html">Working with AI</a>
     <a href="prompts.html">Take-away Prompt</a>
-    <a href="ideation.html">Converging Ideas</a>
-    <a href="mj-case.html" class="active">MJ Case</a>
+    <a href="ideation.html" class="active">Converging Ideas</a>
+    <a href="mj-case.html">MJ Case</a>
     <a href="eval.html">Eval</a>
-    <a href="../mj-case.html" style="color:#f26f21">中文</a>
+    <a href="../ideation.html" style="color:#f26f21">中文</a>
   </nav>
 </header>
 <main>
   <article class="md-body" id="doc">Loading…</article>
 </main>
-<footer class="site">
-  Prototype built at the CATCHPLAY+ Hackathon 2026
-</footer>
+<footer class="site">Prototype built at the CATCHPLAY+ Hackathon 2026</footer>
 <script src="../common.js"></script>
 <script>
-fetch("mj-case.md")
-  .then((r) => r.text())
-  .then((md) => renderMarkdownInto(document.getElementById("doc"), md))
-  .catch((e) => (document.getElementById("doc").textContent = "Failed to load: " + e));
+fetch("ideation.md").then((r)=>r.text())
+  .then((md)=>renderMarkdownInto(document.getElementById("doc"),md))
+  .catch((e)=>(document.getElementById("doc").textContent="Failed to load: "+e));
 </script>
 </body>
 </html>

@@ -4,7 +4,7 @@
 
 > This guide answers two questions: how does "one engineer + AI" actually work?
 > And — can you apply the same method to your own work without writing code?
-> (Yes — see section 5.)
+> (Yes — see section 6.)
 
 ---
 
@@ -12,18 +12,16 @@
 
 Every feature and every fix goes through the same loop:
 
-```
-Describe the need or problem in plain language
-   ↓
-AI analyzes — often replying with an options table (plans A/B/C with trade-offs)
-   ↓
-Human picks a direction (or says "none of these — what I want is…")
-   ↓
-AI implements + runs the automated tests
-   ↓
-Human reviews the screen / the numbers
-   ↓
-Ship (verify once more after deploy)
+```mermaid
+flowchart TB
+    A["💬 Describe the need in plain language"] --> B["🤖 AI analyzes · often an options table (A/B/C, trade-offs)"]
+    B --> C["🧭 Human picks a direction (or: none of these)"]
+    C --> D["⚙️ AI implements + runs automated tests"]
+    D --> E["👀 Human reviews the screen / the numbers"]
+    E --> F["🚀 Ship (verify once more after deploy)"]
+    F -. next request .-> A
+    classDef h fill:#f26f21,stroke:#d4570c,color:#000
+    class B,D h
 ```
 
 **A real loop, end to end** — the time the search scores all huddled together:
@@ -113,7 +111,38 @@ Three moves that work on hard problems:
 
 ---
 
-## 5. Do it yourself — five principles for briefing an AI
+## 5. Taking a big ask and breaking it down for AI
+
+A request like "build me a search feature", handed straight to AI, gets you a
+blob that runs but you can't read or change. Break it down yourself first, then
+hand it over — the quality gap is enormous. Four steps:
+
+**① Spell out "what done looks like" first**
+Not "build search", but "the user types a sentence → sees a row of relevant film
+cards → each with a score". If you can describe what you'll see at acceptance,
+the need is actually thought through.
+
+**② Split into pieces you can verify one at a time**
+Search = (a) turn films into comparable data → (b) match the query to candidates →
+(c) rank → (d) render. Each piece stands alone and can be checked on its own.
+Ship one piece at a time; if it breaks, you know exactly which.
+
+**③ Mark where you have an opinion and where you let go**
+"I own the ranking logic (it's the product's core); the layout can use the
+framework default (not the point)." Spend your judgment on the pieces that matter,
+let AI decide the rest — you don't have to police every line.
+
+**④ Do the smallest verifiable piece first**
+Don't ask for four pieces at once. Build the minimal "type a sentence, get a few
+results" version, watch it move, then add on. Visible progress beats a perfect plan.
+
+> The principle: **the finer you slice, the more accurately AI builds.** A vague
+> big ask → a vague big output; clear small pieces → every piece passes. Exactly
+> like managing a fast new hire who needs precise instructions.
+
+---
+
+## 6. Do it yourself — five principles for briefing an AI
 
 These aren't coding-specific; they hold for any AI tool:
 

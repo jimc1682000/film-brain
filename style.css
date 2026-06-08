@@ -118,3 +118,18 @@ details.note summary { cursor:pointer; font-weight:700; padding:8px 0; color:#ef
 details.note summary:hover { color:#f26f21; }
 details.note p { margin:.5em 0 1em; font-size:1.05rem; }
 details.note .turn { color:#ffb380; }
+
+/* copy-able code block */
+.codewrap { position: relative; margin: 18px 0; }
+.codewrap pre {
+  background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 10px;
+  padding: 18px 18px 18px; overflow-x: auto; margin: 0;
+}
+.codewrap pre code { color: #d6d6d6; font-size: .95rem; line-height: 1.65; white-space: pre-wrap; }
+.copybtn {
+  position: absolute; top: 10px; right: 10px;
+  background: var(--surface); color: #ccc; border: 1px solid var(--border);
+  border-radius: 6px; padding: 5px 12px; font-size: .82rem; cursor: pointer;
+}
+.copybtn:hover { border-color: var(--cp); color: var(--cp); }
+.copybtn.done { background: var(--cp); color: #000; border-color: var(--cp); }
