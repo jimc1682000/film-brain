@@ -1,1 +1,0 @@
-import{_ as a,o as n,c as p,a2 as e}from"./chunks/framework.Cs2pj6er.js";const _=JSON.parse('{"title":"可帶走的 Prompt","description":"","frontmatter":{},"headers":[],"relativePath":"prompts.md","filePath":"prompts.md"}'),t={name:"prompts.md"};function l(o,s,i,r,c,d){return n(),p("div",null,[...s[0]||(s[0]=[e("",4)])])}const h=a(t,[["render",l]]);export{_ as __pageData,h as default};
