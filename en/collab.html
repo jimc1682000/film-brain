@@ -42,5 +42,6 @@ fetch("collab.md")
   .then((md) => renderMarkdownInto(document.getElementById("doc"), md))
   .catch((e) => (document.getElementById("doc").textContent = "Failed to load: " + e));
 </script>
+<script src="../nav.js" defer></script>
 </body>
 </html>

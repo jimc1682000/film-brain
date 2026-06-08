@@ -39,5 +39,6 @@ fetch("ideation.md").then((r)=>r.text())
   .then((md)=>renderMarkdownInto(document.getElementById("doc"),md))
   .catch((e)=>(document.getElementById("doc").textContent="載入失敗: "+e));
 </script>
+<script src="nav.js" defer></script>
 </body>
 </html>
