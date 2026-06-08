@@ -89,25 +89,49 @@ the lines nobody reads are still being watched.
 
 ## 4. Cracking hard problems together
 
-Not every problem yields on the first try. When things stall,
-**the quality of the human's questions decides the way out**.
+Section 5 is about decomposing a *new* ask; this section is the opposite —
+what to do when you're **stuck and the AI keeps circling**. In that state the AI
+is great at "looking busy while flailing", and **the quality of the human's
+questions decides the way out**. There's an order you can follow:
 
-It really happened: the eval system kept failing against a local AI-model service,
-round after round, with the AI's fixes circling. The turn came not from
-"try again", but from changing the question:
+**① Stop — don't let it keep trying**
+A few rounds with no progress means the direction is wrong; ten more tries won't
+help and will muddy the problem further. Halt, go back to diagnosis.
+
+**② Make it reproduce first, then narrow**
+"Does this happen every time, or occasionally?" "Cut half away — is it still there?"
+Before stable reproduction and a narrowed scope, every fix is just a guess.
+
+**③ Force a hypothesis — a falsifiable one**
+"What do you think is causing it? If so, how do we verify that?"
+No testable hypothesis = still scattergun; don't let it start changing things.
+
+**④ Split causality with a binary**
+This was the actual turning point. The eval kept failing against a local AI
+service and the AI's fixes circled, until the question changed to:
 
 > "First tell me: are you full because you ate three bowls of rice,
 > or because something was wrong with the third bowl?"
 
-One sentence pulled the AI from scattergun fixes back to causal triage —
-is this an **accumulated-state** problem or a **specific-input** problem?
-A second nudge followed: "go see how mature open-source tools talk to this
-same service" — the AI dissected one, and found the real fix.
+One cut halves the problem — is it an **accumulated-state** issue or a
+**specific-input** issue? Scope halved, direction suddenly clear.
 
-Three moves that work on hard problems:
-- **Force causality**: use analogies and binary splits to make AI classify the problem before touching anything
-- **Give references**: "how do others solve this?" beats "think harder" ten times over
-- **Demand records**: every misdiagnosis goes into the decision record — next time, AI looks it up itself
+**⑤ Change one thing at a time, verify immediately**
+Change three things at once and even if it works you won't know which one earned
+it — or which did nothing. One variable per round keeps cause and effect clean.
+
+**⑥ Still stuck? Change altitude**
+Don't grind at the same level. Two effective escapes:
+- **Give references**: "how do mature open-source tools solve the same thing?" beats "think harder" tenfold — borrowing beats brute-forcing.
+- **Step back**: "are we even asking the right question?" Sometimes the stall is a mis-framed problem.
+
+**⑦ Write down the misdiagnoses**
+Every "thought it was A, turned out B" goes into the decision record — otherwise
+the AI (and you) circle back to the same pit days later.
+
+> In one line: **when stuck, don't push harder — ask better.** Stop → reproduce
+> and narrow → falsifiable hypothesis → binary-split causality → one variable at a
+> time → change altitude and borrow references → record the misdiagnoses.
 
 ---
 
