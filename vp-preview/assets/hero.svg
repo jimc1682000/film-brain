@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="320" height="320" fill="none">
+  <defs>
+    <linearGradient id="g" x1="40" y1="40" x2="280" y2="280" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff944c"/>
+      <stop offset="0.55" stop-color="#f26f21"/>
+      <stop offset="1" stop-color="#d4570c"/>
+    </linearGradient>
+    <linearGradient id="gb" x1="0" y1="0" x2="320" y2="320" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1f1f1f"/>
+      <stop offset="1" stop-color="#0d0d0d"/>
+    </linearGradient>
+  </defs>
+
+  <!-- card -->
+  <rect x="24" y="24" width="272" height="272" rx="40" fill="url(#gb)" stroke="#3a3a3a" stroke-width="2"/>
+
+  <!-- film reel -->
+  <g transform="translate(160 160)">
+    <circle r="96" fill="none" stroke="url(#g)" stroke-width="14"/>
+    <circle r="30" fill="url(#g)"/>
+    <!-- sprocket holes -->
+    <g fill="url(#g)">
+      <circle cx="0" cy="-64" r="13"/>
+      <circle cx="55" cy="-32" r="13"/>
+      <circle cx="55" cy="32" r="13"/>
+      <circle cx="0" cy="64" r="13"/>
+      <circle cx="-55" cy="32" r="13"/>
+      <circle cx="-55" cy="-32" r="13"/>
+    </g>
+  </g>
+
+  <!-- AI spark -->
+  <g transform="translate(232 96)">
+    <path d="M0 -26 C4 -8 8 -4 26 0 C8 4 4 8 0 26 C-4 8 -8 4 -26 0 C-8 -4 -4 -8 0 -26 Z"
+          fill="#ffd1a8"/>
+  </g>
+</svg>
