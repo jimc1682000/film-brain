@@ -3,9 +3,9 @@
 **Live site: https://jimc1682000.github.io/film-brain/**
 
 Static portfolio for an AI film-library prototype built at the CATCHPLAY+ Hackathon 2026:
-553 fixed genre nodes reshaped into a 14-dimension / 400-tag flexible taxonomy, with
+500+ fixed genre nodes reshaped into a 14-dimension / 400-tag flexible taxonomy, with
 natural-language semantic search that is honest when nothing truly matches and can
-explain every result it returns.
+explain every result it returns. English version under [`/en/`](https://jimc1682000.github.io/film-brain/en/).
 
 把五百多個固定分類改造成 14 維、400 個標籤的彈性體系 — 編輯用一句話找片,
 AI 查不到會誠實說,查得到講得出為什麼。
@@ -17,7 +17,9 @@ AI 查不到會誠實說,查得到講得出為什麼。
 | [總覽](https://jimc1682000.github.io/film-brain/) | How the system works — auto-tagging & query pipelines, trust mechanisms, demo GIFs |
 | [搜尋回放](https://jimc1682000.github.io/film-brain/search.html) | Real pipeline outputs for 7 queries, replayed from canned JSON (incl. the honest low-confidence case) |
 | [技術決策](https://jimc1682000.github.io/film-brain/decisions.html) | Stack choices with real rationale, collaboration discipline, major mid-project pivots (ADR digest) |
-| [協作方式](https://jimc1682000.github.io/film-brain/collab.html) | How one engineer + AI built this — written for non-technical teammates |
+| [協作方式](https://jimc1682000.github.io/film-brain/collab.html) | How one engineer + AI built this — written for non-technical teammates (daily loop, guardrails, decomposing problems for AI) |
+| [可帶走 Prompt](https://jimc1682000.github.io/film-brain/prompts.html) | An auto-tagging prompt you can copy into any chatbot — packaging an AI capability with no backend |
+| [凝聚想法](https://jimc1682000.github.io/film-brain/ideation.html) | How to converge scattered hackathon ideas into one buildable project |
 | [MJ 事件](https://jimc1682000.github.io/film-brain/mj-case.html) | A false-100% debugging case study, from symptom to calibrated fix |
 | [評測迭代](https://jimc1682000.github.io/film-brain/eval.html) | v1–v8 tuning story driven by an LLM-as-judge eval harness (nDCG 0.93 → 0.96) |
 
