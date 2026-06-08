@@ -8,22 +8,17 @@
 ## The starting point
 
 A team of four (1 PM, 2 editors, 1 engineer) with one shared context: everyone
-works on content at the same streaming platform. Nobody knew what to build at the
-start — and that's normal, and the point: **a good project isn't dreamed up, it's
-filtered out.**
+works in the same content industry. Nobody knew what to build at the start — and
+that's normal, and the point: **a good project isn't dreamed up, it's filtered out.**
 
 ---
 
 ## ① Diverge first, don't rush to focus
 
-The first step isn't "find one good idea", it's **lay out five directions** —
-no fear of too many or of overlap:
-
-1. AI content accelerator (auto-gather info, draft article skeletons)
-2. AI one-to-many (rewrite one article into channel-specific versions)
-3. AI industry radar (a daily digest of "what to watch today")
-4. AI playlist-curation assistant (theme → recommended films + blurbs)
-5. AI content-planning calendar (schedule by release/holiday windows)
+The first step isn't "find one good idea", it's **lay out a batch of directions** —
+no fear of too many or of overlap. We listed several angles — some leaning toward
+content production, some toward information-gathering, some toward playlist
+curation, some toward scheduling.
 
 The only discipline here: **quantity first, no judging.** Criticizing too early
 kills ideas before they grow.
@@ -33,23 +28,26 @@ kills ideas before they grow.
 ## ② Filter by real pain, not by what's coolest
 
 Convergence isn't about "which is flashiest", it's **which hits what everyone
-actually struggles with daily**. We laid out each person's pain:
+actually struggles with daily**. Laying out each person's pain, one shared theme
+kept recurring:
 
-- "For a film I haven't seen, I'm unsure how to categorize it — checking synopses and reviews is slow, and I get spoiled" — (editor)
-- "Category naming differs by era and by person; the system is a mess" — (engineer)
-- "I want to search our own library but it's a needle in a haystack; asking a generic AI is useless because it doesn't know what we have" — (editor)
+> Past a certain volume of content, "**is the content itself well understood and
+> findable**" becomes the bottleneck — classifying, searching, organizing all
+> snag on the same thing, seen from different roles.
 
-→ Once aligned to pain, "library indexing + auto-tagging" and "semantic library
-search" surfaced immediately — because **three people, from different angles,
-were hurting over the same thing**: the library's content isn't well understood.
-Flashy-but-painless directions (the calendar, one-to-many) sank on their own.
+→ Once aligned to pain, the line "make content understood + findable" surfaced
+immediately, while flashy-but-painless directions (scheduling, cross-channel
+rewriting) sank on their own. **Three people hurting over the same thing from
+different angles is a strong signal.**
 
 ---
 
 ## ③ After voting, merge instead of either/or
 
-The vote put #3 (radar) and #4 (curation) close together. We didn't pick one —
-we **merged**: the curation assistant as the body, the radar as an extension module.
+More than one option landed close in the vote. We didn't force an either/or — we
+looked at **which ones stack into the same main line**: combining "automatically
+understand the content" and "find content on demand" into one system that feeds
+itself, rather than two half-built features.
 
 > Many teams get stuck on "is it A or B?" Often the answer is "A as the core, B
 > as support" — treat closely-ranked options as stackable layers, not mutually
@@ -57,39 +55,45 @@ we **merged**: the curation assistant as the body, the radar as an extension mod
 
 ---
 
-## ④ Use constraints to lock the scope
+## ④ Lock the project with feasibility and scope
 
-Two external constraints actually sped up convergence:
+Late in convergence, two reality checks set the boundary:
 
-- **Avoid collision**: leadership already wanted a "marketing radar" type thing.
-  We deliberately dodged into the more specific domain of **film & TV**, not
-  colliding with the broad direction — the constraint handed us differentiation.
-- **Feasibility**: the three core features were medium-difficulty and prototypeable;
-  the radar module needs scraping + scheduling, much more work → clearly marked
-  "only if there's time left".
+- **Can this be built within the hackathon?** Keep what's medium-difficulty and
+  prototypeable; anything needing heavy scraping + scheduling automation gets
+  marked "later, if there's time".
+- **What's the minimum to prove?** Rather than piling on features, get the
+  "core experience" to a demoable state first.
 
-→ Constraints aren't the enemy. **"What we can't do" often frames the project
-faster than "what we want to do".**
+→ Constraints aren't the enemy. **"What we won't do right now" often frames the
+project faster than "what we want to do".**
 
 ---
 
-## ⑤ Carve out the smallest verifiable scope, then prioritize
+## ⑤ Carve out the smallest verifiable scope — and dare to cut
 
-Finally, split the project into "core first / extension if time permits":
+Finally, split into "core first / rest parked":
 
-- **Core (priority)**: ① auto-tagging ② semantic search ③ curation copy
-- **Extension (if time)**: ④ the industry-radar module
+- **Core (what actually got built)**: auto-tagging, semantic search, and the
+  curation/awards organizing that extends from them
+- **Extension (listed but cut)**: the real-time information-gathering line —
+  heavy on work, not the core experience, **deliberately dropped** to concentrate
+  time on the demoable main line
+
+> Listing something in the proposal and then cutting it isn't failure, it's
+> **focus**. A hackathon's most common death is wanting to do everything and
+> finishing nothing. Only when you can cut does the project come out clean.
 
 And divide the work on the spot — who owns data, who owns UX, who tests quality,
-who defines the category standard. **A project you can carve an MVP from and
-split into roles — that's when convergence is actually done.**
+who defines the category standard. **A project you can carve an MVP from and split
+into roles — that's when convergence is actually done.**
 
 ---
 
 ## Five steps, in one line
 
 > **List many → filter by real pain → merge the close-ranked → frame with
-> constraints → carve out an MVP and prioritize.**
+> feasibility → carve an MVP and dare to cut.**
 
 A hackathon's time is short; the half-day spent picking the right project beats
 three days heads-down in the wrong direction. The best project is usually the
