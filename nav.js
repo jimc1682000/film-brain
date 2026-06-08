@@ -11,7 +11,14 @@ document.addEventListener("DOMContentLoaded", () => {
   btn.className = "navtoggle";
   btn.setAttribute("aria-label", "選單 / Menu");
   btn.setAttribute("aria-expanded", "false");
-  btn.textContent = "☰";
+  // SVG bars instead of the ☰ glyph — the unicode char sits low in its em box
+  // and won't truly center; an SVG does.
+  btn.innerHTML =
+    '<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">' +
+    '<g stroke="currentColor" stroke-width="2" stroke-linecap="round">' +
+    '<line x1="3" y1="6" x2="17" y2="6"/>' +
+    '<line x1="3" y1="10" x2="17" y2="10"/>' +
+    '<line x1="3" y1="14" x2="17" y2="14"/></g></svg>';
   header.appendChild(btn);
 
   const close = () => { nav.classList.remove("open"); btn.setAttribute("aria-expanded", "false"); };
