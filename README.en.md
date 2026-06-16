@@ -12,10 +12,9 @@ Built for the CATCHPLAY+ Hackathon 2026; open-sourced as a runnable, brand-neutr
 
 ## What this repo is — vs the live demo
 
-| | |
+| This repo (code) | The live demo (site) |
 | --- | --- |
-| **This repo (code)** | The **runnable, mock-based core** — FastAPI + NiceGUI + Qdrant + local bge-m3 + cross-encoder. **Keyless**: search runs on local models, no API key required. Bring your own films via a neutral seed format. |
-| **The live demo (site)** | A portfolio **showcasing the full system run on the real CATCHPLAY+ catalogue** — the search replay, the eval-iteration story, the debugging case studies. |
+| The **runnable, mock-based core** — FastAPI + NiceGUI + Qdrant + local bge-m3 + cross-encoder. **Keyless**: search runs on local models, no API key required. Bring your own films via a neutral seed format. | A portfolio **showcasing the full system run on the real CATCHPLAY+ catalogue** — the search replay, the eval-iteration story, the debugging case studies. |
 
 So a couple of things the showcase describes are **not shipped here**, by design:
 - **Catalogue ingest / scrapers** are a *private source adapter*. This repo ships the **generic loader** (`scripts/seed_from_file.py`) + a **neutral adapter template** (`scripts/adapters/example_adapter.py`) + a bundled **mock dataset** — bring your own films in the documented format (`data/films.seed.schema.json`).

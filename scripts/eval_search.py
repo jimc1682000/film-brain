@@ -23,7 +23,14 @@ import time
 from pathlib import Path
 
 import httpx
-from ranx import Qrels, Run, evaluate
+
+try:
+    from ranx import Qrels, Run, evaluate
+except ModuleNotFoundError as e:  # eval-only dep, kept out of the runtime image
+    raise SystemExit(
+        "ranx not installed — eval deps are separate from the runtime image.\n"
+        "Install them with:  pip install -r requirements-eval.txt"
+    ) from e
 
 from backend.config import settings
 from backend.db import get_db, get_film, get_film_tags

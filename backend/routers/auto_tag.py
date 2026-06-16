@@ -25,6 +25,7 @@ from backend.models import (
 )
 from backend.services import get_auto_tag_service
 from backend.services.auto_tag import OUTPUT_SCHEMA
+from backend.services.bm25_search import index_film
 from backend.tag_registry import TagRegistry
 from backend.tmdb_lookup import catchplay_poster
 
@@ -230,6 +231,10 @@ async def create_film_from_preview(req: CreateFilmRequest):
                 continue
             insert_film_tag(conn, film_id, s.tag_id, confidence=s.confidence, source="ai")
             saved += 1
+        # Index into BM25 (films_fts) now — rebuild_fts only runs at startup, so
+        # without this a film created on a live backend misses exact-keyword
+        # recall until restart. Runs in the same txn as the insert above.
+        index_film(conn, film_id)
         film_row = get_film(conn, film_id)
         tag_rows = get_film_tags(conn, film_id)
 

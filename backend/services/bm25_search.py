@@ -95,6 +95,35 @@ def rebuild_fts(conn: sqlite3.Connection) -> int:
     return n
 
 
+def index_film(conn: sqlite3.Connection, film_id: str) -> None:
+    """Incrementally (re)index one film into films_fts.
+
+    For runtime create/update flows — rebuild_fts only runs at startup, so a
+    film added while the backend is live would otherwise miss BM25 recall until
+    a restart. DELETE-then-INSERT makes this idempotent (also covers updates).
+    Content mirrors rebuild_fts: titles + description + overview + tag labels.
+    """
+    ensure_dict(conn)
+    labels = [
+        label
+        for (label,) in conn.execute(
+            "SELECT t.label_zh_tw FROM film_tags ft JOIN tags t ON ft.tag_id = t.tag_id "
+            "WHERE ft.film_id = ?",
+            (film_id,),
+        ).fetchall()
+        if label
+    ]
+    row = conn.execute(
+        "SELECT title_zh, title_en, description, tmdb_overview FROM films WHERE film_id = ?",
+        (film_id,),
+    ).fetchone()
+    if row is None:
+        return
+    raw = " ".join(x for x in (*row, " ".join(labels)) if x)
+    conn.execute("DELETE FROM films_fts WHERE film_id = ?", (film_id,))
+    conn.execute("INSERT INTO films_fts(film_id, content) VALUES (?, ?)", (film_id, segment(raw)))
+
+
 def bm25_search(
     conn: sqlite3.Connection,
     query: str,

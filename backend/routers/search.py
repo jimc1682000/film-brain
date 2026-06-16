@@ -178,7 +178,10 @@ def _assemble_response(payload: dict, req: SearchRequest) -> SearchResponse:
     cfg = get_config()
     embed = get_embed_service()
 
-    floor = cfg["min_display_score"]
+    # Honor the per-request floor (excluded from the heavy-cache key so one
+    # cached computation serves any min_display_score). The config floor is the
+    # honest minimum; a request can only TIGHTEN it, never loosen below it.
+    floor = max(cfg["min_display_score"], req.min_display_score)
     # The per-result % is RELATIVE ordering (CE), so its absolute value is
     # meaningless — the band CEILING carries the honest signal: a high-confidence
     # query tops at 95%, an out-of-domain one is capped low so it can't read as a

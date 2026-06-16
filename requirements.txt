@@ -38,5 +38,7 @@ pytest-httpx>=0.36.2
 # Utils
 python-dotenv>=1.0.1
 
-# Eval — ranking metrics (nDCG/MAP/MRR) + significance tests
-ranx>=0.3.20
+# Eval-only deps (ranx etc.) live in requirements-eval.txt — they pull
+# C-extension packages (zlib-state via ir-datasets) with no arm64 wheels, so
+# keeping them out of the runtime image lets it build multi-arch (amd64+arm64).
+# Run the search eval with: pip install -r requirements-eval.txt

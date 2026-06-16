@@ -1,0 +1,7 @@
+# Eval-only dependencies — NOT installed in the runtime backend image.
+#   pip install -r requirements-eval.txt
+# Used by scripts/eval_search.py + scripts/compare_search.py (nDCG/MAP/MRR +
+# significance tests). Kept separate because ranx → ir-datasets pulls
+# C-extension packages (zlib-state) with no arm64 wheels, which would break the
+# multi-arch image build.
+ranx>=0.3.20
