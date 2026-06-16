@@ -50,7 +50,8 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           files: coverage.xml
-          use_oidc: true # tokenless — uses the job's id-token (no CODECOV_TOKEN secret)
+          use_oidc: true # primary auth: OIDC via the job's id-token (no secret needed)
+          token: ${{ secrets.CODECOV_TOKEN }} # kept as fallback; harmless if unset
           fail_ci_if_error: false # Codecov is reporting only; the gates above enforce
 
       - name: Per-module coverage gate (every module >=80%)
