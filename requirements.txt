@@ -1,0 +1,42 @@
+# Backend
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.9.0
+pydantic-settings>=2.6.0
+
+# Database
+aiosqlite>=0.20.0
+
+# Vector DB
+qdrant-client>=1.12.0
+
+# LLM
+anthropic>=0.39.0
+# OpenRouter / Gemini-compatible client used by llm_client (ADR 0007)
+openai>=1.40
+
+# Embedding (bge-m3)
+# Default: Ollama daemon (pull with `ollama pull bge-m3`)
+ollama>=0.4.0
+# Optional fallback: direct HF download path
+sentence-transformers>=3.3.0
+
+# Lexical search (BM25) — jieba segments CJK so FTS5 unicode61 gets real words
+jieba>=0.42.1
+
+# TMDb
+httpx>=0.27.0
+
+# Frontend
+nicegui>=2.9.0
+
+# Testing
+pytest>=8.3.0
+pytest-asyncio>=0.24.0
+pytest-httpx>=0.34.0
+
+# Utils
+python-dotenv>=1.0.1
+
+# Eval — ranking metrics (nDCG/MAP/MRR) + significance tests
+ranx>=0.3.20

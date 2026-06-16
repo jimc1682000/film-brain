@@ -1,0 +1,21 @@
+meta {
+  name: Accept Auto-Tags
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/auto-tag/{{sampleFilmId}}/accept
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "tag_ids": ["comedy", "drama"]
+  }
+}
+
+assert {
+  res.status: eq 501
+}

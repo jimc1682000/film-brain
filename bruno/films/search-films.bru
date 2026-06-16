@@ -1,0 +1,17 @@
+meta {
+  name: Search Films
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/films/?search=黃泉&limit=50&offset=0
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.films: isDefined
+  res.body.total: isNumber
+}

@@ -1,0 +1,117 @@
+# commit-msg hook (commitizen) needs this so `pre-commit install` wires both.
+default_install_hook_types: [pre-commit, commit-msg]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=2048']
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.17
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.24.1
+    hooks:
+      - id: validate-pyproject
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.37.3
+    hooks:
+      - id: check-github-workflows
+      - id: check-jsonschema
+        name: validate films.seed.json
+        files: ^data/films\.seed\.json$
+        args: ["--schemafile", "data/films.seed.schema.json"]
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1
+    hooks:
+      - id: shellcheck
+
+  - repo: https://github.com/hukkin/mdformat
+    rev: 1.0.0
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-gfm
+          - mdformat-frontmatter
+
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.22.1
+    hooks:
+      - id: markdownlint-cli2
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.9.1
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+        additional_dependencies: [cz-conventional-gitmoji]
+
+  - repo: local
+    hooks:
+      - id: i18n-hardcode
+        name: i18n (no hardcoded CJK in frontend)
+        entry: python scripts/check_i18n_hardcode.py
+        language: system
+        files: ^frontend/.*\.py$
+
+      - id: betterleaks
+        name: betterleaks (staged secret scan)
+        entry: betterleaks git --no-banner --redact --staged
+        language: system
+        pass_filenames: false
+
+      - id: betterleaks-history
+        name: betterleaks (history secret scan)
+        entry: betterleaks git --no-banner --redact
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+
+      - id: pyright
+        name: pyright (backend source)
+        # Config (include/exclude tests/mode) in pyproject [tool.pyright]; the
+        # wrapper passes --pythonpath so pyright resolves this env's deps.
+        entry: env PYENV_VERSION=python3-boto3 bash scripts/typecheck.sh
+        language: system
+        pass_filenames: false
+        files: ^backend/.*\.py$
+
+      - id: jscpd
+        name: jscpd (copy-paste / DRY)
+        # Config (path/ignore/minTokens/threshold) lives in .jscpd.json. Pinned
+        # to match CI. Type-mandated parallels carry a # jscpd:ignore-start block.
+        entry: npx --yes jscpd@5.0.9 --config .jscpd.json
+        language: system
+        pass_filenames: false
+        files: ^backend/.*\.py$
+
+      - id: pip-audit
+        name: pip-audit (dependency CVE scan)
+        # CVE-2025-3000: torch (transitive via sentence-transformers) — no fix
+        # version published; ignored with tracking, gate stays live for the rest.
+        entry: >-
+          env PYENV_VERSION=python3-boto3 python -m pip_audit
+          -r requirements.txt --ignore-vuln CVE-2025-3000
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+
+      - id: pytest
+        name: pytest (backend)
+        entry: env PYENV_VERSION=python3-boto3 python -m pytest backend/tests/ -q
+        language: system
+        pass_filenames: false
+        stages: [pre-push]

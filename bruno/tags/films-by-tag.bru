@@ -1,0 +1,18 @@
+meta {
+  name: Films By Tag
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/tags/{{sampleTagId}}/films
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.tag_id: isDefined
+  res.body.films: isDefined
+  res.body.total: isNumber
+}

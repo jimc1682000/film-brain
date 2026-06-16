@@ -1,0 +1,20 @@
+version: 2
+# Complements local pip-audit (portable, blocks at pre-push): Dependabot opens
+# PRs for vulnerable / outdated deps on GitHub. Works on private and public repos.
+updates:
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # Batch routine version bumps into one PR; security updates still come
+      # through on their own.
+      python-deps:
+        patterns:
+          - "*"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly

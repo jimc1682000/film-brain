@@ -1,0 +1,17 @@
+meta {
+  name: List Tags
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/tags/
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.tags: isDefined
+  res.body.total: isNumber
+}
