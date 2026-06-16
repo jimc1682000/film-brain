@@ -1,58 +1,73 @@
-# film-brain — AI Film Library Brain
+**繁體中文** | [English](README.en.md)
 
-Semantic film search + multi-dimension auto-tagging. Turns a flat catalogue into
-a 14-dimension / ~400-tag taxonomy and lets people find films by *meaning*
-("something to cry to", "a tense Korean thriller") instead of exact keywords.
+# film-brain — AI 影片庫大腦
 
-Built for the CATCHPLAY+ Hackathon 2026; open-sourced as a runnable, brand-neutral core.
+語意化影片搜尋 + 多維度自動標籤。把扁平的片庫轉成 14 維 / 約 400 個標籤的彈性
+taxonomy,讓人用「意思」找片(「想哭的時候看的」、「緊張的韓國驚悚片」),
+而不是靠精準關鍵字。
 
-**Live demo / write-up:** https://jimc1682000.github.io/film-brain/
+為 CATCHPLAY+ Hackathon 2026 打造;開源出可直接跑、品牌中性的核心。
 
-## What this repo is — vs the live demo
+**線上 Demo / 技術說明:** https://jimc1682000.github.io/film-brain/
+
+## 這個 repo 是什麼 — 跟線上 Demo 的差別
 
 | | |
 | --- | --- |
-| **This repo (code)** | The **runnable, mock-based core** — FastAPI + NiceGUI + Qdrant + local bge-m3 + cross-encoder. **Keyless**: search runs on local models, no API key required. Bring your own films via a neutral seed format. |
-| **The live demo (site)** | A portfolio **showcasing the full system run on the real CATCHPLAY+ catalogue** — the search replay, the eval-iteration story, the debugging case studies. |
+| **這個 repo(程式碼)** | **可直接跑、以 mock 為基礎的核心** — FastAPI + NiceGUI + Qdrant + 本地 bge-m3 + cross-encoder。**免金鑰**:搜尋跑在本地模型,不需要 API key。用中性 seed 格式帶入你自己的片。 |
+| **線上 Demo(站台)** | 一個 **展示完整系統跑在真實 CATCHPLAY+ 目錄** 的作品集 — 搜尋重播、評測迭代故事、除錯案例。 |
 
-So a couple of things the showcase describes are **not shipped here**, by design:
-- **Catalogue ingest / scrapers** are a *private source adapter*. This repo ships the **generic loader** (`scripts/seed_from_file.py`) + a **neutral adapter template** (`scripts/adapters/example_adapter.py`) + a bundled **mock dataset** — bring your own films in the documented format (`data/films.seed.schema.json`).
-- **The 45-query eval numbers** (nDCG@5 0.93 → 0.96 on the site) were measured on the *real catalogue*. The repo ships the **same harness** (`scripts/eval_search.py`) + the **same 45-query set** (`data/eval-queries.json` — query strings, LLM-judged at runtime, no gold labels), but the headline numbers only reproduce against the real catalogue; on the bundled mock films the same harness yields different scores.
+所以站台展示的有幾件事 **刻意不隨此 repo 出貨**:
+- **目錄 ingest / 爬蟲** 是 *私有的 source adapter*。此 repo 出的是 **通用載入器**(`scripts/seed_from_file.py`)+ **中性 adapter 範本**(`scripts/adapters/example_adapter.py`)+ 一份內附 **mock 資料集** — 用文件化格式(`data/films.seed.schema.json`)帶入你自己的片。
+- **45-query 評測分數**(站上 nDCG@5 0.93 → 0.96)是在 *真實目錄* 上測的。此 repo 出 **同一套 harness**(`scripts/eval_search.py`)+ **同一組 45-query set**(`data/eval-queries.json` — 只放查詢字串、由 LLM 即時評、無 gold label),但這組數字要在真實目錄才復現;跑在內附 mock 片庫上同一套 harness 會得到不同分數。
 
-The system is **not coupled to CATCHPLAY** — it runs on any dataset matching the seed schema.
+系統 **不綁定 CATCHPLAY** — 任何符合 seed schema 的資料集都能跑。
 
-## Quickstart (keyless)
+## 快速開始(免金鑰、全容器化)
+
+全部跑在容器裡 — qdrant、本地 **bge-m3** embedder(ollama,首次 `up` 自動拉取)、
+backend、frontend。不需要 host Python、不需要 API key。
 
 ```bash
-docker compose up -d qdrant          # vector DB
-ollama pull bge-m3                    # local embedding model (no API key)
-python -m scripts.seed_from_file data/films.seed.json   # seed the bundled mock films
-uvicorn backend.main:app --port 8000  # backend
-python -m frontend.app                # frontend (separate terminal)
+docker compose up -d        # qdrant + ollama(拉 bge-m3)+ backend + frontend
+docker compose exec backend python -m scripts.seed_from_file data/films.seed.json
+# 開 http://localhost:8080  (API 文件: http://localhost:8000/api/docs)
 ```
 
-A cloud LLM key (OpenRouter / etc.) is **optional** — it only enriches query
-understanding + auto-tagging; without it those degrade gracefully (search still works).
+首次 `up` 會下載 bge-m3 權重(約 1.2 GB)到具名 volume,之後啟動瞬間完成。
+雲端 LLM 金鑰(OpenRouter 等)**選用** — 放一份 `.env`(參考 `.env.example`)可
+強化查詢理解 + 自動標籤;沒有的話這兩項優雅降級,搜尋照常運作。
 
-## Bring your own films
+### 用預先建好的 image(跳過本地 build)
 
-Drop a `data/films.seed.json` matching `data/films.seed.schema.json` (titles map,
-taxonomy tags, optional poster/year/country/cast), then `make seed`. Tags can be
-LLM-filled with `--auto-tag`. See `scripts/adapters/example_adapter.py` for the
-source-adapter contract.
+`.github/workflows/image.yml` 會在每次 push 到 master 時把 `backend` / `frontend`
+image 發佈到 GitHub Container Registry。把套件設為 **public** 之後
+(GitHub → repo → Packages → 各 package → *Package settings* → 改 visibility 為
+public),就能直接 pull 而不用本地 build:
 
-## Architecture
+```bash
+docker compose -f docker-compose.ghcr.yml up -d
+docker compose -f docker-compose.ghcr.yml exec backend \
+    python -m scripts.seed_from_file data/films.seed.json
+```
 
-Detailed C4 + UML diagrams under [`docs/architecture/`](docs/architecture/):
-system context, containers, components, Protocol class diagram, the hybrid-search
-pipeline + sequences, the data model (ERD), and deployment. Design decisions are
-in [`docs/adr/`](docs/adr/).
+## 帶入你自己的片
 
-## Tech
+放一份符合 `data/films.seed.schema.json` 的 `data/films.seed.json`(titles map、
+taxonomy 標籤、選填 poster/year/country/cast),然後 `make seed`。標籤可用
+`--auto-tag` 由 LLM 補齊。source-adapter 合約見 `scripts/adapters/example_adapter.py`。
 
-FastAPI · NiceGUI · SQLite · Qdrant · BAAI/bge-m3 (local) · bce-reranker cross-encoder ·
-hybrid recall (vector + BM25/FTS5+jieba → RRF) · honest cosine-tier scoring · OpenRouter-free / local-Ollama LLM.
+## 架構
 
-## License
+詳細 C4 + UML 圖在 [`docs/architecture/`](docs/architecture/):系統 context、
+container、component、Protocol class diagram、hybrid-search pipeline + sequence、
+資料模型(ERD)、部署。設計決策在 [`docs/adr/`](docs/adr/)。
 
-MIT — see [LICENSE](LICENSE).
+## 技術
+
+FastAPI · NiceGUI · SQLite · Qdrant · BAAI/bge-m3(本地)· bce-reranker cross-encoder ·
+hybrid recall(vector + BM25/FTS5+jieba → RRF)· 誠實 cosine 分層計分 · OpenRouter-free / 本地 Ollama LLM。
+
+## 授權
+
+MIT — 見 [LICENSE](LICENSE)。

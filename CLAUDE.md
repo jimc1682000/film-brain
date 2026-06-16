@@ -12,34 +12,35 @@ Converts 553 tree-based genres into 14-dimension, 395-tag flexible taxonomy.
 - **Database**: SQLite → `data/film_library.db`
 - **Vector DB**: Qdrant (Docker, port 6333)
 - **Embedding**: BAAI/bge-m3 (local, 1024 dims)
-- **LLM** (runtime): split by task. **Query expansion** runs on local Ollama `qwen2.5:1.5b` (frequent, cheap, no quota). **Auto-tag / re-analyze** prefers a cloud model (`tagging_cloud_backend`, default `gemini`) guarded by a circuit breaker — the 8GB CPU box can't run the full-taxonomy prompt usefully on `qwen2.5:1.5b` (~150s, weak tags); on cloud failure or no key it falls back to the bounded local model. `GET /api/llm-health` shows the live tagging path + breaker state. Dev/skills run on Claude Code.
+- **LLM** (runtime, optional — keyless-capable): split by task. **Query expansion** runs on a local Ollama model by default (frequent, cheap, no quota). **Auto-tag / re-analyze** prefers an optional cloud backend (`tagging_cloud_backend`, e.g. `openrouter` / `gemini`) guarded by a circuit breaker; on cloud failure or no key it falls back to the local model. `GET /api/llm-health` shows the live tagging path + breaker state. Both paths degrade gracefully — no key, no crash.
 
 ## Quick Start
 
 ```bash
+# Fully containerized, keyless: qdrant + ollama (auto-pulls bge-m3) + backend
+# + frontend. No host Python, no API key.
+docker compose up -d
+
 # Seed data — bring-your-own-films, no API key needed (bundled mock dataset).
 # Any file matching data/films.seed.schema.json works; --auto-tag (LLM) optional.
-python -m scripts.seed_from_file data/films.seed.json
+docker compose exec backend python -m scripts.seed_from_file data/films.seed.json
 
-# Start backend
-uvicorn backend.main:app --reload --port 8000
+# Or pull pre-built images from GHCR instead of building locally:
+#   docker compose -f docker-compose.ghcr.yml up -d
 
-# Start frontend (separate terminal)
-python -m frontend.app
-
-# Run tests
+# Run tests (host)
 python -m pytest backend/tests/ -v
 ```
 
 ## API Docs
 
-http://localhost:8000/docs (Swagger UI auto-generated)
+http://localhost:8000/api/docs (Swagger UI auto-generated; OpenAPI JSON at `/api/openapi.json`)
 
 ## Key Commands
 
 - `python -m scripts.seed_all` — Run full data pipeline
 - `python -m pytest backend/tests/ -v` — Run all tests
-- `make up` — Start Docker containers (backend + frontend + Qdrant)
+- `make up` — Start Docker containers (qdrant + ollama + backend + frontend)
 - `make check` — ruff lint + format check
 - `make typecheck` — pyright (backend source)
 - `make cov` — tests + per-module ≥80% coverage gate

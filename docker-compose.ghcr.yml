@@ -1,6 +1,15 @@
+# Run from pre-built images on GitHub Container Registry — no local image build.
+# Pulls backend/frontend from GHCR instead of building from source; qdrant +
+# ollama come from their upstream images either way.
+#
+#   docker compose -f docker-compose.ghcr.yml up -d
+#   docker compose -f docker-compose.ghcr.yml exec backend \
+#       python -m scripts.seed_from_file data/films.seed.json
+#
+# Images are published by .github/workflows/image.yml on every push to master
+# (tag :master) and on version tags (:1.2.3). The packages must be public for
+# a keyless pull — see README "Run from pre-built images".
 services:
-  # Local embedding model (bge-m3) — no API key. The one-shot ollama-pull
-  # service below downloads the weights into the shared volume on first `up`.
   ollama:
     image: ollama/ollama:latest
     ports:
@@ -8,9 +17,6 @@ services:
     volumes:
       - ollama_models:/root/.ollama
 
-  # Pulls bge-m3 once, then exits. backend waits on it completing so the first
-  # embed/seed call always finds the model. Re-running `up` is a fast no-op
-  # (weights cached in ollama_models).
   ollama-pull:
     image: ollama/ollama:latest
     depends_on:
@@ -22,27 +28,20 @@ services:
     restart: "no"
 
   backend:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
+    image: ghcr.io/jimc1682000/film-brain-backend:master
     ports:
       - "8000:8000"
     volumes:
+      # Code is baked into the image; only data + the demo-chips config are
+      # mounted from the cloned repo so the bundled mock dataset / seed work.
       - ./data:/app/data
-      - ./backend:/app/backend
-      - ./scripts:/app/scripts
-      # Demo chips, read-only — startup warms these queries' expansion cache.
-      # Same file the frontend renders → single source.
       - ./frontend/chips.json:/app/chips.json:ro
-    # Optional — a cloud LLM key enriches query understanding + auto-tagging.
-    # Keyless runs fine without it (search degrades to BM25 + local vector).
     env_file:
       - path: .env
         required: false
     environment:
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333
-      # Embedding runs on the local ollama service — no API key.
       - EMBEDDING_BACKEND=ollama
       - OLLAMA_HOST=http://ollama:11434
     depends_on:
@@ -52,13 +51,9 @@ services:
         condition: service_completed_successfully
 
   frontend:
-    build:
-      context: .
-      dockerfile: frontend/Dockerfile
+    image: ghcr.io/jimc1682000/film-brain-frontend:master
     ports:
       - "8080:8080"
-    volumes:
-      - ./frontend:/app/frontend
     environment:
       - BACKEND_URL=http://backend:8000
     depends_on:
