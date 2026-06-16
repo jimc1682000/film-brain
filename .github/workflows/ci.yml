@@ -47,7 +47,7 @@ jobs:
             --cov-report=json --cov-report=xml --cov-fail-under=80
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           files: coverage.xml
           use_oidc: true # primary auth: OIDC via the job's id-token (no secret needed)
