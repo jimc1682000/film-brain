@@ -1,7 +1,10 @@
 """Minimal sync TMDB lookup used by award-tracker ingest."""
 
+import ipaddress
 import re
+import socket
 from difflib import SequenceMatcher
+from urllib.parse import urlparse
 
 import httpx
 
@@ -14,25 +17,80 @@ BACKDROP_PREFIX = "https://image.tmdb.org/t/p/w1280"
 
 _OG_IMAGE = re.compile(r'<meta[^>]+property="og:image"[^>]+content="([^"]+)"', re.IGNORECASE)
 
+# Max redirect hops to follow when fetching an og:image page. Each hop is
+# re-validated (see _safe_get) so a public URL can't bounce us into the
+# internal network.
+_MAX_REDIRECTS = 3
 
-def catchplay_poster(url: str | None) -> str | None:
-    """Read og:image off a catchplay video page. None on any failure.
 
-    This is the real CATCHPLAY+ poster, server-rendered into the meta tag —
-    immune to the client-side lazy-load data: placeholder the catalogue
-    scraper sometimes captured.
+def _host_is_public(host: str) -> bool:
+    """True only if every IP `host` resolves to is a public address.
 
-    Out-of-TW IPs (e.g. the EU-hosted VPS) get geo-redirected to a landing
-    page whose og:image is a generic CATCHPLAY+ logo, not the film poster —
-    reject that so we store nothing rather than the wrong artwork. Run the
-    backfill from a TW vantage point to capture real posters.
+    Blocks the SSRF-relevant ranges: loopback, RFC1918 private, link-local
+    (incl. the 169.254.169.254 cloud-metadata endpoint), reserved, multicast,
+    and unspecified. DNS-rebinding (resolve-then-reconnect) is out of scope —
+    this app is meant to run local/trusted (see SECURITY.md).
+    """
+    try:
+        infos = socket.getaddrinfo(host, None)
+    except socket.gaierror:
+        return False
+    for info in infos:
+        ip = ipaddress.ip_address(info[4][0])
+        if (
+            ip.is_private
+            or ip.is_loopback
+            or ip.is_link_local
+            or ip.is_reserved
+            or ip.is_multicast
+            or ip.is_unspecified
+        ):
+            return False
+    return True
+
+
+def _is_safe_url(url: str) -> bool:
+    """Reject non-http(s) schemes and hosts that resolve to private/internal IPs."""
+    parsed = urlparse(url)
+    return (
+        parsed.scheme in ("http", "https")
+        and bool(parsed.hostname)
+        and _host_is_public(parsed.hostname)
+    )
+
+
+def _safe_get(url: str) -> httpx.Response | None:
+    """GET `url` with SSRF guards: validate scheme + host on every hop, and
+    follow redirects manually so a public URL can't redirect into the internal
+    network (httpx's follow_redirects would). None if any hop is unsafe."""
+    with httpx.Client(timeout=15.0, follow_redirects=False) as client:
+        for _ in range(_MAX_REDIRECTS + 1):
+            if not _is_safe_url(url):
+                return None
+            resp = client.get(url)
+            if resp.is_redirect and resp.next_request is not None:
+                url = str(resp.next_request.url)
+                continue
+            return resp
+    return None
+
+
+def og_image(url: str | None) -> str | None:
+    """Read the og:image off any film/source web page. None on any failure.
+
+    Source-neutral: works for any poster page, not just one catalogue. The URL
+    is user-supplied (e.g. the create-film API), so the fetch is SSRF-guarded —
+    only http(s) to public hosts, redirects validated per hop (see _safe_get).
+
+    The `global-landing` / `events` filter rejects CATCHPLAY+'s geo-redirect
+    landing page (out-of-TW IPs get a generic logo, not the film poster) — a
+    harmless no-op for other sources.
     """
     if not url:
         return None
     try:
-        with httpx.Client(timeout=15.0, follow_redirects=True) as c:
-            r = c.get(url)
-        if r.status_code != 200:
+        r = _safe_get(url)
+        if r is None or r.status_code != 200:
             return None
         m = _OG_IMAGE.search(r.text)
         poster = m.group(1) if m else None
@@ -41,6 +99,10 @@ def catchplay_poster(url: str | None) -> str | None:
         return poster
     except httpx.HTTPError:
         return None
+
+
+# Back-compat alias — older callers import catchplay_poster.
+catchplay_poster = og_image
 
 
 # Minimum normalised-title similarity for a TMDB candidate to be accepted when
