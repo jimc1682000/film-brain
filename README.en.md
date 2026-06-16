@@ -2,6 +2,9 @@
 
 # film-brain — AI Film Library Brain
 
+[![CI](https://github.com/jimc1682000/film-brain/actions/workflows/ci.yml/badge.svg)](https://github.com/jimc1682000/film-brain/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/jimc1682000/film-brain/graph/badge.svg)](https://codecov.io/gh/jimc1682000/film-brain)
+
 Semantic film search + multi-dimension auto-tagging. Turns a flat catalogue into
 a 14-dimension / ~400-tag taxonomy and lets people find films by *meaning*
 ("something to cry to", "a tense Korean thriller") instead of exact keywords.

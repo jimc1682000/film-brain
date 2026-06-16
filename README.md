@@ -2,6 +2,9 @@
 
 # film-brain — AI 影片庫大腦
 
+[![CI](https://github.com/jimc1682000/film-brain/actions/workflows/ci.yml/badge.svg)](https://github.com/jimc1682000/film-brain/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/jimc1682000/film-brain/graph/badge.svg)](https://codecov.io/gh/jimc1682000/film-brain)
+
 語意化影片搜尋 + 多維度自動標籤。把扁平的片庫轉成 14 維 / 約 400 個標籤的彈性
 taxonomy,讓人用「意思」找片(「想哭的時候看的」、「緊張的韓國驚悚片」),
 而不是靠精準關鍵字。

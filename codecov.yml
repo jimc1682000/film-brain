@@ -1,0 +1,15 @@
+# Codecov is reporting-only. The CI `test` job already enforces coverage
+# (total >=80% via --cov-fail-under, plus a per-module >=80% gate), so keep
+# Codecov's own status checks informational — they annotate PRs but never block.
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
+
+comment:
+  layout: "reach, diff, files"
+  require_changes: true # only comment when a PR changes coverage
