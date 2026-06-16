@@ -1,0 +1,20 @@
+{
+  "name": "vp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "chart.js": "^4.5.1",
+    "mermaid": "^11.15.0",
+    "vitepress": "^1.6.4",
+    "vitepress-plugin-mermaid": "^2.0.17",
+    "vue": "^3.5.35"
+  }
+}

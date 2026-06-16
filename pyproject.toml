@@ -1,0 +1,121 @@
+[project]
+name = "ai-film-library-brain"
+version = "0.1.0"
+description = "CATCHPLAY+ AI-powered film tagging and semantic search"
+requires-python = ">=3.11"
+
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "httpx>=0.27",
+    "openai>=1.40",
+    "anthropic>=0.49",
+    "qdrant-client>=1.12",
+    "ollama>=0.4.0",
+    "sentence-transformers>=3.0",
+    "jieba>=0.42",
+    "ranx>=0.3.20",
+    "nicegui>=2.0",
+    "python-dotenv>=1.0",
+    "pyyaml>=6.0",
+    "zhconv>=1.4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "pytest-mock>=3.14",
+    "pytest-cov>=5.0",
+    "ruff>=0.8",
+    "pyright>=1.1.410",
+    "mutmut>=3.0",
+    "pip-audit>=2.7",
+]
+
+[tool.commitizen]
+name = "cz_gitmoji"
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
+asyncio_mode = "auto"
+markers = [
+    "qdrant: integration test needing a live Qdrant (CI integration job; skipped otherwise)",
+]
+filterwarnings = [
+    # jieba imports the deprecated pkg_resources at import time — third-party,
+    # nothing we can fix in our code.
+    "ignore:pkg_resources is deprecated as an API:UserWarning",
+]
+
+[tool.pyright]
+include = ["backend"]
+# Tests use heavy dynamic patterns (monkeypatch, **dict unpacking, fakes) where
+# strict typing is high-friction / low-value — gate the source, not the tests.
+exclude = ["backend/tests", "**/__pycache__"]
+pythonVersion = "3.11"
+typeCheckingMode = "basic"
+
+[tool.mutmut]
+# Mutation testing has teeth coverage% lacks: mutate a source line, the suite
+# must catch it. SLOW (one suite run per mutant) — never a pre-commit/per-push
+# gate; run on demand via `make mutation` or a manual CI workflow.
+paths_to_mutate = "backend/"
+tests_dir = "backend/tests/"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["data", ".venv"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "SIM", # flake8-simplify
+    "RET", # flake8-return
+    "PERF", # perflint
+    "PTH", # flake8-use-pathlib
+    "PIE", # flake8-pie
+    "LOG", # flake8-logging
+    "RUF", # ruff-specific
+    "ARG", # flake8-unused-arguments (source; tests ignored below)
+    "PT",  # flake8-pytest-style
+    "PLR0402", # manual-from-import
+    "PLR1714", # repeated-equality-comparison
+    "PLR1730", # if-stmt → min/max
+    "C901", # mccabe complexity (all functions ≤10; gate keeps it that way)
+]
+ignore = [
+    "E501",  # line-too-long (formatter handles)
+    "B008",  # Do not perform function calls in argument defaults (FastAPI Depends)
+    "B904",  # raise-without-from-inside-except (stylistic)
+    "SIM117", # multiple-with-statements (nested with OK)
+    "SIM102", # collapsible-if (readability over compactness)
+    # zh codebase: full-width CJK punctuation in strings/docstrings/comments is
+    # intentional, not "ambiguous unicode".
+    "RUF001", # ambiguous-unicode-character-string
+    "RUF002", # ambiguous-unicode-character-docstring
+    "RUF003", # ambiguous-unicode-character-comment
+    "PT018", # composite-assertion (assert a and b — fine in these tests)
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Test doubles use class-level mutable attrs intentionally; RUF012 (ClassVar)
+# matters for production classes, which are already clean. Unused args (ARG) are
+# rife in fixtures/lambda doubles by design — gate ARG on source only.
+"backend/tests/**" = ["RUF012", "ARG001", "ARG002", "ARG005"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.backends._legacy:_Backend"

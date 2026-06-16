@@ -1,0 +1,7655 @@
+{
+  "metadata": {
+    "version": "1.4",
+    "total_original_subcategories": 553,
+    "description": "Mapping from CATCHPLAY+ tree-based genre system to flat multi-dimension tag system",
+    "changelog": [
+      "v1.1: BL 從 lgbt(audience) 獨立為 bl(narrative); award 維度加入 award_meta 結構（nominated/won/year）",
+      "v1.2: production→content-type; 節目形式(9)移至content-type; 運動細項(13)移至theme; emotion新增9個candidate標籤",
+      "v1.3: 去重 — prison/haunted-house 留 setting 移除 theme; audience family→family-friendly",
+      "v1.4: 82個deprecated重新分類 — 72個策展相關→curation維度; 9個平台/發行商→platform_metadata; deprecated僅剩重複條目"
+    ]
+  },
+  "dimensions": {
+    "genre": {
+      "tags": [
+        {
+          "tag_id": "comedy",
+          "labels": {
+            "en": "Comedy",
+            "zh_TW": "喜劇",
+            "in_ID": "Komedi"
+          },
+          "migrated_from": [
+            "Comedy (主分類)"
+          ]
+        },
+        {
+          "tag_id": "drama",
+          "labels": {
+            "en": "Drama",
+            "zh_TW": "劇情",
+            "in_ID": "Drama"
+          },
+          "migrated_from": [
+            "Drama (主分類)"
+          ]
+        },
+        {
+          "tag_id": "period-epic",
+          "labels": {
+            "en": "Period/Epic",
+            "zh_TW": "古裝/史詩",
+            "in_ID": "Periodik/Epik"
+          },
+          "migrated_from": [
+            "Period/Epic (主分類)"
+          ]
+        },
+        {
+          "tag_id": "musical",
+          "labels": {
+            "en": "Musical/Dance",
+            "zh_TW": "音樂/歌舞",
+            "in_ID": "Musikal/Dansa"
+          },
+          "migrated_from": [
+            "Musical/Dance (主分類)"
+          ]
+        },
+        {
+          "tag_id": "horror",
+          "labels": {
+            "en": "Horror",
+            "zh_TW": "恐怖",
+            "in_ID": "Horor"
+          },
+          "migrated_from": [
+            "Horror (主分類)"
+          ]
+        },
+        {
+          "tag_id": "crime",
+          "labels": {
+            "en": "Crime",
+            "zh_TW": "犯罪",
+            "in_ID": "Kriminal"
+          },
+          "migrated_from": [
+            "Crime (主分類)"
+          ]
+        },
+        {
+          "tag_id": "war",
+          "labels": {
+            "en": "War",
+            "zh_TW": "戰爭",
+            "in_ID": "Perang"
+          },
+          "migrated_from": [
+            "War (主分類)"
+          ]
+        },
+        {
+          "tag_id": "sci-fi",
+          "labels": {
+            "en": "Sci-Fi",
+            "zh_TW": "科幻",
+            "in_ID": "Fiksi Ilmiah"
+          },
+          "migrated_from": [
+            "Sci-Fi/Fantasy (主分類)"
+          ]
+        },
+        {
+          "tag_id": "fantasy",
+          "labels": {
+            "en": "Fantasy",
+            "zh_TW": "奇幻",
+            "in_ID": "Fantasy"
+          },
+          "migrated_from": [
+            "Sci-Fi/Fantasy (主分類)"
+          ]
+        },
+        {
+          "tag_id": "romance",
+          "labels": {
+            "en": "Romance",
+            "zh_TW": "愛情",
+            "in_ID": "Percintaan"
+          },
+          "migrated_from": [
+            "Romance (主分類)"
+          ]
+        },
+        {
+          "tag_id": "action",
+          "labels": {
+            "en": "Action",
+            "zh_TW": "動作",
+            "in_ID": "Aksi"
+          },
+          "migrated_from": [
+            "Action/Adventure (主分類)"
+          ]
+        },
+        {
+          "tag_id": "adventure",
+          "labels": {
+            "en": "Adventure",
+            "zh_TW": "冒險",
+            "in_ID": "Petualangan"
+          },
+          "migrated_from": [
+            "Action/Adventure (主分類)"
+          ]
+        },
+        {
+          "tag_id": "thriller",
+          "labels": {
+            "en": "Thriller",
+            "zh_TW": "驚悚",
+            "in_ID": "Thriller"
+          },
+          "migrated_from": [
+            "Thriller (主分類)"
+          ]
+        },
+        {
+          "tag_id": "disaster",
+          "labels": {
+            "en": "Disaster",
+            "zh_TW": "災難",
+            "in_ID": "Bencana"
+          },
+          "migrated_from": [
+            "Disaster (主分類)"
+          ]
+        },
+        {
+          "tag_id": "animation",
+          "labels": {
+            "en": "Animation",
+            "zh_TW": "動畫",
+            "in_ID": "Animasi"
+          },
+          "migrated_from": [
+            "Animation (主分類)"
+          ]
+        },
+        {
+          "tag_id": "documentary",
+          "labels": {
+            "en": "Documentary",
+            "zh_TW": "紀錄片",
+            "in_ID": "Dokumenter"
+          },
+          "migrated_from": [
+            "Documentary (主分類)"
+          ]
+        },
+        {
+          "tag_id": "sports",
+          "labels": {
+            "en": "Sports",
+            "zh_TW": "運動",
+            "in_ID": "Olahraga"
+          },
+          "migrated_from": [
+            "Sports (主分類)"
+          ]
+        },
+        {
+          "tag_id": "biography",
+          "labels": {
+            "en": "Biography",
+            "zh_TW": "傳記",
+            "in_ID": "Biografi"
+          },
+          "migrated_from": [
+            "Biography (主分類)"
+          ]
+        },
+        {
+          "tag_id": "kids-family",
+          "labels": {
+            "en": "Kids/Family",
+            "zh_TW": "兒童/家庭",
+            "in_ID": "Anak-anak/Keluarga"
+          },
+          "migrated_from": [
+            "Kids/Family (主分類)"
+          ]
+        },
+        {
+          "tag_id": "series",
+          "labels": {
+            "en": "Series",
+            "zh_TW": "影集",
+            "in_ID": "Serial"
+          },
+          "migrated_from": [
+            "Series (主分類)"
+          ]
+        },
+        {
+          "tag_id": "dark-comedy",
+          "labels": {
+            "en": "Dark Comedy",
+            "zh_TW": "黑色喜劇",
+            "in_ID": "Komedi Satir"
+          },
+          "migrated_from": [
+            "Dark Comedies [Comedy]"
+          ]
+        },
+        {
+          "tag_id": "spoof",
+          "labels": {
+            "en": "Spoof",
+            "zh_TW": "惡搞喜劇",
+            "in_ID": "Parodi"
+          },
+          "migrated_from": [
+            "Spoofs [Comedy]"
+          ]
+        },
+        {
+          "tag_id": "western",
+          "labels": {
+            "en": "Western",
+            "zh_TW": "西部片",
+            "in_ID": "Film Western"
+          },
+          "migrated_from": [
+            "Western [Action/Adventure]",
+            "Western Comedies [Comedy]",
+            "Western Epics [Period/Epic]"
+          ]
+        },
+        {
+          "tag_id": "mystery",
+          "labels": {
+            "en": "Mystery",
+            "zh_TW": "推理懸疑",
+            "in_ID": "Misteri Detektif"
+          },
+          "migrated_from": [
+            "Detective Mystery [Crime]",
+            "Mystery Thrillers [Thriller]",
+            "Mystery Dramas [Drama]"
+          ]
+        },
+        {
+          "tag_id": "gangster",
+          "labels": {
+            "en": "Gangster",
+            "zh_TW": "黑幫犯罪",
+            "in_ID": "Gangster"
+          },
+          "migrated_from": [
+            "Gangster [Crime]"
+          ]
+        },
+        {
+          "tag_id": "heist",
+          "labels": {
+            "en": "Heist",
+            "zh_TW": "搶劫犯罪",
+            "in_ID": "Pencurian Berencana"
+          },
+          "migrated_from": [
+            "Heist [Crime]"
+          ]
+        },
+        {
+          "tag_id": "martial-arts",
+          "labels": {
+            "en": "Martial Arts",
+            "zh_TW": "武打片",
+            "in_ID": "Bela Diri"
+          },
+          "migrated_from": [
+            "Martial Arts [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "wuxia",
+          "labels": {
+            "en": "Wuxia",
+            "zh_TW": "武俠片",
+            "in_ID": "Film Silat"
+          },
+          "migrated_from": [
+            "Wuxia [Period/Epic]"
+          ]
+        },
+        {
+          "tag_id": "spy",
+          "labels": {
+            "en": "Spy",
+            "zh_TW": "諜報",
+            "in_ID": "Spionase"
+          },
+          "migrated_from": [
+            "Spy Action [Action/Adventure]",
+            "Spy Thrillers [Thriller]"
+          ]
+        },
+        {
+          "tag_id": "superhero",
+          "labels": {
+            "en": "Superhero",
+            "zh_TW": "動漫英雄",
+            "in_ID": "Superhero"
+          },
+          "migrated_from": [
+            "Superhero [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "slasher",
+          "labels": {
+            "en": "Slasher",
+            "zh_TW": "虐殺片",
+            "in_ID": "Slasher/Penyiksaan"
+          },
+          "migrated_from": [
+            "Slasher/Torture [Horror]"
+          ]
+        },
+        {
+          "tag_id": "zombie",
+          "labels": {
+            "en": "Zombie",
+            "zh_TW": "活屍",
+            "in_ID": "Zombie"
+          },
+          "migrated_from": [
+            "Zombie [Horror]"
+          ]
+        },
+        {
+          "tag_id": "vampire",
+          "labels": {
+            "en": "Vampire",
+            "zh_TW": "吸血鬼",
+            "in_ID": "Vampir"
+          },
+          "migrated_from": [
+            "Vampire [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "werewolf",
+          "labels": {
+            "en": "Werewolf",
+            "zh_TW": "狼人",
+            "in_ID": "Manusia Serigala"
+          },
+          "migrated_from": [
+            "Werewolf [Horror]"
+          ]
+        },
+        {
+          "tag_id": "monster",
+          "labels": {
+            "en": "Monster",
+            "zh_TW": "怪物",
+            "in_ID": "Monster"
+          },
+          "migrated_from": [
+            "Monster [Horror]",
+            "Monster Fantasy [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "psychological-thriller",
+          "labels": {
+            "en": "Psychological Thriller",
+            "zh_TW": "心理驚悚",
+            "in_ID": "Thriller Psikologis"
+          },
+          "migrated_from": [
+            "Psychological Thrillers [Thriller]"
+          ]
+        },
+        {
+          "tag_id": "romantic-comedy",
+          "labels": {
+            "en": "Romantic Comedy",
+            "zh_TW": "愛情喜劇",
+            "in_ID": "Komedi Romantis"
+          },
+          "migrated_from": [
+            "Romantic Comedies [Romance]"
+          ]
+        },
+        {
+          "tag_id": "erotic",
+          "labels": {
+            "en": "Erotic",
+            "zh_TW": "情色",
+            "in_ID": "Sensual"
+          },
+          "migrated_from": [
+            "Erotic Thrillers [Thriller]",
+            "Erotic Horror [Horror]",
+            "Erotic Romance [Romance]"
+          ]
+        },
+        {
+          "tag_id": "dance",
+          "labels": {
+            "en": "Dance",
+            "zh_TW": "舞蹈",
+            "in_ID": "Dansa"
+          },
+          "migrated_from": [
+            "Dance Films [Musical/Dance]"
+          ]
+        },
+        {
+          "tag_id": "anime",
+          "labels": {
+            "en": "Anime",
+            "zh_TW": "日本動漫",
+            "in_ID": "Anime"
+          },
+          "migrated_from": [
+            "Anime [Animation]"
+          ]
+        },
+        {
+          "tag_id": "stop-motion",
+          "labels": {
+            "en": "Stop-Motion",
+            "zh_TW": "黏土動畫",
+            "in_ID": "Stop-Motion"
+          },
+          "migrated_from": [
+            "Stop-Motion [Animation]"
+          ]
+        },
+        {
+          "tag_id": "cop-action",
+          "labels": {
+            "en": "Cop Action",
+            "zh_TW": "警匪片",
+            "in_ID": "Polisi vs Penjahat"
+          },
+          "migrated_from": [
+            "Cop & Robber [Crime]",
+            "Cop & Robber Action [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "con-artist",
+          "labels": {
+            "en": "Con Artist",
+            "zh_TW": "行騙高手",
+            "in_ID": "Ahli Tipu Muslihat"
+          },
+          "migrated_from": [
+            "Con Artist [Crime]"
+          ]
+        },
+        {
+          "tag_id": "serial-killer",
+          "labels": {
+            "en": "Serial Killer",
+            "zh_TW": "連續殺人狂",
+            "in_ID": "Pembunuhan Berantai"
+          },
+          "migrated_from": [
+            "Serial Killer [Thriller]"
+          ]
+        },
+        {
+          "tag_id": "supernatural",
+          "labels": {
+            "en": "Supernatural",
+            "zh_TW": "靈異",
+            "in_ID": "Alam Gaib"
+          },
+          "migrated_from": [
+            "Supernatural Horror [Horror]",
+            "Supernatural Thrillers [Thriller]"
+          ]
+        },
+        {
+          "tag_id": "dystopia",
+          "labels": {
+            "en": "Dystopia",
+            "zh_TW": "反烏托邦",
+            "in_ID": "Distopia"
+          },
+          "migrated_from": [
+            "Dystopia [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "pirate",
+          "labels": {
+            "en": "Pirate",
+            "zh_TW": "海盜",
+            "in_ID": "Bajak Laut"
+          },
+          "migrated_from": [
+            "Pirate [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "samurai",
+          "labels": {
+            "en": "Samurai",
+            "zh_TW": "武士道",
+            "in_ID": "Samurai"
+          },
+          "migrated_from": [
+            "Samurai [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "robot",
+          "labels": {
+            "en": "Robot",
+            "zh_TW": "機器人",
+            "in_ID": "Robot"
+          },
+          "migrated_from": [
+            "Robot [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "b-horror",
+          "labels": {
+            "en": "B-Horror",
+            "zh_TW": "B級恐怖",
+            "in_ID": "B-Horor"
+          },
+          "migrated_from": [
+            "B-Horror [Horror]"
+          ]
+        }
+      ]
+    },
+    "theme": {
+      "tags": [
+        {
+          "tag_id": "revenge",
+          "labels": {
+            "en": "Revenge",
+            "zh_TW": "復仇",
+            "in_ID": "Balas Dendam"
+          },
+          "migrated_from": [
+            "Revenge [Crime]",
+            "Revenge Action [Action/Adventure]",
+            "Woman's Revenge [Crime]"
+          ]
+        },
+        {
+          "tag_id": "coming-of-age",
+          "labels": {
+            "en": "Coming of Age",
+            "zh_TW": "成長",
+            "in_ID": "Jelang Dewasa"
+          },
+          "migrated_from": [
+            "Coming-of-Age Comedies [Comedy]",
+            "Coming-of-Age Dramas [Drama]"
+          ]
+        },
+        {
+          "tag_id": "family",
+          "labels": {
+            "en": "Family",
+            "zh_TW": "家庭",
+            "in_ID": "Keluarga"
+          },
+          "migrated_from": [
+            "Family Comedies [Comedy]",
+            "Family Dramas [Drama]"
+          ]
+        },
+        {
+          "tag_id": "friendship",
+          "labels": {
+            "en": "Friendship",
+            "zh_TW": "友情",
+            "in_ID": "Persahabatan"
+          },
+          "migrated_from": [
+            "Friendship [Drama]",
+            "Buddy Comedies [Comedy]",
+            "Bromance [Drama]"
+          ]
+        },
+        {
+          "tag_id": "workplace",
+          "labels": {
+            "en": "Workplace",
+            "zh_TW": "職場",
+            "in_ID": "Dunia Kerja"
+          },
+          "migrated_from": [
+            "Workplace Comedies [Comedy]",
+            "Workplace Conflict [Drama]",
+            "Office Romance [Romance]"
+          ]
+        },
+        {
+          "tag_id": "showbiz",
+          "labels": {
+            "en": "Showbiz",
+            "zh_TW": "娛樂內幕",
+            "in_ID": "Showbiz"
+          },
+          "migrated_from": [
+            "Showbiz Comedies [Comedy]",
+            "Showbiz Dramas [Drama]",
+            "Showbiz [Musical/Dance]"
+          ]
+        },
+        {
+          "tag_id": "food",
+          "labels": {
+            "en": "Food",
+            "zh_TW": "美食",
+            "in_ID": "Kuliner"
+          },
+          "migrated_from": [
+            "Food Comedies [Comedy]",
+            "Feel-Good Foodie Movies [Drama]",
+            "Food Documentaries [Documentary]",
+            "Films for Foodies [Biography]"
+          ]
+        },
+        {
+          "tag_id": "animal",
+          "labels": {
+            "en": "Animal",
+            "zh_TW": "動物",
+            "in_ID": "Hewan"
+          },
+          "migrated_from": [
+            "Animal Comedies [Comedy]",
+            "Animal [Kids/Family]",
+            "Animal Animations [Animation]",
+            "Animal Documentaries [Documentary]",
+            "Love for Pets [Drama]"
+          ]
+        },
+        {
+          "tag_id": "girl-power",
+          "labels": {
+            "en": "Girl Power",
+            "zh_TW": "女力",
+            "in_ID": "Emansipasi Wanita"
+          },
+          "migrated_from": [
+            "Girl Power [Comedy]",
+            "Feminist [Drama]",
+            "Famous Woman [Biography]",
+            "Female Action [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "social-issues",
+          "labels": {
+            "en": "Social Issues",
+            "zh_TW": "社會議題",
+            "in_ID": "Isu Sosial"
+          },
+          "migrated_from": [
+            "Social Issues [Drama]",
+            "Social Issue Documentaries [Documentary]"
+          ]
+        },
+        {
+          "tag_id": "political",
+          "labels": {
+            "en": "Political",
+            "zh_TW": "政治",
+            "in_ID": "Politik"
+          },
+          "migrated_from": [
+            "Political Satires [Comedy]",
+            "Political Dramas [Drama]",
+            "Political Thrillers [Thriller]"
+          ]
+        },
+        {
+          "tag_id": "military",
+          "labels": {
+            "en": "Military",
+            "zh_TW": "軍旅",
+            "in_ID": "Militer"
+          },
+          "migrated_from": [
+            "Military Comedies [Comedy]",
+            "Military [War]"
+          ]
+        },
+        {
+          "tag_id": "addiction",
+          "labels": {
+            "en": "Addiction",
+            "zh_TW": "成癮",
+            "in_ID": "Pecandu"
+          },
+          "migrated_from": [
+            "Addiction Dramas [Drama]"
+          ]
+        },
+        {
+          "tag_id": "bullying",
+          "labels": {
+            "en": "Bullying",
+            "zh_TW": "霸凌",
+            "in_ID": "Perundungan"
+          },
+          "migrated_from": [
+            "Bullying [Drama]"
+          ]
+        },
+        {
+          "tag_id": "bereavement",
+          "labels": {
+            "en": "Bereavement",
+            "zh_TW": "喪親之痛",
+            "in_ID": "Kehilangan"
+          },
+          "migrated_from": [
+            "Bereavement [Drama]"
+          ]
+        },
+        {
+          "tag_id": "midlife-crisis",
+          "labels": {
+            "en": "Midlife Crisis",
+            "zh_TW": "中年危機",
+            "in_ID": "Krisis Paruh Baya"
+          },
+          "migrated_from": [
+            "Midlife Crisis [Drama]"
+          ]
+        },
+        {
+          "tag_id": "faith",
+          "labels": {
+            "en": "Faith",
+            "zh_TW": "信仰",
+            "in_ID": "Keyakinan"
+          },
+          "migrated_from": [
+            "Faith [Drama]",
+            "Religious Thrillers [Thriller]",
+            "Bible Stories [Period/Epic]",
+            "Religious Figure [Biography]"
+          ]
+        },
+        {
+          "tag_id": "marriage",
+          "labels": {
+            "en": "Marriage",
+            "zh_TW": "婚姻",
+            "in_ID": "Pernikahan"
+          },
+          "migrated_from": [
+            "Marriage [Romance]"
+          ]
+        },
+        {
+          "tag_id": "affair",
+          "labels": {
+            "en": "Affair",
+            "zh_TW": "外遇",
+            "in_ID": "Cinta Terlarang"
+          },
+          "migrated_from": [
+            "Affair [Romance]",
+            "Teacher-Student Affair [Romance]",
+            "One-Night Stand [Romance]"
+          ]
+        },
+        {
+          "tag_id": "cross-dressing",
+          "labels": {
+            "en": "Cross-Dressing",
+            "zh_TW": "變裝",
+            "in_ID": "Lintas Busana"
+          },
+          "migrated_from": [
+            "Cross-Dressing Comedies [Comedy]",
+            "Cross-Dressing Dramas [Drama]"
+          ]
+        },
+        {
+          "tag_id": "teacher-student",
+          "labels": {
+            "en": "Teacher-Student",
+            "zh_TW": "師生關係",
+            "in_ID": "Guru-Murid"
+          },
+          "migrated_from": [
+            "Teacher-Student Dramas [Drama]",
+            "Teacher-Student Affair [Romance]"
+          ]
+        },
+        {
+          "tag_id": "genocide",
+          "labels": {
+            "en": "Genocide",
+            "zh_TW": "大屠殺",
+            "in_ID": "Bencana"
+          },
+          "migrated_from": [
+            "Genocide Dramas [Drama]"
+          ]
+        },
+        {
+          "tag_id": "anti-war",
+          "labels": {
+            "en": "Anti-War",
+            "zh_TW": "反戰",
+            "in_ID": "Anti-Perang"
+          },
+          "migrated_from": [
+            "Anti-War [War]"
+          ]
+        },
+        {
+          "tag_id": "survival",
+          "labels": {
+            "en": "Survival",
+            "zh_TW": "求生",
+            "in_ID": "Bertahan Hidup"
+          },
+          "migrated_from": [
+            "Survival [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "undercover",
+          "labels": {
+            "en": "Undercover",
+            "zh_TW": "臥底",
+            "in_ID": "Penyamaran"
+          },
+          "migrated_from": [
+            "Undercover [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "hostage",
+          "labels": {
+            "en": "Hostage",
+            "zh_TW": "人質危機",
+            "in_ID": "Penyanderaan"
+          },
+          "migrated_from": [
+            "Hostage [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "rescue",
+          "labels": {
+            "en": "Rescue",
+            "zh_TW": "救援",
+            "in_ID": "Misi Penyelamatan"
+          },
+          "migrated_from": [
+            "Rescue [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "on-the-run",
+          "labels": {
+            "en": "On the Run",
+            "zh_TW": "逃亡",
+            "in_ID": "Pelarian"
+          },
+          "migrated_from": [
+            "On the Run [Action/Adventure]",
+            "Lovers on the Run [Crime]"
+          ]
+        },
+        {
+          "tag_id": "treasure-hunt",
+          "labels": {
+            "en": "Treasure Hunt",
+            "zh_TW": "尋寶",
+            "in_ID": "Perburuan Harta Karun"
+          },
+          "migrated_from": [
+            "Treasure Hunt [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "virus-outbreak",
+          "labels": {
+            "en": "Virus Outbreak",
+            "zh_TW": "病毒擴散",
+            "in_ID": "Penyebaran Virus"
+          },
+          "migrated_from": [
+            "Virus Outbreak [Disaster]"
+          ]
+        },
+        {
+          "tag_id": "apocalypse",
+          "labels": {
+            "en": "Apocalypse",
+            "zh_TW": "末日",
+            "in_ID": "Kiamat"
+          },
+          "migrated_from": [
+            "Apocalyptic [Disaster]",
+            "End of the World [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "alien-invasion",
+          "labels": {
+            "en": "Alien Invasion",
+            "zh_TW": "異形入侵",
+            "in_ID": "Serbuan Makhluk Asing"
+          },
+          "migrated_from": [
+            "Alien Invasion [Sci-Fi/Fantasy]",
+            "Alien Disaster [Disaster]"
+          ]
+        },
+        {
+          "tag_id": "alien-encounter",
+          "labels": {
+            "en": "Alien Encounter",
+            "zh_TW": "外星人接觸",
+            "in_ID": "Pertemuan Makhluk Asing"
+          },
+          "migrated_from": [
+            "Alien Encounters [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "time-travel",
+          "labels": {
+            "en": "Time Travel",
+            "zh_TW": "時空跳躍",
+            "in_ID": "Perjalanan Waktu"
+          },
+          "migrated_from": [
+            "Time Travel [Sci-Fi/Fantasy]",
+            "Time-Travel Romance [Romance]"
+          ]
+        },
+        {
+          "tag_id": "immortality",
+          "labels": {
+            "en": "Immortality",
+            "zh_TW": "長生不老",
+            "in_ID": "Keabadian"
+          },
+          "migrated_from": [
+            "Immortal [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "demonic-possession",
+          "labels": {
+            "en": "Demonic Possession",
+            "zh_TW": "惡靈附身",
+            "in_ID": "Kerasukan"
+          },
+          "migrated_from": [
+            "Demonic Possession [Horror]"
+          ]
+        },
+        {
+          "tag_id": "witchcraft",
+          "labels": {
+            "en": "Witchcraft",
+            "zh_TW": "巫術",
+            "in_ID": "Penyihir"
+          },
+          "migrated_from": [
+            "Witchcraft [Horror]"
+          ]
+        },
+        {
+          "tag_id": "satanic",
+          "labels": {
+            "en": "Satanic",
+            "zh_TW": "撒旦崇拜",
+            "in_ID": "Penyembah Setan"
+          },
+          "migrated_from": [
+            "Satanic [Horror]"
+          ]
+        },
+        {
+          "tag_id": "cannibalism",
+          "labels": {
+            "en": "Cannibalism",
+            "zh_TW": "食人",
+            "in_ID": "Kanibal"
+          },
+          "migrated_from": [
+            "Cannibalism [Horror]"
+          ]
+        },
+        {
+          "tag_id": "psychopath",
+          "labels": {
+            "en": "Psychopath",
+            "zh_TW": "變態殺人魔",
+            "in_ID": "Psikopat"
+          },
+          "migrated_from": [
+            "Psychopath [Horror]"
+          ]
+        },
+        {
+          "tag_id": "stalker",
+          "labels": {
+            "en": "Stalker",
+            "zh_TW": "跟蹤狂",
+            "in_ID": "Stalker"
+          },
+          "migrated_from": [
+            "Stalker Thrillers [Thriller]",
+            "Scary Lover [Thriller]"
+          ]
+        },
+        {
+          "tag_id": "terrorism",
+          "labels": {
+            "en": "Terrorism",
+            "zh_TW": "恐怖攻擊",
+            "in_ID": "Teroris"
+          },
+          "migrated_from": [
+            "Terrorist Thrillers [Thriller]",
+            "Terrorist Attack [Disaster]",
+            "War on Terror [War]"
+          ]
+        },
+        {
+          "tag_id": "david-vs-goliath",
+          "labels": {
+            "en": "David vs. Goliath",
+            "zh_TW": "小蝦米對抗大鯨魚",
+            "in_ID": "Daud vs Goliat"
+          },
+          "migrated_from": [
+            "David vs. Goliath [Biography]"
+          ]
+        },
+        {
+          "tag_id": "medical",
+          "labels": {
+            "en": "Medical",
+            "zh_TW": "醫療",
+            "in_ID": "Medis"
+          },
+          "migrated_from": [
+            "Medical Dramas [Drama]",
+            "Medical Thrillers [Thriller]",
+            "Medical Documentaries [Documentary]"
+          ]
+        },
+        {
+          "tag_id": "legal",
+          "labels": {
+            "en": "Legal",
+            "zh_TW": "法律",
+            "in_ID": "Hukum"
+          },
+          "migrated_from": [
+            "Courtroom Dramas [Drama]",
+            "Courtroom [Crime]",
+            "Legal Thrillers [Thriller]"
+          ]
+        },
+        {
+          "tag_id": "environmental",
+          "labels": {
+            "en": "Environmental",
+            "zh_TW": "環保",
+            "in_ID": "Ramah Lingkungan"
+          },
+          "migrated_from": [
+            "Environmental Documentaries [Documentary]"
+          ]
+        },
+        {
+          "tag_id": "fashion",
+          "labels": {
+            "en": "Fashion",
+            "zh_TW": "時尚",
+            "in_ID": "Mode"
+          },
+          "migrated_from": [
+            "Fashion Documentaries [Documentary]",
+            "Fashion Icon [Biography]",
+            "Fashion & Beauty [Variety Shows]"
+          ]
+        },
+        {
+          "tag_id": "hitman",
+          "labels": {
+            "en": "Hitman",
+            "zh_TW": "殺手",
+            "in_ID": "Pembunuh Bayaran"
+          },
+          "migrated_from": [
+            "Hitman [Crime]"
+          ]
+        },
+        {
+          "tag_id": "fairy-tale",
+          "labels": {
+            "en": "Fairy Tale",
+            "zh_TW": "童話",
+            "in_ID": "Dongeng"
+          },
+          "migrated_from": [
+            "Fairy Tale Comedies [Comedy]",
+            "Fairy Tale Dramas [Drama]",
+            "Fairy Tale [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "school",
+          "labels": {
+            "en": "School",
+            "zh_TW": "校園",
+            "in_ID": "Sekolah"
+          },
+          "migrated_from": [
+            "School Comedies [Comedy]"
+          ]
+        },
+        {
+          "tag_id": "road-trip",
+          "labels": {
+            "en": "Road Trip",
+            "zh_TW": "公路",
+            "in_ID": "Perjalanan"
+          },
+          "migrated_from": [
+            "Road Comedies [Comedy]",
+            "Road Movies [Drama]",
+            "Road Adventure [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "sex",
+          "labels": {
+            "en": "Sex/Sensual",
+            "zh_TW": "性",
+            "in_ID": "Sensual"
+          },
+          "migrated_from": [
+            "Sex Comedies [Comedy]"
+          ]
+        },
+        {
+          "tag_id": "fish-out-of-water",
+          "labels": {
+            "en": "Fish out of Water",
+            "zh_TW": "錯置",
+            "in_ID": "Gegar Budaya"
+          },
+          "migrated_from": [
+            "Fish out of Water Comedies [Comedy]"
+          ]
+        },
+        {
+          "tag_id": "interracial",
+          "labels": {
+            "en": "Interracial Romance",
+            "zh_TW": "跨種族戀",
+            "in_ID": "Asmara Antar Ras"
+          },
+          "migrated_from": [
+            "Interracial Romance [Romance]"
+          ]
+        },
+        {
+          "tag_id": "age-gap-romance",
+          "labels": {
+            "en": "Age-Gap Romance",
+            "zh_TW": "老少戀/姊弟戀",
+            "in_ID": "Asmara Beda Usia"
+          },
+          "migrated_from": [
+            "May-December Romance [Romance]",
+            "Cougar Romance [Romance]",
+            "Autumn Romance [Romance]"
+          ]
+        },
+        {
+          "tag_id": "ghost-romance",
+          "labels": {
+            "en": "Ghost Romance",
+            "zh_TW": "人鬼戀",
+            "in_ID": "Hantu Kasmaran"
+          },
+          "migrated_from": [
+            "Ghost in Love [Romance]"
+          ]
+        },
+        {
+          "tag_id": "cross-country-romance",
+          "labels": {
+            "en": "Cross-Country Romance",
+            "zh_TW": "異國戀",
+            "in_ID": "LDR"
+          },
+          "migrated_from": [
+            "Cross-Country Romance [Romance]"
+          ]
+        },
+        {
+          "tag_id": "battle-of-sexes",
+          "labels": {
+            "en": "Battle of the Sexes",
+            "zh_TW": "鬥智冤家",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Battle of the Sexes [Romance]"
+          ]
+        },
+        {
+          "tag_id": "comeback",
+          "labels": {
+            "en": "Comeback",
+            "zh_TW": "東山再起",
+            "in_ID": "Bangkit dari Kegagalan"
+          },
+          "migrated_from": [
+            "Comeback [Sports]"
+          ]
+        },
+        {
+          "tag_id": "mountain-climbing",
+          "labels": {
+            "en": "Mountain Climbing",
+            "zh_TW": "登山",
+            "in_ID": "Panjat Gunung"
+          },
+          "migrated_from": [
+            "Mountain-Climbing [Action/Adventure]",
+            "Mountain Accident [Disaster]"
+          ]
+        },
+        {
+          "tag_id": "sailing",
+          "labels": {
+            "en": "Sailing",
+            "zh_TW": "航海",
+            "in_ID": "Pelayaran"
+          },
+          "migrated_from": [
+            "Sailing [Period/Epic]"
+          ]
+        },
+        {
+          "tag_id": "submarine",
+          "labels": {
+            "en": "Submarine",
+            "zh_TW": "潛水艇",
+            "in_ID": "Kapal Selam"
+          },
+          "migrated_from": [
+            "Submarine [War]"
+          ]
+        },
+        {
+          "tag_id": "aerial-combat",
+          "labels": {
+            "en": "Aerial Combat",
+            "zh_TW": "空戰",
+            "in_ID": "Pertempuran Udara"
+          },
+          "migrated_from": [
+            "Aerial Combat [War]"
+          ]
+        },
+        {
+          "tag_id": "naval-battle",
+          "labels": {
+            "en": "Naval Battle",
+            "zh_TW": "海戰",
+            "in_ID": "Pertempuran Laut"
+          },
+          "migrated_from": [
+            "Naval Battle [War]"
+          ]
+        },
+        {
+          "tag_id": "royalty",
+          "labels": {
+            "en": "Royalty",
+            "zh_TW": "皇室",
+            "in_ID": "Keluarga Kerajaan"
+          },
+          "migrated_from": [
+            "Royalty [Biography]",
+            "French Monarchy [Period/Epic]"
+          ]
+        },
+        {
+          "tag_id": "mad-science",
+          "labels": {
+            "en": "Mad Science",
+            "zh_TW": "瘋狂科學",
+            "in_ID": "Sains Gila"
+          },
+          "migrated_from": [
+            "Mad Science [Horror]"
+          ]
+        },
+        {
+          "tag_id": "nightmare",
+          "labels": {
+            "en": "Nightmare",
+            "zh_TW": "惡夢",
+            "in_ID": "Mimpi Buruk"
+          },
+          "migrated_from": [
+            "Nightmare [Horror]"
+          ]
+        },
+        {
+          "tag_id": "death",
+          "labels": {
+            "en": "Death",
+            "zh_TW": "死神",
+            "in_ID": "Kematian"
+          },
+          "migrated_from": [
+            "Death [Horror]"
+          ]
+        },
+        {
+          "tag_id": "killer-doll",
+          "labels": {
+            "en": "Killer Doll",
+            "zh_TW": "殺人怪娃",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Killer Doll [Horror]"
+          ]
+        },
+        {
+          "tag_id": "gentleman-thief",
+          "labels": {
+            "en": "Gentleman Thief",
+            "zh_TW": "雅賊",
+            "in_ID": "Pencuri Berkelas"
+          },
+          "migrated_from": [
+            "Gentleman Thief [Crime]"
+          ]
+        },
+        {
+          "tag_id": "robin-hood",
+          "labels": {
+            "en": "Robin Hood",
+            "zh_TW": "劫富濟貧",
+            "in_ID": "Robin Hood"
+          },
+          "migrated_from": [
+            "Robin Hood [Crime]"
+          ]
+        },
+        {
+          "tag_id": "unsettled-case",
+          "labels": {
+            "en": "Unsettled Case",
+            "zh_TW": "歷史懸案",
+            "in_ID": "Kasus Tak Tuntas"
+          },
+          "migrated_from": [
+            "Unsettled Case [Crime]"
+          ]
+        },
+        {
+          "tag_id": "celebrity",
+          "labels": {
+            "en": "Celebrity",
+            "zh_TW": "名人",
+            "in_ID": "Selebriti"
+          },
+          "migrated_from": [
+            "Celebrity Documentaries [Documentary]",
+            "Cinema & TV Icon [Biography]"
+          ]
+        },
+        {
+          "tag_id": "art",
+          "labels": {
+            "en": "Art",
+            "zh_TW": "藝術",
+            "in_ID": "Seni"
+          },
+          "migrated_from": [
+            "Art Documentaries [Documentary]",
+            "Painter [Biography]"
+          ]
+        },
+        {
+          "tag_id": "technology",
+          "labels": {
+            "en": "Technology",
+            "zh_TW": "科技",
+            "in_ID": "Teknologi"
+          },
+          "migrated_from": [
+            "Technology [Biography]",
+            "Techno-Thrillers [Thriller]"
+          ]
+        },
+        {
+          "tag_id": "tycoon",
+          "labels": {
+            "en": "Tycoon",
+            "zh_TW": "商業鉅子",
+            "in_ID": "Hartawan"
+          },
+          "migrated_from": [
+            "Tycoon [Biography]"
+          ]
+        },
+        {
+          "tag_id": "journalist",
+          "labels": {
+            "en": "Journalist",
+            "zh_TW": "記者",
+            "in_ID": "Jurnalis"
+          },
+          "migrated_from": [
+            "Journalist [Biography]"
+          ]
+        },
+        {
+          "tag_id": "craftsman",
+          "labels": {
+            "en": "Craftsman",
+            "zh_TW": "職人精神",
+            "in_ID": "Pengrajin"
+          },
+          "migrated_from": [
+            "Craftsman [Biography]"
+          ]
+        },
+        {
+          "tag_id": "ordinary-hero",
+          "labels": {
+            "en": "Ordinary Hero",
+            "zh_TW": "小人物大英雄",
+            "in_ID": "Pahlawan Tak Dikenal"
+          },
+          "migrated_from": [
+            "Ordinary Hero [Biography]"
+          ]
+        },
+        {
+          "tag_id": "health-lifestyle",
+          "labels": {
+            "en": "Health & Lifestyle",
+            "zh_TW": "生活新知",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Health & Lifestyle [Variety Shows]"
+          ]
+        },
+        {
+          "tag_id": "pets",
+          "labels": {
+            "en": "Pets",
+            "zh_TW": "寵物",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Pets [Variety Shows]",
+            "Love for Pets [Drama]"
+          ]
+        },
+        {
+          "tag_id": "behind-the-scenes",
+          "labels": {
+            "en": "Behind the Scenes",
+            "zh_TW": "幕後故事",
+            "in_ID": "Di Balik Layar"
+          },
+          "migrated_from": [
+            "Behind the Scenes [Variety Shows]",
+            "Backstage Documentaries [Documentary]"
+          ]
+        },
+        {
+          "tag_id": "dream",
+          "labels": {
+            "en": "Dream",
+            "zh_TW": "夢境",
+            "in_ID": "Alam Mimpi"
+          },
+          "migrated_from": [
+            "Dream Thrillers [Thriller]"
+          ]
+        },
+        {
+          "tag_id": "locked-room",
+          "labels": {
+            "en": "Locked Room",
+            "zh_TW": "幽閉",
+            "in_ID": "Ruang Tertutup"
+          },
+          "migrated_from": [
+            "Locked Room Thrillers [Thriller]"
+          ]
+        },
+        {
+          "tag_id": "cult",
+          "labels": {
+            "en": "Cult",
+            "zh_TW": "邪典",
+            "in_ID": "Kultus"
+          },
+          "migrated_from": [
+            "Cult Horror [Horror]"
+          ]
+        },
+        {
+          "tag_id": "rock-n-roll",
+          "labels": {
+            "en": "Rock N Roll",
+            "zh_TW": "搖滾",
+            "in_ID": "Rock N Roll"
+          },
+          "migrated_from": [
+            "Rock N Roll [Musical/Dance]"
+          ]
+        },
+        {
+          "tag_id": "classical-music",
+          "labels": {
+            "en": "Classical Music",
+            "zh_TW": "古典音樂",
+            "in_ID": "Musik Klasik"
+          },
+          "migrated_from": [
+            "Classical Music [Musical/Dance]"
+          ]
+        },
+        {
+          "tag_id": "choir",
+          "labels": {
+            "en": "Choir",
+            "zh_TW": "合唱團",
+            "in_ID": "Paduan Suara"
+          },
+          "migrated_from": [
+            "Choir [Musical/Dance]"
+          ]
+        },
+        {
+          "tag_id": "music",
+          "labels": {
+            "en": "Music",
+            "zh_TW": "音樂",
+            "in_ID": "Musik"
+          },
+          "migrated_from": [
+            "Music Documentaries [Documentary]",
+            "Music Icon [Biography]",
+            "Music Program [Variety Shows]"
+          ]
+        },
+        {
+          "tag_id": "boxing",
+          "labels": {
+            "en": "Boxing",
+            "zh_TW": "拳擊",
+            "in_ID": "Tinju"
+          },
+          "migrated_from": [
+            "Boxing [Sports]"
+          ]
+        },
+        {
+          "tag_id": "baseball",
+          "labels": {
+            "en": "Baseball",
+            "zh_TW": "棒球",
+            "in_ID": "Baseball"
+          },
+          "migrated_from": [
+            "Baseball [Sports]"
+          ]
+        },
+        {
+          "tag_id": "basketball",
+          "labels": {
+            "en": "Basketball",
+            "zh_TW": "籃球",
+            "in_ID": "Basket"
+          },
+          "migrated_from": [
+            "Basketball [Sports]"
+          ]
+        },
+        {
+          "tag_id": "soccer",
+          "labels": {
+            "en": "Soccer",
+            "zh_TW": "足球",
+            "in_ID": "Sepakbola"
+          },
+          "migrated_from": [
+            "Soccer [Sports]"
+          ]
+        },
+        {
+          "tag_id": "football",
+          "labels": {
+            "en": "Football",
+            "zh_TW": "美式足球",
+            "in_ID": "Football"
+          },
+          "migrated_from": [
+            "Football [Sports]"
+          ]
+        },
+        {
+          "tag_id": "motorsport",
+          "labels": {
+            "en": "Motorsport",
+            "zh_TW": "賽車",
+            "in_ID": "Otomotif"
+          },
+          "migrated_from": [
+            "Motorsport [Sports]",
+            "Car Racing [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "extreme-sports",
+          "labels": {
+            "en": "Extreme Sports",
+            "zh_TW": "極限運動",
+            "in_ID": "Olahraga Ekstrem"
+          },
+          "migrated_from": [
+            "Extreme Sports [Sports]"
+          ]
+        },
+        {
+          "tag_id": "surfing",
+          "labels": {
+            "en": "Surfing",
+            "zh_TW": "衝浪",
+            "in_ID": "Selancar"
+          },
+          "migrated_from": [
+            "Surfing [Sports]"
+          ]
+        },
+        {
+          "tag_id": "swimming",
+          "labels": {
+            "en": "Swimming",
+            "zh_TW": "游泳",
+            "in_ID": "Renang"
+          },
+          "migrated_from": [
+            "Swimming [Sports]"
+          ]
+        },
+        {
+          "tag_id": "horse-racing",
+          "labels": {
+            "en": "Horse Racing",
+            "zh_TW": "賽馬",
+            "in_ID": "Pacuan Kuda"
+          },
+          "migrated_from": [
+            "Horse-Racing [Sports]"
+          ]
+        },
+        {
+          "tag_id": "bike",
+          "labels": {
+            "en": "Cycling",
+            "zh_TW": "自行車",
+            "in_ID": "Bersepeda"
+          },
+          "migrated_from": [
+            "Bike [Sports]"
+          ]
+        },
+        {
+          "tag_id": "race",
+          "labels": {
+            "en": "Running/Race",
+            "zh_TW": "賽跑",
+            "in_ID": "Balapan"
+          },
+          "migrated_from": [
+            "Race [Sports]"
+          ]
+        },
+        {
+          "tag_id": "other-sports",
+          "labels": {
+            "en": "Other Sports",
+            "zh_TW": "其他運動",
+            "in_ID": "Olahraga Lainnya"
+          },
+          "migrated_from": [
+            "Other Sports [Sports]"
+          ]
+        },
+        {
+          "tag_id": "family-drama",
+          "labels": {
+            "en": "Family Drama",
+            "zh_TW": "家庭劇情",
+            "in_ID": "Drama Keluarga"
+          }
+        },
+        {
+          "tag_id": "family-comedy",
+          "labels": {
+            "en": "Family Comedy",
+            "zh_TW": "家庭喜劇",
+            "in_ID": "Komedi Keluarga"
+          }
+        }
+      ]
+    },
+    "emotion": {
+      "tags": [
+        {
+          "tag_id": "tearjerker",
+          "labels": {
+            "en": "Tearjerker",
+            "zh_TW": "催淚",
+            "in_ID": "Kisah Sedih"
+          },
+          "migrated_from": [
+            "Tearjerkers [Drama]",
+            "Tearjerker Romance [Romance]"
+          ]
+        },
+        {
+          "tag_id": "feel-good",
+          "labels": {
+            "en": "Feel-Good",
+            "zh_TW": "療癒",
+            "in_ID": "Drama Kuliner"
+          },
+          "migrated_from": [
+            "Feel-Good Foodie Movies [Drama]",
+            "Light Comedies [Comedy]",
+            "Spiritual-Healing Movies"
+          ]
+        },
+        {
+          "tag_id": "inspirational",
+          "labels": {
+            "en": "Inspirational",
+            "zh_TW": "勵志",
+            "in_ID": "Film Inspirasi"
+          },
+          "migrated_from": [
+            "Inspirational Films [Kids/Family]"
+          ]
+        },
+        {
+          "tag_id": "mind-bending",
+          "labels": {
+            "en": "Mind-Bending",
+            "zh_TW": "燒腦",
+            "in_ID": "Imajinasi"
+          },
+          "migrated_from": [
+            "In the Brain [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "relaxing",
+          "labels": {
+            "en": "Relaxing",
+            "zh_TW": "紓壓",
+            "in_ID": "Relaksasi"
+          },
+          "status": "candidate"
+        },
+        {
+          "tag_id": "thrilling",
+          "labels": {
+            "en": "Thrilling",
+            "zh_TW": "刺激",
+            "in_ID": "Mendebarkan"
+          },
+          "status": "candidate"
+        },
+        {
+          "tag_id": "heartwarming",
+          "labels": {
+            "en": "Heartwarming",
+            "zh_TW": "溫馨",
+            "in_ID": "Menghangatkan Hati"
+          },
+          "status": "candidate"
+        },
+        {
+          "tag_id": "touching",
+          "labels": {
+            "en": "Touching",
+            "zh_TW": "感動",
+            "in_ID": "Menyentuh"
+          },
+          "status": "candidate"
+        },
+        {
+          "tag_id": "exhilarating",
+          "labels": {
+            "en": "Exhilarating",
+            "zh_TW": "爽快",
+            "in_ID": "Menggairahkan"
+          },
+          "status": "candidate"
+        },
+        {
+          "tag_id": "dark",
+          "labels": {
+            "en": "Dark",
+            "zh_TW": "黑暗",
+            "in_ID": "Gelap"
+          },
+          "status": "candidate"
+        },
+        {
+          "tag_id": "scary",
+          "labels": {
+            "en": "Scary",
+            "zh_TW": "驚嚇",
+            "in_ID": "Menakutkan"
+          },
+          "status": "candidate"
+        },
+        {
+          "tag_id": "suspenseful",
+          "labels": {
+            "en": "Suspenseful",
+            "zh_TW": "懸疑感",
+            "in_ID": "Menegangkan"
+          },
+          "status": "candidate"
+        },
+        {
+          "tag_id": "romantic",
+          "labels": {
+            "en": "Romantic",
+            "zh_TW": "浪漫",
+            "in_ID": "Romantis"
+          },
+          "status": "candidate"
+        },
+        {
+          "tag_id": "toxic-romance",
+          "labels": {
+            "en": "Toxic Romance",
+            "zh_TW": "虐戀",
+            "in_ID": "Cinta Beracun"
+          }
+        },
+        {
+          "tag_id": "infidelity-consequence",
+          "labels": {
+            "en": "Aftermath of Infidelity",
+            "zh_TW": "出軌後果",
+            "in_ID": "Konsekuensi Perselingkuhan"
+          }
+        },
+        {
+          "tag_id": "hardcore",
+          "labels": {
+            "en": "Hardcore",
+            "zh_TW": "硬派",
+            "in_ID": "Hardcore"
+          }
+        }
+      ]
+    },
+    "era": {
+      "tags": [
+        {
+          "tag_id": "period",
+          "labels": {
+            "en": "Period",
+            "zh_TW": "古裝",
+            "in_ID": "Periodik"
+          },
+          "migrated_from": [
+            "Period Dramas [Drama]",
+            "Period Horror [Horror]",
+            "Period Action [Action/Adventure]",
+            "Period Comedies [Period/Epic]",
+            "Period Romance [Period/Epic]",
+            "Period War [War]"
+          ]
+        },
+        {
+          "tag_id": "medieval",
+          "labels": {
+            "en": "Medieval",
+            "zh_TW": "中古世紀",
+            "in_ID": "Abad Pertengahan"
+          },
+          "migrated_from": [
+            "Medieval [Period/Epic]"
+          ]
+        },
+        {
+          "tag_id": "roman-empire",
+          "labels": {
+            "en": "Roman Empire",
+            "zh_TW": "羅馬帝國",
+            "in_ID": "Imperium Roma"
+          },
+          "migrated_from": [
+            "Roman Empire [Period/Epic]"
+          ]
+        },
+        {
+          "tag_id": "french-monarchy",
+          "labels": {
+            "en": "French Monarchy",
+            "zh_TW": "法國王室",
+            "in_ID": "Monarki Perancis"
+          },
+          "migrated_from": [
+            "French Monarchy [Period/Epic]"
+          ]
+        },
+        {
+          "tag_id": "world-war-i",
+          "labels": {
+            "en": "World War I",
+            "zh_TW": "一戰",
+            "in_ID": "Perang Dunia I"
+          },
+          "migrated_from": [
+            "World War I [War]"
+          ]
+        },
+        {
+          "tag_id": "world-war-ii",
+          "labels": {
+            "en": "World War II",
+            "zh_TW": "二戰",
+            "in_ID": "Perang Dunia II"
+          },
+          "migrated_from": [
+            "World War II [War]",
+            "Nazi [War]",
+            "Pacific War [War]"
+          ]
+        },
+        {
+          "tag_id": "nazi",
+          "labels": {
+            "en": "Nazi",
+            "zh_TW": "德國納粹",
+            "in_ID": "Nazi"
+          },
+          "migrated_from": [
+            "Nazi [War]"
+          ]
+        },
+        {
+          "tag_id": "vietnam-war",
+          "labels": {
+            "en": "Vietnam War Era",
+            "zh_TW": "越戰",
+            "in_ID": "Perang Vietnam"
+          },
+          "migrated_from": [
+            "Vietnam War [War]"
+          ]
+        },
+        {
+          "tag_id": "korean-war",
+          "labels": {
+            "en": "Korean War Era",
+            "zh_TW": "韓戰",
+            "in_ID": "Perang Korea"
+          },
+          "migrated_from": [
+            "Korean War [War]"
+          ]
+        },
+        {
+          "tag_id": "gulf-war",
+          "labels": {
+            "en": "Gulf War Era",
+            "zh_TW": "波灣戰爭",
+            "in_ID": "Perang Teluk"
+          },
+          "migrated_from": [
+            "Gulf War [War]"
+          ]
+        },
+        {
+          "tag_id": "american-civil-war",
+          "labels": {
+            "en": "American Civil War",
+            "zh_TW": "美國內戰",
+            "in_ID": "Perang Saudara"
+          },
+          "migrated_from": [
+            "Civil War [War]"
+          ]
+        },
+        {
+          "tag_id": "american-revolution",
+          "labels": {
+            "en": "American Revolution",
+            "zh_TW": "美國獨立戰爭",
+            "in_ID": "Perang Revolusi Amerika"
+          },
+          "migrated_from": [
+            "American Revolutionary War [War]"
+          ]
+        },
+        {
+          "tag_id": "american-history",
+          "labels": {
+            "en": "American History",
+            "zh_TW": "美國歷史",
+            "in_ID": "Sejarah Amerika"
+          },
+          "migrated_from": [
+            "American History [Period/Epic]"
+          ]
+        },
+        {
+          "tag_id": "british-period",
+          "labels": {
+            "en": "British Period",
+            "zh_TW": "英式古裝",
+            "in_ID": "Periodik Inggris"
+          },
+          "migrated_from": [
+            "British Period [Period/Epic]",
+            "British Historical Dramas [Drama]"
+          ]
+        },
+        {
+          "tag_id": "sino-japanese-war",
+          "labels": {
+            "en": "Sino-Japanese War",
+            "zh_TW": "中日戰爭",
+            "in_ID": "Perang Sino-Jepang"
+          },
+          "migrated_from": [
+            "Sino-Japanese War [War]"
+          ]
+        },
+        {
+          "tag_id": "pacific-war",
+          "labels": {
+            "en": "Pacific War",
+            "zh_TW": "太平洋戰爭",
+            "in_ID": "Perang Pasifik"
+          },
+          "migrated_from": [
+            "Pacific War [War]"
+          ]
+        },
+        {
+          "tag_id": "future",
+          "labels": {
+            "en": "Future",
+            "zh_TW": "未來世界",
+            "in_ID": "Dunia Masa Depan"
+          },
+          "migrated_from": [
+            "Future World [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "shakespeare",
+          "labels": {
+            "en": "Shakespearean Era",
+            "zh_TW": "莎翁時代",
+            "in_ID": "Era Shakespear"
+          },
+          "migrated_from": [
+            "Shakespeare [Drama]"
+          ]
+        }
+      ]
+    },
+    "setting": {
+      "tags": [
+        {
+          "tag_id": "prison",
+          "labels": {
+            "en": "Prison",
+            "zh_TW": "監獄",
+            "in_ID": "Penjara"
+          },
+          "migrated_from": [
+            "Prison Dramas [Drama]",
+            "Prison [Crime]"
+          ]
+        },
+        {
+          "tag_id": "courtroom",
+          "labels": {
+            "en": "Courtroom",
+            "zh_TW": "法庭",
+            "in_ID": "Persidangan"
+          },
+          "migrated_from": [
+            "Courtroom Dramas [Drama]",
+            "Courtroom [Crime]"
+          ]
+        },
+        {
+          "tag_id": "outer-space",
+          "labels": {
+            "en": "Outer Space",
+            "zh_TW": "太空",
+            "in_ID": "Luar Angkasa"
+          },
+          "migrated_from": [
+            "Outer Space [Sci-Fi/Fantasy]",
+            "Space Adventure [Action/Adventure]",
+            "Space Disaster [Disaster]"
+          ]
+        },
+        {
+          "tag_id": "underwater",
+          "labels": {
+            "en": "Underwater",
+            "zh_TW": "水下",
+            "in_ID": "Lautan"
+          },
+          "migrated_from": [
+            "Terror in the Water [Horror]",
+            "Submarine [War]"
+          ]
+        },
+        {
+          "tag_id": "airplane",
+          "labels": {
+            "en": "Airplane",
+            "zh_TW": "飛機/高空",
+            "in_ID": "Udara"
+          },
+          "migrated_from": [
+            "Terror in the Air [Action/Adventure]",
+            "Plane Crash [Disaster]"
+          ]
+        },
+        {
+          "tag_id": "mountain",
+          "labels": {
+            "en": "Mountain",
+            "zh_TW": "山",
+            "in_ID": "Gunung"
+          },
+          "migrated_from": [
+            "Mountain-Climbing [Action/Adventure]",
+            "Mountain Accident [Disaster]"
+          ]
+        },
+        {
+          "tag_id": "sea",
+          "labels": {
+            "en": "Sea",
+            "zh_TW": "海上",
+            "in_ID": "Laut"
+          },
+          "migrated_from": [
+            "Sailing [Period/Epic]",
+            "Shipwreck [Disaster]",
+            "Naval Battle [War]",
+            "Pirate [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "haunted-house",
+          "labels": {
+            "en": "Haunted House",
+            "zh_TW": "鬼屋",
+            "in_ID": "Rumah Angker"
+          },
+          "migrated_from": [
+            "Haunted House [Horror]"
+          ]
+        },
+        {
+          "tag_id": "lost-world",
+          "labels": {
+            "en": "Lost World",
+            "zh_TW": "秘境",
+            "in_ID": "Dunia yang Hilang"
+          },
+          "migrated_from": [
+            "Lost World [Sci-Fi/Fantasy]"
+          ]
+        }
+      ]
+    },
+    "source": {
+      "tags": [
+        {
+          "tag_id": "based-on-true-story",
+          "labels": {
+            "en": "Based on True Story",
+            "zh_TW": "真人實事",
+            "in_ID": "Kisah Nyata"
+          },
+          "migrated_from": [
+            "Based on True Story [Drama]",
+            "True Crime [Crime]"
+          ]
+        },
+        {
+          "tag_id": "literary-adaptation",
+          "labels": {
+            "en": "Literary Adaptation",
+            "zh_TW": "文學改編",
+            "in_ID": "Adaptasi Literatur"
+          },
+          "migrated_from": [
+            "Literary Adaptations [Drama]",
+            "Based on Novel [Period/Epic]"
+          ]
+        },
+        {
+          "tag_id": "novel-adaptation",
+          "labels": {
+            "en": "Novel Adaptation",
+            "zh_TW": "小說改編",
+            "in_ID": "Adaptasi Novel"
+          },
+          "migrated_from": [
+            "Based on Novel [Period/Epic]",
+            "Romantic Novel Adaptations [Romance]",
+            "Sci-Fi/Fantasy Novel Adaptations [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "manga-adaptation",
+          "labels": {
+            "en": "Manga Adaptation",
+            "zh_TW": "日漫改編",
+            "in_ID": "Adaptasi Manga"
+          },
+          "migrated_from": [
+            "Manga Adaptations [Drama]"
+          ]
+        },
+        {
+          "tag_id": "stage-adaptation",
+          "labels": {
+            "en": "Stage Adaptation",
+            "zh_TW": "舞台劇改編",
+            "in_ID": "Adaptasi Teater"
+          },
+          "migrated_from": [
+            "Stage Adaptations [Drama]"
+          ]
+        },
+        {
+          "tag_id": "musical-adaptation",
+          "labels": {
+            "en": "Musical Adaptation",
+            "zh_TW": "音樂劇改編",
+            "in_ID": "Adaptasi Musikal"
+          },
+          "migrated_from": [
+            "Musical Adaptations [Musical/Dance]"
+          ]
+        },
+        {
+          "tag_id": "video-game-adaptation",
+          "labels": {
+            "en": "Video Game Adaptation",
+            "zh_TW": "電玩改編",
+            "in_ID": "Adaptasi Video Game"
+          },
+          "migrated_from": [
+            "Video Game Adaptations [Sci-Fi/Fantasy]",
+            "Action Video Game Adaptations [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "comic-adaptation",
+          "labels": {
+            "en": "Comic/Cartoon Adaptation",
+            "zh_TW": "動漫改編",
+            "in_ID": "Adaptasi Komik atau Kartun"
+          },
+          "migrated_from": [
+            "Comic or Cartoon Adaptations [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "mythology-adaptation",
+          "labels": {
+            "en": "Mythology Adaptation",
+            "zh_TW": "神話改編",
+            "in_ID": "Adaptasi Mitologi"
+          },
+          "migrated_from": [
+            "Mythology Adaptations [Period/Epic]",
+            "Greek Mythology [Sci-Fi/Fantasy]",
+            "Oriental Mythology [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "childrens-literature",
+          "labels": {
+            "en": "Children's Literature Adaptation",
+            "zh_TW": "兒童名著改編",
+            "in_ID": "Adaptasi Kisah Anak-anak"
+          },
+          "migrated_from": [
+            "Children's Literature Adaptations [Kids/Family]"
+          ]
+        },
+        {
+          "tag_id": "bible-stories",
+          "labels": {
+            "en": "Bible Stories",
+            "zh_TW": "聖經故事",
+            "in_ID": "Kisal Bibel"
+          },
+          "migrated_from": [
+            "Bible Stories [Period/Epic]"
+          ]
+        },
+        {
+          "tag_id": "shakespeare-adaptation",
+          "labels": {
+            "en": "Shakespeare Adaptation",
+            "zh_TW": "莎翁名劇改編",
+            "in_ID": "Shakespear"
+          },
+          "migrated_from": [
+            "Shakespeare [Drama]"
+          ]
+        },
+        {
+          "tag_id": "sports-biography",
+          "labels": {
+            "en": "Sports Biography",
+            "zh_TW": "運動傳記",
+            "in_ID": "Biografi Olahraga"
+          },
+          "migrated_from": [
+            "Sports Biographies [Sports]"
+          ]
+        },
+        {
+          "tag_id": "musical-biography",
+          "labels": {
+            "en": "Musical Biography",
+            "zh_TW": "傳記音樂片",
+            "in_ID": "Biografi Musikal"
+          },
+          "migrated_from": [
+            "Musical Biographies [Musical/Dance]"
+          ]
+        }
+      ]
+    },
+    "region": {
+      "tags": [
+        {
+          "tag_id": "hong-kong",
+          "labels": {
+            "en": "Hong Kong",
+            "zh_TW": "港式",
+            "in_ID": "Hong Kong"
+          },
+          "migrated_from": [
+            "Hong Kong Action [Action/Adventure]",
+            "Hopping Zombie [Horror]"
+          ]
+        },
+        {
+          "tag_id": "british",
+          "labels": {
+            "en": "British",
+            "zh_TW": "英式",
+            "in_ID": "Inggris"
+          },
+          "migrated_from": [
+            "British Humor [Comedy]",
+            "British Period [Period/Epic]",
+            "British Historical Dramas [Drama]",
+            "British Dramas [Series]"
+          ]
+        },
+        {
+          "tag_id": "japanese",
+          "labels": {
+            "en": "Japanese",
+            "zh_TW": "日式",
+            "in_ID": "Jepang"
+          },
+          "migrated_from": [
+            "Japanese/Korean Horror [Horror]",
+            "Japanese Romance [Romance]",
+            "Japanese Dramas [Series]",
+            "Anime [Animation]"
+          ]
+        },
+        {
+          "tag_id": "korean",
+          "labels": {
+            "en": "Korean",
+            "zh_TW": "韓國",
+            "in_ID": "Korea"
+          },
+          "migrated_from": [
+            "Japanese/Korean Horror [Horror]",
+            "Korean Dramas [Series]",
+            "Korean Films"
+          ]
+        },
+        {
+          "tag_id": "thai",
+          "labels": {
+            "en": "Thai",
+            "zh_TW": "泰國",
+            "in_ID": "Thailand"
+          },
+          "migrated_from": [
+            "Thai Horror [Horror]",
+            "Thai Dramas [Series]"
+          ]
+        },
+        {
+          "tag_id": "bollywood",
+          "labels": {
+            "en": "Bollywood",
+            "zh_TW": "寶萊塢",
+            "in_ID": "Bollywood"
+          },
+          "migrated_from": [
+            "Bollywood Musicals [Musical/Dance]",
+            "Bollywood Films"
+          ]
+        },
+        {
+          "tag_id": "taiwanese",
+          "labels": {
+            "en": "Taiwanese",
+            "zh_TW": "台灣",
+            "in_ID": "Taiwan"
+          },
+          "migrated_from": [
+            "Taiwanese Dramas [Series]",
+            "Taiwanese New Cinema",
+            "Chinese Language Films [華語電影]"
+          ]
+        },
+        {
+          "tag_id": "chinese",
+          "labels": {
+            "en": "Chinese",
+            "zh_TW": "華語/中國",
+            "in_ID": "Tiongkok"
+          },
+          "migrated_from": [
+            "Chinese Dramas [Series]",
+            "Chinese Language Films [華語電影]"
+          ]
+        },
+        {
+          "tag_id": "indonesian",
+          "labels": {
+            "en": "Indonesian",
+            "zh_TW": "印尼",
+            "in_ID": "Indonesia"
+          },
+          "migrated_from": [
+            "Indonesian Horror [Horror]",
+            "Indonesian Dramas [Series]",
+            "Indonesian Films"
+          ]
+        },
+        {
+          "tag_id": "american",
+          "labels": {
+            "en": "American",
+            "zh_TW": "美式",
+            "in_ID": "Amerika"
+          },
+          "migrated_from": [
+            "American Dramas [Series]",
+            "Urban Comedies [Comedy]"
+          ]
+        },
+        {
+          "tag_id": "european",
+          "labels": {
+            "en": "European",
+            "zh_TW": "歐洲",
+            "in_ID": "Eropa"
+          },
+          "migrated_from": [
+            "European Animations [Animation]",
+            "Film Europe"
+          ]
+        },
+        {
+          "tag_id": "french",
+          "labels": {
+            "en": "French",
+            "zh_TW": "法國",
+            "in_ID": "Perancis"
+          },
+          "migrated_from": [
+            "French Monarchy [Period/Epic]",
+            "My French Film Festival"
+          ]
+        },
+        {
+          "tag_id": "singaporean",
+          "labels": {
+            "en": "Singaporean",
+            "zh_TW": "新加坡",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Singaporean Films"
+          ]
+        }
+      ]
+    },
+    "audience": {
+      "tags": [
+        {
+          "tag_id": "kids",
+          "labels": {
+            "en": "Kids",
+            "zh_TW": "兒童",
+            "in_ID": "Anak-anak"
+          },
+          "migrated_from": [
+            "Kids/Family (主分類)",
+            "Pre-Schooler [Kids/Family]",
+            "For Little Boy [Kids/Family]",
+            "For Little Girl [Kids/Family]"
+          ]
+        },
+        {
+          "tag_id": "teens",
+          "labels": {
+            "en": "Teens",
+            "zh_TW": "青少年",
+            "in_ID": "Remaja"
+          },
+          "migrated_from": [
+            "Teen Scream [Horror]",
+            "Teenage Romance [Romance]",
+            "Teenage Hero [Animation]"
+          ]
+        },
+        {
+          "tag_id": "adults",
+          "labels": {
+            "en": "Adults",
+            "zh_TW": "成人",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Adult Animations [Animation]"
+          ]
+        },
+        {
+          "tag_id": "seniors",
+          "labels": {
+            "en": "Seniors",
+            "zh_TW": "銀髮族",
+            "in_ID": "Usia Senja"
+          },
+          "migrated_from": [
+            "Senior Comedies [Comedy]",
+            "Senior Dramas [Drama]"
+          ]
+        },
+        {
+          "tag_id": "lgbt",
+          "labels": {
+            "en": "LGBT",
+            "zh_TW": "同志",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "LGBT Comedies [Comedy]",
+            "LGBT Dramas [Drama]",
+            "LGBT Romance [Romance]"
+          ]
+        },
+        {
+          "tag_id": "family-friendly",
+          "labels": {
+            "en": "Family-Friendly",
+            "zh_TW": "闔家觀賞",
+            "in_ID": "Ramah Keluarga"
+          },
+          "migrated_from": [
+            "Family Animations [Kids/Family]",
+            "Family Comedies [Comedy]",
+            "Family Dramas [Drama]"
+          ]
+        },
+        {
+          "tag_id": "chick-flick",
+          "labels": {
+            "en": "Chick Flick",
+            "zh_TW": "夢幻言情",
+            "in_ID": "Pernik Drama Remaja"
+          },
+          "migrated_from": [
+            "Chick Flicks [Romance]"
+          ]
+        },
+        {
+          "tag_id": "for-boys",
+          "labels": {
+            "en": "For Boys",
+            "zh_TW": "男孩天地",
+            "in_ID": "Dunia Anak Laki-laki"
+          },
+          "migrated_from": [
+            "For Little Boy [Kids/Family]"
+          ]
+        },
+        {
+          "tag_id": "for-girls",
+          "labels": {
+            "en": "For Girls",
+            "zh_TW": "女孩天堂",
+            "in_ID": "Dunia Anak Perempuan"
+          },
+          "migrated_from": [
+            "For Little Girl [Kids/Family]"
+          ]
+        },
+        {
+          "tag_id": "pre-schooler",
+          "labels": {
+            "en": "Pre-Schooler",
+            "zh_TW": "學齡前",
+            "in_ID": "Pra-sekolah"
+          },
+          "migrated_from": [
+            "Pre-Schooler [Kids/Family]"
+          ]
+        }
+      ]
+    },
+    "occasion": {
+      "tags": [
+        {
+          "tag_id": "chinese-new-year",
+          "labels": {
+            "en": "Chinese New Year",
+            "zh_TW": "賀歲片",
+            "in_ID": "Tahun Baru Imlek"
+          },
+          "migrated_from": [
+            "Chinese New Year [Comedy]"
+          ]
+        },
+        {
+          "tag_id": "christmas",
+          "labels": {
+            "en": "Christmas",
+            "zh_TW": "聖誕",
+            "in_ID": "Natal"
+          },
+          "migrated_from": [
+            "Christmas"
+          ]
+        },
+        {
+          "tag_id": "halloween",
+          "labels": {
+            "en": "Halloween",
+            "zh_TW": "萬聖節",
+            "in_ID": "Halloween"
+          },
+          "migrated_from": [
+            "Halloween [Horror]"
+          ]
+        },
+        {
+          "tag_id": "mothers-day",
+          "labels": {
+            "en": "Mother's Day",
+            "zh_TW": "母親節",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Mother's Day [Kids/Family]"
+          ]
+        },
+        {
+          "tag_id": "fathers-day",
+          "labels": {
+            "en": "Father's Day",
+            "zh_TW": "父親節",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Father's Day [Kids/Family]"
+          ]
+        },
+        {
+          "tag_id": "earth-day",
+          "labels": {
+            "en": "Earth Day",
+            "zh_TW": "地球日",
+            "in_ID": "Hari Bumi"
+          },
+          "migrated_from": [
+            "Earth Day [Kids/Family]"
+          ]
+        },
+        {
+          "tag_id": "beach-party",
+          "labels": {
+            "en": "Beach Party / Summer",
+            "zh_TW": "夏日歌舞片",
+            "in_ID": "Pesta Pantai"
+          },
+          "migrated_from": [
+            "Beach Party [Musical/Dance]"
+          ]
+        }
+      ]
+    },
+    "narrative": {
+      "tags": [
+        {
+          "tag_id": "film-noir",
+          "labels": {
+            "en": "Film Noir",
+            "zh_TW": "經典黑色電影",
+            "in_ID": "Film Noir"
+          },
+          "migrated_from": [
+            "Film Noir [Crime]"
+          ]
+        },
+        {
+          "tag_id": "mockumentary",
+          "labels": {
+            "en": "Mockumentary",
+            "zh_TW": "偽紀錄片",
+            "in_ID": "Mokumenter"
+          },
+          "migrated_from": [
+            "Mockumentaries [Comedy]",
+            "Sci-Fi Mockumentaries [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "found-footage",
+          "labels": {
+            "en": "Found Footage",
+            "zh_TW": "偽紀錄",
+            "in_ID": "Semi Dokumenter"
+          },
+          "migrated_from": [
+            "Found Footage Horror [Horror]"
+          ]
+        },
+        {
+          "tag_id": "omnibus",
+          "labels": {
+            "en": "Omnibus",
+            "zh_TW": "多段式電影",
+            "in_ID": "Omnibus"
+          },
+          "migrated_from": [
+            "Omnibus Films [Drama]"
+          ]
+        },
+        {
+          "tag_id": "multiple-storylines",
+          "labels": {
+            "en": "Multiple Storylines",
+            "zh_TW": "多線交錯",
+            "in_ID": "Multi-Cerita"
+          },
+          "migrated_from": [
+            "Multiple Storylines [Drama]"
+          ]
+        },
+        {
+          "tag_id": "black-and-white",
+          "labels": {
+            "en": "Black and White",
+            "zh_TW": "黑白片",
+            "in_ID": "Film Hitam Putih"
+          },
+          "migrated_from": [
+            "Black and White Films [Drama]"
+          ]
+        },
+        {
+          "tag_id": "silent-film",
+          "labels": {
+            "en": "Silent Film",
+            "zh_TW": "默片",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Silent Films [Drama]"
+          ]
+        },
+        {
+          "tag_id": "ensemble",
+          "labels": {
+            "en": "Ensemble",
+            "zh_TW": "大堆頭",
+            "in_ID": "Ansambel"
+          },
+          "migrated_from": [
+            "Ensemble Comedies [Comedy]",
+            "Ensemble Dramas [Drama]"
+          ]
+        },
+        {
+          "tag_id": "sing-along",
+          "labels": {
+            "en": "Sing-Along",
+            "zh_TW": "在家K歌",
+            "in_ID": "Bernyanyi Bersama"
+          },
+          "migrated_from": [
+            "Sing-alongs [Musical/Dance]"
+          ]
+        },
+        {
+          "tag_id": "live-musical",
+          "labels": {
+            "en": "Live Musical",
+            "zh_TW": "音樂劇實況",
+            "in_ID": "Pertunjukan Musikal Langsung"
+          },
+          "migrated_from": [
+            "Live Musicals [Musical/Dance]"
+          ]
+        },
+        {
+          "tag_id": "hand-drawn",
+          "labels": {
+            "en": "Hand-Drawn Animation",
+            "zh_TW": "手繪動畫",
+            "in_ID": "Animasi Gambar Manual"
+          },
+          "migrated_from": [
+            "Hand-Drawn Animations [Animation]"
+          ]
+        },
+        {
+          "tag_id": "motion-capture",
+          "labels": {
+            "en": "Motion-Capture Animation",
+            "zh_TW": "真人動作捕捉動畫",
+            "in_ID": "Animasi Motion-Capture"
+          },
+          "migrated_from": [
+            "Motion-Capture Animations [Animation]"
+          ]
+        },
+        {
+          "tag_id": "live-action-animation",
+          "labels": {
+            "en": "Live-Action with Animation",
+            "zh_TW": "真人結合動畫",
+            "in_ID": "Animasi Live-Action"
+          },
+          "migrated_from": [
+            "Live-Action with Animation [Animation]"
+          ]
+        },
+        {
+          "tag_id": "live-action-reimagining",
+          "labels": {
+            "en": "Live-Action Reimagining",
+            "zh_TW": "動畫真人版",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Disney Live Action Reimaginings [Kids/Family]"
+          ]
+        },
+        {
+          "tag_id": "bl",
+          "labels": {
+            "en": "Boys' Love (BL)",
+            "zh_TW": "BL",
+            "in_ID": "Boys' Love"
+          },
+          "migrated_from": [
+            "BL Dramas [Series]"
+          ]
+        }
+      ]
+    },
+    "award": {
+      "tags": [],
+      "note": "由獎項追蹤模組自動寫入。tag_id 為獎項+類別（如 oscar-best-picture），film↔tag 關聯中以 award_meta 區分 nominated/won 及年份。",
+      "award_meta_schema": {
+        "result": "nominated | won",
+        "year": "int (ceremony year)",
+        "category": "string (award category name)"
+      },
+      "example_tags": [
+        {
+          "tag_id": "oscar-best-picture",
+          "labels": {
+            "en": "Oscar - Best Picture",
+            "zh_TW": "奧斯卡最佳影片",
+            "in_ID": "Oscar - Film Terbaik"
+          }
+        },
+        {
+          "tag_id": "cannes-palme-dor",
+          "labels": {
+            "en": "Cannes - Palme d'Or",
+            "zh_TW": "坎城金棕櫚獎",
+            "in_ID": "Cannes - Palme d'Or"
+          }
+        },
+        {
+          "tag_id": "golden-horse-best-film",
+          "labels": {
+            "en": "Golden Horse - Best Film",
+            "zh_TW": "金馬獎最佳影片",
+            "in_ID": "Golden Horse - Film Terbaik"
+          }
+        }
+      ]
+    },
+    "ip": {
+      "tags": [
+        {
+          "tag_id": "marvel",
+          "labels": {
+            "en": "Marvel",
+            "zh_TW": "漫威",
+            "in_ID": "Marvel"
+          },
+          "migrated_from": [
+            "Marvel Comics [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "dc-comics",
+          "labels": {
+            "en": "DC Comics",
+            "zh_TW": "DC漫畫",
+            "in_ID": "DC"
+          },
+          "migrated_from": [
+            "DC Comics [Sci-Fi/Fantasy]",
+            "Batman [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "harry-potter",
+          "labels": {
+            "en": "Harry Potter",
+            "zh_TW": "哈利波特",
+            "in_ID": "Harry Potter"
+          },
+          "migrated_from": [
+            "Harry Potter [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "star-wars",
+          "labels": {
+            "en": "Star Wars",
+            "zh_TW": "星際大戰",
+            "in_ID": "Star Wars"
+          },
+          "migrated_from": [
+            "Star Wars [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "star-trek",
+          "labels": {
+            "en": "Star Trek",
+            "zh_TW": "星際爭霸戰",
+            "in_ID": "Star Trek"
+          },
+          "migrated_from": [
+            "Star Trek [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "batman",
+          "labels": {
+            "en": "Batman",
+            "zh_TW": "蝙蝠俠",
+            "in_ID": "Batman"
+          },
+          "migrated_from": [
+            "Batman [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "spider-verse",
+          "labels": {
+            "en": "Spider-Verse",
+            "zh_TW": "蜘蛛人宇宙",
+            "in_ID": "Spider-Verse"
+          },
+          "migrated_from": [
+            "Spider-Verse [Sci-Fi/Fantasy]",
+            "Spider-Man Universe"
+          ]
+        },
+        {
+          "tag_id": "hunger-games",
+          "labels": {
+            "en": "The Hunger Games",
+            "zh_TW": "乱世佳人",
+            "in_ID": "The Hunger Games"
+          },
+          "migrated_from": [
+            "The Hunger Games [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "the-matrix",
+          "labels": {
+            "en": "The Matrix",
+            "zh_TW": "駭客任務",
+            "in_ID": "The Matrix"
+          },
+          "migrated_from": [
+            "The Matrix [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "twilight",
+          "labels": {
+            "en": "The Twilight Saga",
+            "zh_TW": "暮光之城",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "The Twilight Saga [Romance]"
+          ]
+        },
+        {
+          "tag_id": "conjuring-universe",
+          "labels": {
+            "en": "The Conjuring Universe",
+            "zh_TW": "厲陰宅宇宙",
+            "in_ID": "The Conjuring Universe"
+          },
+          "migrated_from": [
+            "The Conjuring Universe [Horror]"
+          ]
+        },
+        {
+          "tag_id": "transformers",
+          "labels": {
+            "en": "Transformers",
+            "zh_TW": "變形金剛",
+            "in_ID": "Transformers"
+          },
+          "migrated_from": [
+            "Transformers [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "fast-and-furious",
+          "labels": {
+            "en": "Fast & Furious",
+            "zh_TW": "玩命關頭",
+            "in_ID": "Fast & Furious"
+          },
+          "migrated_from": [
+            "Fast & Furious [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "james-bond",
+          "labels": {
+            "en": "James Bond",
+            "zh_TW": "007",
+            "in_ID": "James Bond"
+          },
+          "migrated_from": [
+            "James Bond [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "mission-impossible",
+          "labels": {
+            "en": "Mission: Impossible",
+            "zh_TW": "不可能的任務",
+            "in_ID": "Mission: Impossible"
+          },
+          "migrated_from": [
+            "Mission: Impossible [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "john-wick",
+          "labels": {
+            "en": "John Wick",
+            "zh_TW": "乱世佳人",
+            "in_ID": "John Wick"
+          },
+          "migrated_from": [
+            "John Wick [Action/Adventure]"
+          ]
+        },
+        {
+          "tag_id": "godfather",
+          "labels": {
+            "en": "The Godfather",
+            "zh_TW": "教父系列",
+            "in_ID": "Seri The Godfather"
+          },
+          "migrated_from": [
+            "The Godfather Saga [Crime]"
+          ]
+        },
+        {
+          "tag_id": "gatao",
+          "labels": {
+            "en": "Gatao",
+            "zh_TW": "角頭宇宙",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Gatao [Crime]"
+          ]
+        },
+        {
+          "tag_id": "infernal-affairs",
+          "labels": {
+            "en": "Infernal Affairs",
+            "zh_TW": "無間道",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Infernal Affairs [Crime]"
+          ]
+        },
+        {
+          "tag_id": "final-destination",
+          "labels": {
+            "en": "Final Destination",
+            "zh_TW": "絕命終結站",
+            "in_ID": "Final Destination"
+          },
+          "migrated_from": [
+            "Final Destination [Disaster]"
+          ]
+        },
+        {
+          "tag_id": "monsterverse",
+          "labels": {
+            "en": "MonsterVerse",
+            "zh_TW": "華納怪獸宇宙",
+            "in_ID": "MonsterVerse"
+          },
+          "migrated_from": [
+            "MonsterVerse [Disaster]"
+          ]
+        },
+        {
+          "tag_id": "jurassic-park",
+          "labels": {
+            "en": "Jurassic Park",
+            "zh_TW": "侏羅紀系列",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Jurassic Park Franchise [Disaster]"
+          ]
+        },
+        {
+          "tag_id": "disney",
+          "labels": {
+            "en": "Disney",
+            "zh_TW": "迪士尼",
+            "in_ID": "Disney"
+          },
+          "migrated_from": [
+            "Disney [Kids/Family]",
+            "Disney Animations [Animation]",
+            "Disney Live Action Reimaginings [Kids/Family]"
+          ]
+        },
+        {
+          "tag_id": "pixar",
+          "labels": {
+            "en": "Pixar",
+            "zh_TW": "皮克斯",
+            "in_ID": "Pixar"
+          },
+          "migrated_from": [
+            "Pixar Animations [Animation]"
+          ]
+        },
+        {
+          "tag_id": "dreamworks",
+          "labels": {
+            "en": "DreamWorks",
+            "zh_TW": "夢工廠",
+            "in_ID": "DreamWorks"
+          },
+          "migrated_from": [
+            "DreamWorks Animations [Animation]"
+          ]
+        },
+        {
+          "tag_id": "illumination",
+          "labels": {
+            "en": "Illumination",
+            "zh_TW": "照明娛樂",
+            "in_ID": "Illumination"
+          },
+          "migrated_from": [
+            "Illumination Animations [Animation]"
+          ]
+        },
+        {
+          "tag_id": "lego",
+          "labels": {
+            "en": "LEGO",
+            "zh_TW": "樂高",
+            "in_ID": "LEGO"
+          },
+          "migrated_from": [
+            "LEGO Animations [Animation]"
+          ]
+        },
+        {
+          "tag_id": "minions",
+          "labels": {
+            "en": "Minions",
+            "zh_TW": "小小兵",
+            "in_ID": "Minions"
+          },
+          "migrated_from": [
+            "Minions [Animation]"
+          ]
+        },
+        {
+          "tag_id": "detective-conan",
+          "labels": {
+            "en": "Detective Conan",
+            "zh_TW": "名偵探柯南",
+            "in_ID": "Detektif Conan"
+          },
+          "migrated_from": [
+            "Detective Conan [Animation]"
+          ]
+        },
+        {
+          "tag_id": "naruto",
+          "labels": {
+            "en": "Naruto",
+            "zh_TW": "火影忍者",
+            "in_ID": "Naruto"
+          },
+          "migrated_from": [
+            "Naruto [Animation]"
+          ]
+        },
+        {
+          "tag_id": "studio-ghibli",
+          "labels": {
+            "en": "Studio Ghibli",
+            "zh_TW": "吉卜力",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Studio Ghibli [Animation]"
+          ]
+        },
+        {
+          "tag_id": "demon-slayer",
+          "labels": {
+            "en": "Demon Slayer",
+            "zh_TW": "鬼滅之刃",
+            "in_ID": "Demon Slayer: Kimetsu no Yaiba"
+          },
+          "migrated_from": [
+            "Demon Slayer: Kimetsu no Yaiba [Animation]"
+          ]
+        },
+        {
+          "tag_id": "attack-on-titan",
+          "labels": {
+            "en": "Attack on Titan",
+            "zh_TW": "進擊的巨人",
+            "in_ID": "Attack on Titan"
+          },
+          "migrated_from": [
+            "Attack on Titan [Animation]"
+          ]
+        },
+        {
+          "tag_id": "princess",
+          "labels": {
+            "en": "Princess",
+            "zh_TW": "公主系列",
+            "in_ID": "Putri Kerajaan"
+          },
+          "migrated_from": [
+            "Princess [Animation]"
+          ]
+        },
+        {
+          "tag_id": "stephen-king",
+          "labels": {
+            "en": "Stephen King",
+            "zh_TW": "史蒂芬金",
+            "in_ID": "Stephen King"
+          },
+          "migrated_from": [
+            "Stephen King Classics [Thriller]"
+          ]
+        },
+        {
+          "tag_id": "junji-ito",
+          "labels": {
+            "en": "Junji Ito",
+            "zh_TW": "伊藤潤二",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Junji Ito [Horror]"
+          ]
+        },
+        {
+          "tag_id": "detective-dee",
+          "labels": {
+            "en": "Detective Dee",
+            "zh_TW": "狄仁傑",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Detective Dee [Period/Epic]"
+          ]
+        },
+        {
+          "tag_id": "shaw-brothers",
+          "labels": {
+            "en": "Shaw Brothers",
+            "zh_TW": "邵氏經典",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Shaw Brothers Classics [Period/Epic]"
+          ]
+        },
+        {
+          "tag_id": "stephen-chow",
+          "labels": {
+            "en": "Stephen Chow",
+            "zh_TW": "星爺",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Stephen Chow [Comedy]"
+          ]
+        },
+        {
+          "tag_id": "mummy",
+          "labels": {
+            "en": "The Mummy",
+            "zh_TW": "木乃伊",
+            "in_ID": "Mumi"
+          },
+          "migrated_from": [
+            "Mummy [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "nickelodeon",
+          "labels": {
+            "en": "Nickelodeon",
+            "zh_TW": "尼克",
+            "in_ID": "Nickelodeon"
+          },
+          "migrated_from": [
+            "Nickelodeon [Kids/Family]"
+          ]
+        },
+        {
+          "tag_id": "sesame-street",
+          "labels": {
+            "en": "Sesame Street",
+            "zh_TW": "芝麻街",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Sesame Street [Kids/Family]"
+          ]
+        },
+        {
+          "tag_id": "cartoon-network",
+          "labels": {
+            "en": "Cartoon Network",
+            "zh_TW": "卡通頻道",
+            "in_ID": "Cartoon Network"
+          },
+          "migrated_from": [
+            "Cartoon Network [Kids/Family]"
+          ]
+        },
+        {
+          "tag_id": "ani-one",
+          "labels": {
+            "en": "Ani-One",
+            "zh_TW": "Ani-One",
+            "in_ID": "Ani-One"
+          },
+          "migrated_from": [
+            "Ani-One [Animation]"
+          ]
+        },
+        {
+          "tag_id": "muse",
+          "labels": {
+            "en": "Muse",
+            "zh_TW": "木棉花",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Muse [Animation]"
+          ]
+        },
+        {
+          "tag_id": "sony-animations",
+          "labels": {
+            "en": "Sony Animations",
+            "zh_TW": "索尼動畫",
+            "in_ID": "Animasi Sony"
+          },
+          "migrated_from": [
+            "Sony Animations [Animation]"
+          ]
+        },
+        {
+          "tag_id": "venom",
+          "labels": {
+            "en": "Venom",
+            "zh_TW": "猛毒",
+            "in_ID": "Venom"
+          },
+          "migrated_from": [
+            "Venom [Spider-Man Universe]"
+          ]
+        },
+        {
+          "tag_id": "morbius",
+          "labels": {
+            "en": "Morbius",
+            "zh_TW": "乱世佳人",
+            "in_ID": "Morbius"
+          },
+          "migrated_from": [
+            "Morbius [Spider-Man Universe]"
+          ]
+        },
+        {
+          "tag_id": "spider-man-universe",
+          "labels": {
+            "en": "Spider-Man Universe",
+            "zh_TW": "蜘蛛人宇宙",
+            "in_ID": "Spider-Man Universe"
+          },
+          "migrated_from": [
+            "Spider-Man Universe"
+          ]
+        },
+        {
+          "tag_id": "middle-earth",
+          "labels": {
+            "en": "Middle Earth (LOTR)",
+            "zh_TW": "中土",
+            "in_ID": "Middle Earth"
+          },
+          "migrated_from": [
+            "Middle Earth [Sci-Fi/Fantasy]"
+          ]
+        },
+        {
+          "tag_id": "hopping-zombie",
+          "labels": {
+            "en": "Hopping Zombie",
+            "zh_TW": "香港殭屍片",
+            "in_ID": "Vampir Asia"
+          },
+          "migrated_from": [
+            "Hopping Zombie [Horror]"
+          ]
+        },
+        {
+          "tag_id": "pili-puppetry",
+          "labels": {
+            "en": "Pili Puppetry",
+            "zh_TW": "霹靂布袋戲",
+            "in_ID": "Wayang Potehi"
+          },
+          "migrated_from": [
+            "Pili Puppetry [Series]"
+          ]
+        },
+        {
+          "tag_id": "hbo-asia",
+          "labels": {
+            "en": "HBO Asia Originals",
+            "zh_TW": "HBO Asia原創影集",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "HBO Asia Originals [Series]"
+          ]
+        },
+        {
+          "tag_id": "catchplay-originals",
+          "labels": {
+            "en": "CATCHPLAY Originals",
+            "zh_TW": "CATCHPLAY原創",
+            "in_ID": "CATCHPLAY Original"
+          },
+          "migrated_from": [
+            "CATCHPLAY Originals"
+          ]
+        },
+        {
+          "tag_id": "bbc-first",
+          "labels": {
+            "en": "BBC First",
+            "zh_TW": "BBC First",
+            "in_ID": "BBC First"
+          },
+          "migrated_from": [
+            "BBC First"
+          ]
+        },
+        {
+          "tag_id": "docubay",
+          "labels": {
+            "en": "Docubay",
+            "zh_TW": "Docubay",
+            "in_ID": "Docubay"
+          },
+          "migrated_from": [
+            "Docubay [Documentary]"
+          ]
+        },
+        {
+          "tag_id": "sero",
+          "labels": {
+            "en": "Sero",
+            "zh_TW": "Sero",
+            "in_ID": "Sero"
+          },
+          "migrated_from": [
+            "Sero"
+          ]
+        }
+      ]
+    },
+    "content-type": {
+      "tags": [
+        {
+          "tag_id": "mandarin-dub",
+          "labels": {
+            "en": "Mandarin Dub",
+            "zh_TW": "國語配音",
+            "in_ID": "Mandarin Dub"
+          },
+          "migrated_from": [
+            "Mandarin Dub [Kids/Family]"
+          ]
+        },
+        {
+          "tag_id": "digitally-remastered",
+          "labels": {
+            "en": "Digitally Remastered",
+            "zh_TW": "數位經典修復",
+            "in_ID": "Klasik Format Digital"
+          },
+          "migrated_from": [
+            "Digitally Remastered Classics"
+          ]
+        },
+        {
+          "tag_id": "oscar-winning",
+          "labels": {
+            "en": "Oscar-Winning",
+            "zh_TW": "奧斯卡得獎",
+            "in_ID": "Peraih Oscar"
+          },
+          "migrated_from": [
+            "Oscar-Winning Animations [Animation]"
+          ]
+        },
+        {
+          "tag_id": "animation-series",
+          "labels": {
+            "en": "Animation Series",
+            "zh_TW": "動畫影集",
+            "in_ID": "Serial Animasi"
+          },
+          "migrated_from": [
+            "Animation Series [Series]"
+          ]
+        },
+        {
+          "tag_id": "documentary-program",
+          "labels": {
+            "en": "Documentary Program",
+            "zh_TW": "紀實節目",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Documentary Programs [Series]"
+          ]
+        },
+        {
+          "tag_id": "huangmei-opera",
+          "labels": {
+            "en": "Huangmei Opera",
+            "zh_TW": "邵氏黃梅調電影",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Huangmei Opera [Musical/Dance]"
+          ]
+        },
+        {
+          "tag_id": "variety-show",
+          "labels": {
+            "en": "Variety Show",
+            "zh_TW": "綜藝節目",
+            "in_ID": "Variety Show"
+          },
+          "migrated_from": [
+            "Variety Shows (主分類)"
+          ]
+        },
+        {
+          "tag_id": "stand-up-comedy",
+          "labels": {
+            "en": "Stand-Up Comedy",
+            "zh_TW": "脫口秀",
+            "in_ID": "Stand Up Comedy"
+          },
+          "migrated_from": [
+            "Stand-Up Comedies [Variety Shows]"
+          ]
+        },
+        {
+          "tag_id": "reality-show",
+          "labels": {
+            "en": "Reality Show",
+            "zh_TW": "實境節目",
+            "in_ID": "Reality Show"
+          },
+          "migrated_from": [
+            "Reality Shows [Variety Shows]"
+          ]
+        },
+        {
+          "tag_id": "talk-show",
+          "labels": {
+            "en": "Talk Show",
+            "zh_TW": "談話性節目",
+            "in_ID": "Talk Show"
+          },
+          "migrated_from": [
+            "Talk Shows [Variety Shows]"
+          ]
+        },
+        {
+          "tag_id": "concert-film",
+          "labels": {
+            "en": "Concert Film",
+            "zh_TW": "演唱會紀實",
+            "in_ID": "Konser"
+          },
+          "migrated_from": [
+            "Concert Films [Musical/Dance]"
+          ]
+        },
+        {
+          "tag_id": "talent-show",
+          "labels": {
+            "en": "Talent Show",
+            "zh_TW": "選秀節目",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "Talent Shows [Variety Shows]"
+          ]
+        },
+        {
+          "tag_id": "news",
+          "labels": {
+            "en": "News",
+            "zh_TW": "新聞專題",
+            "in_ID": ""
+          },
+          "migrated_from": [
+            "News [Variety Shows]"
+          ]
+        },
+        {
+          "tag_id": "travel-show",
+          "labels": {
+            "en": "Travel Show",
+            "zh_TW": "行腳節目",
+            "in_ID": "Program Jalan-jalan"
+          },
+          "migrated_from": [
+            "Travel Shows [Variety Shows]"
+          ]
+        },
+        {
+          "tag_id": "short-drama",
+          "labels": {
+            "en": "Short Drama",
+            "zh_TW": "直式短影音",
+            "in_ID": "Short Dramas"
+          },
+          "migrated_from": [
+            "Short Dramas"
+          ]
+        }
+      ]
+    },
+    "curation": {
+      "tags": [
+        {
+          "tag_id": "tien-hsiang-wen",
+          "labels": {
+            "en": "Tien-Hsiang Wen",
+            "zh_TW": "聞天祥"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Tien-Hsiang Wen / 聞天祥"
+          ]
+        },
+        {
+          "tag_id": "francis-chang",
+          "labels": {
+            "en": "Francis Chang",
+            "zh_TW": "常富寧"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Francis Chang / 常富寧"
+          ]
+        },
+        {
+          "tag_id": "ryan-hsieh",
+          "labels": {
+            "en": "Ryan Hsieh",
+            "zh_TW": "謝哲青"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Ryan Hsieh / 謝哲青"
+          ]
+        },
+        {
+          "tag_id": "pao-chang-tsai",
+          "labels": {
+            "en": "Pao-Chang Tsai",
+            "zh_TW": "蔡柏璋"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Pao-Chang Tsai / 蔡柏璋"
+          ]
+        },
+        {
+          "tag_id": "chamder-tsai",
+          "labels": {
+            "en": "Chamder Tsai",
+            "zh_TW": "蔡燦得"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Chamder Tsai / 蔡燦得"
+          ]
+        },
+        {
+          "tag_id": "ball-chuang",
+          "labels": {
+            "en": "Ball Chuang",
+            "zh_TW": "莊鵑瑛（小球）"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Ball Chuang / 莊鵑瑛（小球）"
+          ]
+        },
+        {
+          "tag_id": "jesse-tang",
+          "labels": {
+            "en": "Jesse Tang",
+            "zh_TW": "唐綺陽"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Jesse Tang / 唐綺陽"
+          ]
+        },
+        {
+          "tag_id": "mickey-huang",
+          "labels": {
+            "en": "Mickey Huang",
+            "zh_TW": "黃子佼"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Mickey Huang / 黃子佼"
+          ]
+        },
+        {
+          "tag_id": "shih-yuan-lu",
+          "labels": {
+            "en": "Shih Yuan Lu",
+            "zh_TW": "呂蒔媛"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Shih Yuan Lu / 呂蒔媛"
+          ]
+        },
+        {
+          "tag_id": "rima-zeidan",
+          "labels": {
+            "en": "Rima Zeidan",
+            "zh_TW": "瑞瑪席丹"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Rima Zeidan / 瑞瑪席丹"
+          ]
+        },
+        {
+          "tag_id": "yu-ning-chu",
+          "labels": {
+            "en": "Yu Ning Chu",
+            "zh_TW": "瞿友寧"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Yu Ning Chu / 瞿友寧"
+          ]
+        },
+        {
+          "tag_id": "master-of-pig",
+          "labels": {
+            "en": "Master of Pig",
+            "zh_TW": "豬大爺"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Master of Pig / 豬大爺"
+          ]
+        },
+        {
+          "tag_id": "irene-chiang",
+          "labels": {
+            "en": "Irene Chiang",
+            "zh_TW": "江鵝"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Irene Chiang / 江鵝"
+          ]
+        },
+        {
+          "tag_id": "queen-wei",
+          "labels": {
+            "en": "Queen Wei",
+            "zh_TW": "魏如昀"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Queen Wei / 魏如昀"
+          ]
+        },
+        {
+          "tag_id": "knee",
+          "labels": {
+            "en": "Knee",
+            "zh_TW": "膝關節"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Knee / 膝關節"
+          ]
+        },
+        {
+          "tag_id": "arifin-putra",
+          "labels": {
+            "en": "Arifin Putra",
+            "zh_TW": "Arifin Putra"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Arifin Putra"
+          ]
+        },
+        {
+          "tag_id": "ario-bayu",
+          "labels": {
+            "en": "Ario Bayu",
+            "zh_TW": "Ario Bayu"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Ario Bayu"
+          ]
+        },
+        {
+          "tag_id": "dion-wiyoko",
+          "labels": {
+            "en": "Dion Wiyoko",
+            "zh_TW": "Dion Wiyoko"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Dion Wiyoko"
+          ]
+        },
+        {
+          "tag_id": "eriska-rein",
+          "labels": {
+            "en": "Eriska Rein",
+            "zh_TW": "Eriska Rein"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Eriska Rein"
+          ]
+        },
+        {
+          "tag_id": "hanung-bramantyo",
+          "labels": {
+            "en": "Hanung Bramantyo",
+            "zh_TW": "Hanung Bramantyo"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Hanung Bramantyo"
+          ]
+        },
+        {
+          "tag_id": "kemal-palevi",
+          "labels": {
+            "en": "Kemal Palevi",
+            "zh_TW": "Kemal Palevi"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Kemal Palevi"
+          ]
+        },
+        {
+          "tag_id": "maizura",
+          "labels": {
+            "en": "Maizura",
+            "zh_TW": "Maizura"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Maizura"
+          ]
+        },
+        {
+          "tag_id": "riri-riza",
+          "labels": {
+            "en": "Riri Riza",
+            "zh_TW": "Riri Riza"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Riri Riza"
+          ]
+        },
+        {
+          "tag_id": "samuel-zylgwyn",
+          "labels": {
+            "en": "Samuel Zylgwyn",
+            "zh_TW": "Samuel Zylgwyn"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Samuel Zylgwyn"
+          ]
+        },
+        {
+          "tag_id": "tanta-ginting",
+          "labels": {
+            "en": "Tanta Ginting",
+            "zh_TW": "Tanta Ginting"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Tanta Ginting"
+          ]
+        },
+        {
+          "tag_id": "tarra-budiman",
+          "labels": {
+            "en": "Tarra Budiman",
+            "zh_TW": "Tarra Budiman"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Tarra Budiman"
+          ]
+        },
+        {
+          "tag_id": "yama-carlos",
+          "labels": {
+            "en": "Yama Carlos",
+            "zh_TW": "Yama Carlos"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Yama Carlos"
+          ]
+        },
+        {
+          "tag_id": "yayan-ruhian",
+          "labels": {
+            "en": "Yayan Ruhian",
+            "zh_TW": "Yayan Ruhian"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Yayan Ruhian"
+          ]
+        },
+        {
+          "tag_id": "yu-chieh-cheng",
+          "labels": {
+            "en": "Yu-Chieh Cheng",
+            "zh_TW": "鄭有傑"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Yu-Chieh Cheng / 鄭有傑"
+          ]
+        },
+        {
+          "tag_id": "morning-mo",
+          "labels": {
+            "en": "Morning Mo",
+            "zh_TW": "莫子儀"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Morning Mo / 莫子儀"
+          ]
+        },
+        {
+          "tag_id": "chun-yao-yao",
+          "labels": {
+            "en": "Chun-Yao Yao",
+            "zh_TW": "姚淳耀"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Chun-Yao Yao / 姚淳耀"
+          ]
+        },
+        {
+          "tag_id": "run-yin-bai",
+          "labels": {
+            "en": "Run-yin Bai",
+            "zh_TW": "白潤音"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Run-yin Bai / 白潤音"
+          ]
+        },
+        {
+          "tag_id": "fran-chen",
+          "labels": {
+            "en": "Fran Chen",
+            "zh_TW": "法蘭"
+          },
+          "curation_type": "curator",
+          "migrated_from": [
+            "Fran Chen / 法蘭"
+          ]
+        },
+        {
+          "tag_id": "ang-lee",
+          "labels": {
+            "en": "Ang Lee",
+            "zh_TW": "李安"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Ang Lee / 李安"
+          ]
+        },
+        {
+          "tag_id": "akira-kurosawa",
+          "labels": {
+            "en": "Akira Kurosawa",
+            "zh_TW": "黑澤明"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Akira Kurosawa / 黑澤明"
+          ]
+        },
+        {
+          "tag_id": "yasujiro-ozu",
+          "labels": {
+            "en": "Yasujiro Ozu",
+            "zh_TW": "小津安二郎"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Yasujiro Ozu / 小津安二郎"
+          ]
+        },
+        {
+          "tag_id": "charles-chaplin",
+          "labels": {
+            "en": "Charles Chaplin",
+            "zh_TW": "卓別林"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Charles Chaplin / 卓別林"
+          ]
+        },
+        {
+          "tag_id": "krzysztof-kieslowski",
+          "labels": {
+            "en": "Krzysztof Kieslowski",
+            "zh_TW": "奇士勞斯基"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Krzysztof Kieslowski / 奇士勞斯基"
+          ]
+        },
+        {
+          "tag_id": "hsiao-hsien-hou",
+          "labels": {
+            "en": "Hsiao-Hsien Hou",
+            "zh_TW": "侯孝賢"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Hsiao-Hsien Hou / 侯孝賢"
+          ]
+        },
+        {
+          "tag_id": "kuo-fu-chen",
+          "labels": {
+            "en": "Kuo-Fu Chen",
+            "zh_TW": "陳國富"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Kuo-Fu Chen / 陳國富"
+          ]
+        },
+        {
+          "tag_id": "edward-yang",
+          "labels": {
+            "en": "Edward Yang",
+            "zh_TW": "楊德昌"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Edward Yang / 楊德昌"
+          ]
+        },
+        {
+          "tag_id": "ming-liang-tsai",
+          "labels": {
+            "en": "Ming-Liang Tsai",
+            "zh_TW": "蔡明亮"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Ming-Liang Tsai / 蔡明亮"
+          ]
+        },
+        {
+          "tag_id": "yi-chang",
+          "labels": {
+            "en": "Yi Chang",
+            "zh_TW": "張毅"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Yi Chang / 張毅"
+          ]
+        },
+        {
+          "tag_id": "sylvia-chang",
+          "labels": {
+            "en": "Sylvia Chang",
+            "zh_TW": "張艾嘉"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Sylvia Chang / 張艾嘉"
+          ]
+        },
+        {
+          "tag_id": "cheng-sheng-lin",
+          "labels": {
+            "en": "Cheng-Sheng Lin",
+            "zh_TW": "林正盛"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Cheng-Sheng Lin / 林正盛"
+          ]
+        },
+        {
+          "tag_id": "toon-wang",
+          "labels": {
+            "en": "Toon Wang",
+            "zh_TW": "王童"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Toon Wang / 王童"
+          ]
+        },
+        {
+          "tag_id": "jim-jarmusch",
+          "labels": {
+            "en": "Jim Jarmusch",
+            "zh_TW": "吉姆賈木許"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Jim Jarmusch / 吉姆賈木許"
+          ]
+        },
+        {
+          "tag_id": "takeshi-kitano",
+          "labels": {
+            "en": "Takeshi Kitano",
+            "zh_TW": "北野武"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Takeshi Kitano / 北野武"
+          ]
+        },
+        {
+          "tag_id": "andrei-tarkovsky",
+          "labels": {
+            "en": "Andrei Tarkovsky",
+            "zh_TW": "塔可夫斯基"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Andrei Tarkovsky / 塔可夫斯基"
+          ]
+        },
+        {
+          "tag_id": "stanley-kubrick",
+          "labels": {
+            "en": "Stanley Kubrick",
+            "zh_TW": "史丹利庫柏力克"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Stanley Kubrick / 史丹利庫柏力克"
+          ]
+        },
+        {
+          "tag_id": "kar-wai-wong",
+          "labels": {
+            "en": "Kar-Wai Wong",
+            "zh_TW": "王家衛"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Kar-Wai Wong / 王家衛"
+          ]
+        },
+        {
+          "tag_id": "pedro-almodóvar",
+          "labels": {
+            "en": "Pedro Almodóvar",
+            "zh_TW": "佩卓阿莫多瓦"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Pedro Almodóvar / 佩卓阿莫多瓦"
+          ]
+        },
+        {
+          "tag_id": "shunji-iwai",
+          "labels": {
+            "en": "Shunji Iwai",
+            "zh_TW": "岩井俊二"
+          },
+          "curation_type": "director-collection",
+          "migrated_from": [
+            "Shunji Iwai / 岩井俊二"
+          ]
+        },
+        {
+          "tag_id": "ken-takakura",
+          "labels": {
+            "en": "Ken Takakura",
+            "zh_TW": "高倉健"
+          },
+          "curation_type": "actor-collection",
+          "migrated_from": [
+            "Ken Takakura / 高倉健"
+          ]
+        },
+        {
+          "tag_id": "isabelle-huppert",
+          "labels": {
+            "en": "Isabelle Huppert",
+            "zh_TW": "伊莎貝雨蓓"
+          },
+          "curation_type": "actor-collection",
+          "migrated_from": [
+            "Isabelle Huppert / 伊莎貝雨蓓"
+          ]
+        },
+        {
+          "tag_id": "black-coffee",
+          "labels": {
+            "en": "Black Coffee",
+            "zh_TW": "黑咖啡聊美劇"
+          },
+          "curation_type": "program",
+          "migrated_from": [
+            "Black Coffee / 黑咖啡聊美劇"
+          ]
+        },
+        {
+          "tag_id": "食尚玩家",
+          "labels": {
+            "en": "食尚玩家",
+            "zh_TW": "食尚玩家"
+          },
+          "curation_type": "program",
+          "migrated_from": [
+            "食尚玩家"
+          ]
+        },
+        {
+          "tag_id": "女人我最大",
+          "labels": {
+            "en": "女人我最大",
+            "zh_TW": "女人我最大"
+          },
+          "curation_type": "program",
+          "migrated_from": [
+            "女人我最大"
+          ]
+        },
+        {
+          "tag_id": "健康20",
+          "labels": {
+            "en": "健康2.0",
+            "zh_TW": "健康2.0"
+          },
+          "curation_type": "program",
+          "migrated_from": [
+            "健康2.0"
+          ]
+        },
+        {
+          "tag_id": "地球黃金線",
+          "labels": {
+            "en": "地球黃金線",
+            "zh_TW": "地球黃金線"
+          },
+          "curation_type": "program",
+          "migrated_from": [
+            "地球黃金線"
+          ]
+        },
+        {
+          "tag_id": "11點熱吵店",
+          "labels": {
+            "en": "11點熱吵店",
+            "zh_TW": "11點熱吵店"
+          },
+          "curation_type": "program",
+          "migrated_from": [
+            "11點熱吵店"
+          ]
+        },
+        {
+          "tag_id": "看板人物",
+          "labels": {
+            "en": "看板人物",
+            "zh_TW": "看板人物"
+          },
+          "curation_type": "program",
+          "migrated_from": [
+            "看板人物"
+          ]
+        },
+        {
+          "tag_id": "一步一腳印",
+          "labels": {
+            "en": "一步一腳印",
+            "zh_TW": "一步一腳印"
+          },
+          "curation_type": "program",
+          "migrated_from": [
+            "一步一腳印"
+          ]
+        },
+        {
+          "tag_id": "tvbs國際談全球",
+          "labels": {
+            "en": "TVBS國際+談全球",
+            "zh_TW": "TVBS國際+談全球"
+          },
+          "curation_type": "program",
+          "migrated_from": [
+            "TVBS國際+談全球"
+          ]
+        },
+        {
+          "tag_id": "t-pop我們聽大的",
+          "labels": {
+            "en": "#T-POP我們聽大的!!",
+            "zh_TW": "#T-POP我們聽大的!!"
+          },
+          "curation_type": "program",
+          "migrated_from": [
+            "#T-POP我們聽大的!!"
+          ]
+        },
+        {
+          "tag_id": "威廉沈歡樂送",
+          "labels": {
+            "en": "威廉沈歡樂送",
+            "zh_TW": "威廉沈歡樂送"
+          },
+          "curation_type": "program",
+          "migrated_from": [
+            "威廉沈歡樂送"
+          ]
+        },
+        {
+          "tag_id": "上班這黨事",
+          "labels": {
+            "en": "上班這黨事",
+            "zh_TW": "上班這黨事"
+          },
+          "curation_type": "program",
+          "migrated_from": [
+            "上班這黨事"
+          ]
+        },
+        {
+          "tag_id": "萌寵明星粗乃玩",
+          "labels": {
+            "en": "萌寵明星粗乃玩",
+            "zh_TW": "萌寵明星粗乃玩"
+          },
+          "curation_type": "program",
+          "migrated_from": [
+            "萌寵明星粗乃玩"
+          ]
+        },
+        {
+          "tag_id": "vod-premieres",
+          "labels": {
+            "en": "VOD Premieres",
+            "zh_TW": "戲院看不到的好片"
+          },
+          "curation_type": "campaign",
+          "migrated_from": [
+            "VOD Premieres / 戲院看不到的好片"
+          ]
+        },
+        {
+          "tag_id": "cinema-premiere",
+          "labels": {
+            "en": "Cinema Premiere",
+            "zh_TW": "Bioskop Premier"
+          },
+          "curation_type": "campaign",
+          "migrated_from": [
+            "Cinema Premiere / Bioskop Premier"
+          ]
+        },
+        {
+          "tag_id": "my-french-film-festival",
+          "labels": {
+            "en": "My French Film Festival",
+            "zh_TW": "我的法國電影節"
+          },
+          "curation_type": "campaign",
+          "migrated_from": [
+            "My French Film Festival / 我的法國電影節"
+          ]
+        },
+        {
+          "tag_id": "recommended-by",
+          "labels": {
+            "en": "Recommended By",
+            "zh_TW": "他們都推薦"
+          },
+          "curation_type": "campaign",
+          "migrated_from": [
+            "Recommended By / 他們都推薦"
+          ]
+        }
+      ],
+      "note": "策展相關標籤 — 策展人、導演/演員精選、合作節目、行銷活動等。curation_type 區分子類型。",
+      "curation_types": {
+        "curator": "策展人（平台邀請推薦片單的名人）",
+        "director-collection": "導演精選集",
+        "actor-collection": "演員精選集",
+        "program": "合作節目/節目名稱",
+        "campaign": "行銷活動/影展活動"
+      }
+    }
+  },
+  "deprecated": [
+    {
+      "original": "James Bond (duplicate entry at index 277)",
+      "reason": "重複條目，與 index 274 相同"
+    }
+  ],
+  "migration_rules": [
+    {
+      "original": "Action Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Horror Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "horror",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Sci-Fi Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "sci-fi",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Sports Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "sports",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Western Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "western",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Crime Comedies [Crime]",
+      "maps_to": [
+        {
+          "tag_id": "crime",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "War Comedies [War]",
+      "maps_to": [
+        {
+          "tag_id": "war",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Fantasy Comedies [Sci-Fi/Fantasy]",
+      "maps_to": [
+        {
+          "tag_id": "fantasy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Period Comedies [Period/Epic]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "period",
+          "dimension": "era"
+        }
+      ]
+    },
+    {
+      "original": "Coming-of-Age Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "coming-of-age",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Coming-of-Age Dramas [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "coming-of-age",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Family Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "family",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Family Dramas [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "family",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Military Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "military",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "School Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "school",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Workplace Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "workplace",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Road Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "road-trip",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Food Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "food",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Animal Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "animal",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Sex Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "sex",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "LGBT Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "lgbt",
+          "dimension": "audience"
+        }
+      ]
+    },
+    {
+      "original": "LGBT Dramas [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "lgbt",
+          "dimension": "audience"
+        }
+      ]
+    },
+    {
+      "original": "LGBT Romance [Romance]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "lgbt",
+          "dimension": "audience"
+        }
+      ]
+    },
+    {
+      "original": "BL Dramas [Series]",
+      "maps_to": [
+        {
+          "tag_id": "series",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "bl",
+          "dimension": "narrative"
+        }
+      ]
+    },
+    {
+      "original": "Senior Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "seniors",
+          "dimension": "audience"
+        }
+      ]
+    },
+    {
+      "original": "Senior Dramas [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "seniors",
+          "dimension": "audience"
+        }
+      ]
+    },
+    {
+      "original": "Teen Scream [Horror]",
+      "maps_to": [
+        {
+          "tag_id": "horror",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "teens",
+          "dimension": "audience"
+        }
+      ]
+    },
+    {
+      "original": "Teenage Romance [Romance]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "teens",
+          "dimension": "audience"
+        }
+      ]
+    },
+    {
+      "original": "Political Satires [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "political",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Showbiz Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "showbiz",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Showbiz Dramas [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "showbiz",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "British Humor [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "british",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Action Sci-Fi [Sci-Fi/Fantasy]",
+      "maps_to": [
+        {
+          "tag_id": "sci-fi",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Sci-Fi Thrillers [Sci-Fi/Fantasy]",
+      "maps_to": [
+        {
+          "tag_id": "sci-fi",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Sci-Fi Horror [Horror]",
+      "maps_to": [
+        {
+          "tag_id": "sci-fi",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "horror",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Sci-Fi Crime [Crime]",
+      "maps_to": [
+        {
+          "tag_id": "sci-fi",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "crime",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Sci-Fi Wars [War]",
+      "maps_to": [
+        {
+          "tag_id": "sci-fi",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "war",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Sci-Fi Animations [Animation]",
+      "maps_to": [
+        {
+          "tag_id": "sci-fi",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "animation",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Action Fantasy [Sci-Fi/Fantasy]",
+      "maps_to": [
+        {
+          "tag_id": "fantasy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Fantasy Romance [Sci-Fi/Fantasy]",
+      "maps_to": [
+        {
+          "tag_id": "fantasy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Fantasy Adventure [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "fantasy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "adventure",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Fantasy Epic [Sci-Fi/Fantasy]",
+      "maps_to": [
+        {
+          "tag_id": "fantasy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "period-epic",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Monster Fantasy [Sci-Fi/Fantasy]",
+      "maps_to": [
+        {
+          "tag_id": "fantasy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "monster",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Musical Romance [Romance]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "musical",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Romantic Dramas [Romance]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "War Romance [Romance]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "war",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Romantic Adventure [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "adventure",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Romantic Thrillers [Thriller]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Romantic Epics [Period/Epic]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "period-epic",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Period Romance [Period/Epic]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "period",
+          "dimension": "era"
+        }
+      ]
+    },
+    {
+      "original": "Time-Travel Romance [Romance]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "time-travel",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Erotic Romance [Romance]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "erotic",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Tearjerker Romance [Romance]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "tearjerker",
+          "dimension": "emotion"
+        }
+      ]
+    },
+    {
+      "original": "Cop & Robber Action [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "cop-action",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Revenge Action [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "revenge",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Action Thrillers [Thriller]",
+      "maps_to": [
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Hong Kong Action [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "hong-kong",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Female Action [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "girl-power",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Period Action [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "period",
+          "dimension": "era"
+        }
+      ]
+    },
+    {
+      "original": "Space Adventure [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "adventure",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "outer-space",
+          "dimension": "setting"
+        }
+      ]
+    },
+    {
+      "original": "Road Adventure [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "adventure",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "road-trip",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Period Horror [Horror]",
+      "maps_to": [
+        {
+          "tag_id": "horror",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "period",
+          "dimension": "era"
+        }
+      ]
+    },
+    {
+      "original": "Erotic Horror [Horror]",
+      "maps_to": [
+        {
+          "tag_id": "horror",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "erotic",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Japanese/Korean Horror [Horror]",
+      "maps_to": [
+        {
+          "tag_id": "horror",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "japanese",
+          "dimension": "region"
+        },
+        {
+          "tag_id": "korean",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Thai Horror [Horror]",
+      "maps_to": [
+        {
+          "tag_id": "horror",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "thai",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Indonesian Horror [Horror]",
+      "maps_to": [
+        {
+          "tag_id": "horror",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "indonesian",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Horror Series [Series]",
+      "maps_to": [
+        {
+          "tag_id": "series",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "horror",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Erotic Thrillers [Thriller]",
+      "maps_to": [
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "erotic",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Legal Thrillers [Thriller]",
+      "maps_to": [
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "legal",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Medical Thrillers [Thriller]",
+      "maps_to": [
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "medical",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Political Thrillers [Thriller]",
+      "maps_to": [
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "political",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Religious Thrillers [Thriller]",
+      "maps_to": [
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "faith",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Techno-Thrillers [Thriller]",
+      "maps_to": [
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "technology",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Terrorist Thrillers [Thriller]",
+      "maps_to": [
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "terrorism",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Spy Thrillers [Thriller]",
+      "maps_to": [
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "spy",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Crime Dramas [Crime]",
+      "maps_to": [
+        {
+          "tag_id": "crime",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Woman's Revenge [Crime]",
+      "maps_to": [
+        {
+          "tag_id": "crime",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "revenge",
+          "dimension": "theme"
+        },
+        {
+          "tag_id": "girl-power",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "War Epics [Period/Epic]",
+      "maps_to": [
+        {
+          "tag_id": "war",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "period-epic",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Western Epics [Period/Epic]",
+      "maps_to": [
+        {
+          "tag_id": "western",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "period-epic",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "War Series [Series]",
+      "maps_to": [
+        {
+          "tag_id": "series",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "war",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "War Documentaries [Documentary]",
+      "maps_to": [
+        {
+          "tag_id": "documentary",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "war",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Sports Documentaries [Documentary]",
+      "maps_to": [
+        {
+          "tag_id": "documentary",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "sports",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Music Documentaries [Documentary]",
+      "maps_to": [
+        {
+          "tag_id": "documentary",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "music",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Food Documentaries [Documentary]",
+      "maps_to": [
+        {
+          "tag_id": "documentary",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "food",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Art Documentaries [Documentary]",
+      "maps_to": [
+        {
+          "tag_id": "documentary",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "art",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Fashion Documentaries [Documentary]",
+      "maps_to": [
+        {
+          "tag_id": "documentary",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "fashion",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Historical Documentaries [Documentary]",
+      "maps_to": [
+        {
+          "tag_id": "documentary",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "period",
+          "dimension": "era"
+        }
+      ]
+    },
+    {
+      "original": "Medical Documentaries [Documentary]",
+      "maps_to": [
+        {
+          "tag_id": "documentary",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "medical",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Natural Disaster Documentaries [Documentary]",
+      "maps_to": [
+        {
+          "tag_id": "documentary",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Environmental Documentaries [Documentary]",
+      "maps_to": [
+        {
+          "tag_id": "documentary",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "environmental",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Social Issue Documentaries [Documentary]",
+      "maps_to": [
+        {
+          "tag_id": "documentary",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "social-issues",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Celebrity Documentaries [Documentary]",
+      "maps_to": [
+        {
+          "tag_id": "documentary",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "celebrity",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Animal Documentaries [Documentary]",
+      "maps_to": [
+        {
+          "tag_id": "documentary",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "animal",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Backstage Documentaries [Documentary]",
+      "maps_to": [
+        {
+          "tag_id": "documentary",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "behind-the-scenes",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Animated Musicals [Animation]",
+      "maps_to": [
+        {
+          "tag_id": "animation",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "musical",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Superhero Animations [Animation]",
+      "maps_to": [
+        {
+          "tag_id": "animation",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "superhero",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Animal Animations [Animation]",
+      "maps_to": [
+        {
+          "tag_id": "animation",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "animal",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Adult Animations [Animation]",
+      "maps_to": [
+        {
+          "tag_id": "animation",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "adults",
+          "dimension": "audience"
+        }
+      ]
+    },
+    {
+      "original": "Family Animations [Kids/Family]",
+      "maps_to": [
+        {
+          "tag_id": "animation",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "family-friendly",
+          "dimension": "audience"
+        }
+      ]
+    },
+    {
+      "original": "European Animations [Animation]",
+      "maps_to": [
+        {
+          "tag_id": "animation",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "european",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Bollywood Musicals [Musical/Dance]",
+      "maps_to": [
+        {
+          "tag_id": "musical",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "bollywood",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Music & Romance [Musical/Dance]",
+      "maps_to": [
+        {
+          "tag_id": "musical",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Earthquake [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Flood [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Volcanic Eruption [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Storm [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Plane Crash [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "airplane",
+          "dimension": "setting"
+        }
+      ]
+    },
+    {
+      "original": "Shipwreck [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "sea",
+          "dimension": "setting"
+        }
+      ]
+    },
+    {
+      "original": "Meteor [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "outer-space",
+          "dimension": "setting"
+        }
+      ]
+    },
+    {
+      "original": "Alien Disaster [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "alien-invasion",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Monster Disaster [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "monster",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Space Disaster [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "outer-space",
+          "dimension": "setting"
+        }
+      ]
+    },
+    {
+      "original": "Car Crash [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Fire [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Terrorist Attack [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "terrorism",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Mountain Accident [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "mountain",
+          "dimension": "setting"
+        }
+      ]
+    },
+    {
+      "original": "Taiwanese Dramas [Series]",
+      "maps_to": [
+        {
+          "tag_id": "series",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "taiwanese",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Japanese Dramas [Series]",
+      "maps_to": [
+        {
+          "tag_id": "series",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "japanese",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "British Dramas [Series]",
+      "maps_to": [
+        {
+          "tag_id": "series",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "british",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "American Dramas [Series]",
+      "maps_to": [
+        {
+          "tag_id": "series",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "american",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Chinese Dramas [Series]",
+      "maps_to": [
+        {
+          "tag_id": "series",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "chinese",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Thai Dramas [Series]",
+      "maps_to": [
+        {
+          "tag_id": "series",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "thai",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Korean Dramas [Series]",
+      "maps_to": [
+        {
+          "tag_id": "series",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "korean",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Indonesian Dramas [Series]",
+      "maps_to": [
+        {
+          "tag_id": "series",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "indonesian",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "American President [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "political",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Criminal [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "crime",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Sports Hero [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "sports",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Sports Biographies [Sports]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "sports",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Musical Biographies [Musical/Dance]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "music",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Music Icon [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "music",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "War Hero [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "war",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Politician [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "political",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Scientist [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "technology",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Writer [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "art",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Painter [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "art",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Dancer [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "dance",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Famous Woman [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "girl-power",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Fashion Icon [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "fashion",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Religious Figure [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "faith",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Films for Foodies [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "food",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Traveler [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "road-trip",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Journalist [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "journalist",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Technology [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "technology",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Tycoon [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "tycoon",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Craftsman [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "craftsman",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Cinema & TV Icon [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "showbiz",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Ordinary Hero [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "ordinary-hero",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "David vs. Goliath [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "david-vs-goliath",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Royalty [Biography]",
+      "maps_to": [
+        {
+          "tag_id": "biography",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "royalty",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Food & Travel [Variety Shows]",
+      "maps_to": [
+        {
+          "tag_id": "variety-show",
+          "dimension": "content-type"
+        },
+        {
+          "tag_id": "food",
+          "dimension": "theme"
+        },
+        {
+          "tag_id": "road-trip",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Interviews [Variety Shows]",
+      "maps_to": [
+        {
+          "tag_id": "variety-show",
+          "dimension": "content-type"
+        }
+      ]
+    },
+    {
+      "original": "Fashion & Beauty [Variety Shows]",
+      "maps_to": [
+        {
+          "tag_id": "variety-show",
+          "dimension": "content-type"
+        },
+        {
+          "tag_id": "fashion",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Music Program [Variety Shows]",
+      "maps_to": [
+        {
+          "tag_id": "variety-show",
+          "dimension": "content-type"
+        },
+        {
+          "tag_id": "music",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Health & Lifestyle [Variety Shows]",
+      "maps_to": [
+        {
+          "tag_id": "variety-show",
+          "dimension": "content-type"
+        },
+        {
+          "tag_id": "health-lifestyle",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Pets [Variety Shows]",
+      "maps_to": [
+        {
+          "tag_id": "variety-show",
+          "dimension": "content-type"
+        },
+        {
+          "tag_id": "pets",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "News [Variety Shows]",
+      "maps_to": [
+        {
+          "tag_id": "news",
+          "dimension": "content-type"
+        }
+      ]
+    },
+    {
+      "original": "Mockumentaries [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "mockumentary",
+          "dimension": "narrative"
+        }
+      ]
+    },
+    {
+      "original": "Sci-Fi Mockumentaries [Sci-Fi/Fantasy]",
+      "maps_to": [
+        {
+          "tag_id": "sci-fi",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "mockumentary",
+          "dimension": "narrative"
+        }
+      ]
+    },
+    {
+      "original": "Found Footage Horror [Horror]",
+      "maps_to": [
+        {
+          "tag_id": "horror",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "found-footage",
+          "dimension": "narrative"
+        }
+      ]
+    },
+    {
+      "original": "Omnibus Films [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "omnibus",
+          "dimension": "narrative"
+        }
+      ]
+    },
+    {
+      "original": "Multiple Storylines [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "multiple-storylines",
+          "dimension": "narrative"
+        }
+      ]
+    },
+    {
+      "original": "Black and White Films [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "black-and-white",
+          "dimension": "narrative"
+        }
+      ]
+    },
+    {
+      "original": "Silent Films [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "silent-film",
+          "dimension": "narrative"
+        }
+      ]
+    },
+    {
+      "original": "Ensemble Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "ensemble",
+          "dimension": "narrative"
+        }
+      ]
+    },
+    {
+      "original": "Ensemble Dramas [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "ensemble",
+          "dimension": "narrative"
+        }
+      ]
+    },
+    {
+      "original": "Terror in the Water [Horror]",
+      "maps_to": [
+        {
+          "tag_id": "horror",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "underwater",
+          "dimension": "setting"
+        }
+      ]
+    },
+    {
+      "original": "Terror in the Air [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "airplane",
+          "dimension": "setting"
+        }
+      ]
+    },
+    {
+      "original": "Locked Room Thrillers [Thriller]",
+      "maps_to": [
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "locked-room",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Dream Thrillers [Thriller]",
+      "maps_to": [
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "dream",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Scary Lover [Thriller]",
+      "maps_to": [
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "stalker",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Buddy Cop [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "cop-action",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "friendship",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Cross-Dressing Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "cross-dressing",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Cross-Dressing Dramas [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "cross-dressing",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Fairy Tale Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "fairy-tale",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Fairy Tale Dramas [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "fairy-tale",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Fish out of Water Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "fish-out-of-water",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Medical Dramas [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "medical",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Political Dramas [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "political",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Prison Dramas [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "prison",
+          "dimension": "theme"
+        },
+        {
+          "tag_id": "prison",
+          "dimension": "setting"
+        }
+      ]
+    },
+    {
+      "original": "Courtroom Dramas [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "legal",
+          "dimension": "theme"
+        },
+        {
+          "tag_id": "courtroom",
+          "dimension": "setting"
+        }
+      ]
+    },
+    {
+      "original": "Road Movies [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "road-trip",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Tearjerkers [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "tearjerker",
+          "dimension": "emotion"
+        }
+      ]
+    },
+    {
+      "original": "Inspirational Films [Kids/Family]",
+      "maps_to": [
+        {
+          "tag_id": "inspirational",
+          "dimension": "emotion"
+        }
+      ]
+    },
+    {
+      "original": "Spiritual-Healing Movies",
+      "maps_to": [
+        {
+          "tag_id": "feel-good",
+          "dimension": "emotion"
+        }
+      ]
+    },
+    {
+      "original": "Feel-Good Foodie Movies [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "feel-good",
+          "dimension": "emotion"
+        },
+        {
+          "tag_id": "food",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Light Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "feel-good",
+          "dimension": "emotion"
+        }
+      ]
+    },
+    {
+      "original": "In the Brain [Sci-Fi/Fantasy]",
+      "maps_to": [
+        {
+          "tag_id": "sci-fi",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "mind-bending",
+          "dimension": "emotion"
+        }
+      ]
+    },
+    {
+      "original": "Chinese Language Films",
+      "maps_to": [
+        {
+          "tag_id": "chinese",
+          "dimension": "region"
+        },
+        {
+          "tag_id": "taiwanese",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Indonesian Films",
+      "maps_to": [
+        {
+          "tag_id": "indonesian",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Korean Films",
+      "maps_to": [
+        {
+          "tag_id": "korean",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Bollywood Films",
+      "maps_to": [
+        {
+          "tag_id": "bollywood",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Film Europe",
+      "maps_to": [
+        {
+          "tag_id": "european",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Singaporean Films",
+      "maps_to": [
+        {
+          "tag_id": "singaporean",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Urban Comedies [Comedy]",
+      "maps_to": [
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "american",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Japanese Romance [Romance]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "japanese",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Taiwanese New Cinema",
+      "maps_to": [
+        {
+          "tag_id": "taiwanese",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "British Historical Dramas [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "british",
+          "dimension": "region"
+        },
+        {
+          "tag_id": "british-period",
+          "dimension": "era"
+        }
+      ]
+    },
+    {
+      "original": "Wuxia [Period/Epic]",
+      "maps_to": [
+        {
+          "tag_id": "wuxia",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "martial-arts",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "period",
+          "dimension": "era"
+        }
+      ]
+    },
+    {
+      "original": "Samurai [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "samurai",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "martial-arts",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "japanese",
+          "dimension": "region"
+        }
+      ]
+    },
+    {
+      "original": "Pirate [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "pirate",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "adventure",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "sea",
+          "dimension": "setting"
+        }
+      ]
+    },
+    {
+      "original": "Spy Action [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "spy",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Car Racing [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "motorsport",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Romantic Comedies [Romance]",
+      "maps_to": [
+        {
+          "tag_id": "romantic-comedy",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "comedy",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Chick Flicks [Romance]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "chick-flick",
+          "dimension": "audience"
+        }
+      ]
+    },
+    {
+      "original": "Mystery Dramas [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "mystery",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Mystery Thrillers [Thriller]",
+      "maps_to": [
+        {
+          "tag_id": "thriller",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "mystery",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Tobey Maguire [Spider-Man Universe]",
+      "maps_to": [
+        {
+          "tag_id": "spider-man-universe",
+          "dimension": "ip"
+        }
+      ]
+    },
+    {
+      "original": "Andrew Garfield [Spider-Man Universe]",
+      "maps_to": [
+        {
+          "tag_id": "spider-man-universe",
+          "dimension": "ip"
+        }
+      ]
+    },
+    {
+      "original": "Tom Holland [Spider-Man Universe]",
+      "maps_to": [
+        {
+          "tag_id": "spider-man-universe",
+          "dimension": "ip"
+        }
+      ]
+    },
+    {
+      "original": "Spidey Animation [Spider-Man Universe]",
+      "maps_to": [
+        {
+          "tag_id": "spider-man-universe",
+          "dimension": "ip"
+        },
+        {
+          "tag_id": "animation",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Venom [Spider-Man Universe]",
+      "maps_to": [
+        {
+          "tag_id": "venom",
+          "dimension": "ip"
+        },
+        {
+          "tag_id": "spider-man-universe",
+          "dimension": "ip"
+        }
+      ]
+    },
+    {
+      "original": "Morbius [Spider-Man Universe]",
+      "maps_to": [
+        {
+          "tag_id": "morbius",
+          "dimension": "ip"
+        },
+        {
+          "tag_id": "spider-man-universe",
+          "dimension": "ip"
+        }
+      ]
+    },
+    {
+      "original": "Batman [Sci-Fi/Fantasy]",
+      "maps_to": [
+        {
+          "tag_id": "batman",
+          "dimension": "ip"
+        },
+        {
+          "tag_id": "dc-comics",
+          "dimension": "ip"
+        },
+        {
+          "tag_id": "superhero",
+          "dimension": "genre"
+        }
+      ]
+    },
+    {
+      "original": "Oscar-Winning Animations [Animation]",
+      "maps_to": [
+        {
+          "tag_id": "animation",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "oscar-winning",
+          "dimension": "production"
+        }
+      ]
+    },
+    {
+      "original": "Mandarin Dub [Kids/Family]",
+      "maps_to": [
+        {
+          "tag_id": "mandarin-dub",
+          "dimension": "production"
+        }
+      ]
+    },
+    {
+      "original": "Digitally Remastered Classics",
+      "maps_to": [
+        {
+          "tag_id": "digitally-remastered",
+          "dimension": "production"
+        }
+      ]
+    },
+    {
+      "original": "Literary Adaptations [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "literary-adaptation",
+          "dimension": "source"
+        }
+      ]
+    },
+    {
+      "original": "Based on True Story [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "based-on-true-story",
+          "dimension": "source"
+        }
+      ]
+    },
+    {
+      "original": "True Crime [Crime]",
+      "maps_to": [
+        {
+          "tag_id": "crime",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "based-on-true-story",
+          "dimension": "source"
+        }
+      ]
+    },
+    {
+      "original": "Based on Novel [Period/Epic]",
+      "maps_to": [
+        {
+          "tag_id": "novel-adaptation",
+          "dimension": "source"
+        }
+      ]
+    },
+    {
+      "original": "Romantic Novel Adaptations [Romance]",
+      "maps_to": [
+        {
+          "tag_id": "romance",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "novel-adaptation",
+          "dimension": "source"
+        }
+      ]
+    },
+    {
+      "original": "Sci-Fi/Fantasy Novel Adaptations [Sci-Fi/Fantasy]",
+      "maps_to": [
+        {
+          "tag_id": "sci-fi",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "novel-adaptation",
+          "dimension": "source"
+        }
+      ]
+    },
+    {
+      "original": "Manga Adaptations [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "manga-adaptation",
+          "dimension": "source"
+        }
+      ]
+    },
+    {
+      "original": "Stage Adaptations [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "stage-adaptation",
+          "dimension": "source"
+        }
+      ]
+    },
+    {
+      "original": "Musical Adaptations [Musical/Dance]",
+      "maps_to": [
+        {
+          "tag_id": "musical",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "musical-adaptation",
+          "dimension": "source"
+        }
+      ]
+    },
+    {
+      "original": "Video Game Adaptations [Sci-Fi/Fantasy]",
+      "maps_to": [
+        {
+          "tag_id": "video-game-adaptation",
+          "dimension": "source"
+        }
+      ]
+    },
+    {
+      "original": "Action Video Game Adaptations [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "video-game-adaptation",
+          "dimension": "source"
+        }
+      ]
+    },
+    {
+      "original": "Comic or Cartoon Adaptations [Action/Adventure]",
+      "maps_to": [
+        {
+          "tag_id": "action",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "comic-adaptation",
+          "dimension": "source"
+        }
+      ]
+    },
+    {
+      "original": "Mythology Adaptations [Period/Epic]",
+      "maps_to": [
+        {
+          "tag_id": "mythology-adaptation",
+          "dimension": "source"
+        }
+      ]
+    },
+    {
+      "original": "Children's Literature Adaptations [Kids/Family]",
+      "maps_to": [
+        {
+          "tag_id": "kids-family",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "childrens-literature",
+          "dimension": "source"
+        }
+      ]
+    },
+    {
+      "original": "Bible Stories [Period/Epic]",
+      "maps_to": [
+        {
+          "tag_id": "period-epic",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "bible-stories",
+          "dimension": "source"
+        },
+        {
+          "tag_id": "faith",
+          "dimension": "theme"
+        }
+      ]
+    },
+    {
+      "original": "Shakespeare [Drama]",
+      "maps_to": [
+        {
+          "tag_id": "drama",
+          "dimension": "genre"
+        },
+        {
+          "tag_id": "shakespeare-adaptation",
+          "dimension": "source"
+        },
+        {
+          "tag_id": "shakespeare",
+          "dimension": "era"
+        }
+      ]
+    },
+    {
+      "original": "Other Natural Disasters [Disaster]",
+      "maps_to": [
+        {
+          "tag_id": "disaster",
+          "dimension": "genre"
+        }
+      ]
+    }
+  ],
+  "platform_metadata": {
+    "note": "平台/頻道/發行商，屬於影片 metadata 而非 tag。實作時寫入影片資料表的對應欄位。",
+    "implementation": {
+      "description": "在影片資料表 (films table) 新增欄位存放，不進入 tag 系統",
+      "fields": {
+        "distributor": {
+          "type": "string",
+          "description": "發行商/片商（如 NBC Universal, Paramount, SONY）",
+          "source": "從現有分類遷移 + 片庫資料庫"
+        },
+        "channel": {
+          "type": "string",
+          "description": "播出頻道（如 tvN, Paramount Network, TVBS）",
+          "source": "從現有分類遷移 + 片庫資料庫"
+        }
+      }
+    },
+    "items": [
+      {
+        "original": "NBC Universal / 環球出品",
+        "maps_to_field": "distributor"
+      },
+      {
+        "original": "Paramount / 派拉蒙出品",
+        "maps_to_field": "distributor"
+      },
+      {
+        "original": "Paramount Network",
+        "maps_to_field": "channel"
+      },
+      {
+        "original": "SONY Hits",
+        "maps_to_field": "distributor"
+      },
+      {
+        "original": "Celestial Movies On Demand",
+        "maps_to_field": "channel"
+      },
+      {
+        "original": "Now Baogu Movies On Demand",
+        "maps_to_field": "channel"
+      },
+      {
+        "original": "tvN Movies",
+        "maps_to_field": "channel"
+      },
+      {
+        "original": "BLK2 Classics / 澤東電影精選",
+        "maps_to_field": "distributor"
+      },
+      {
+        "original": "TVBS",
+        "maps_to_field": "channel"
+      }
+    ]
+  }
+}

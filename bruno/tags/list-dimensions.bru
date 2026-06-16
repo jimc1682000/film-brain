@@ -1,0 +1,15 @@
+meta {
+  name: List Dimensions
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/tags/dimensions
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}

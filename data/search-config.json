@@ -1,0 +1,50 @@
+{
+  "_說明": "搜尋所有可調旋鈕。改完存檔,下次搜尋自動生效(mtime 熱載,data/ 是 volume)。以 _ 開頭欄位純註解。本檔由 ADR 0004 自評閉環調校,且所有維度統一為『加權 boost』—— 不再有硬性過濾,任何維度都只是依權重加分、永不清空結果。",
+
+  "_help": {
+    "recall": "每路召回候選數。高→廣但雜;低→快但可能漏。",
+    "pool": "RRF 後丟給 CE 精排的候選數。",
+    "rrf_k": "RRF 1/(k+rank) 的 k。小→頭部突出;大→名次平。",
+    "top_bonus": "各路前幾名額外加分,護精準命中。",
+    "weights": "向量/HyDE/BM25 三路召回的權重。",
+    "min_display_score": "顯示分數門檻(對 raw 排序分),低於不顯示。",
+    "confidence_tiers": "信心分級:用『最佳候選對使用者原句向量的 cosine』(唯一能分辨真命中/離題的訊號,CE 絕對分不行——會給離題片高分)選 high/mid/low。每段一個顯示 band:內部排序分是相對的(CE 只可信順序),所以 band 天花板才是誠實訊號——high 頂 95%、mid 頂 68%、low 頂 42% + 警示。校準(2026-06,45 真實查詢):真實 cosine 0.45–0.65、軟離題(報稅/股票)0.47–0.50、重度離題(MJ/量子)<0.40;門檻取安全側,保證無命中不進 high。band 對『整個候選池』做 min-max(非當次 slice)→ 同片跨 top_k 分數穩定。",
+    "tag_boost_scale": "維度 boost 的總倍率。每部片帶到查詢要求的 tag → 分數 += 該維 weight × 此倍率。調此 = 整體『偏好/硬條件』影響力。",
+    "inject_weight_threshold": "維度 weight ≥ 此值視為『強條件』(如地區/得獎),會主動把帶該 tag 的片注入候選池(確保有結果可排),而非只靠召回撞到。低於此的維度(主題/情緒)只加分、不注入。",
+    "dimensions": "每維一個 weight,全部 mode=boost(統一靠權重,無硬篩)。weight 越高 = 該維越主導排序;達 inject_weight_threshold 會注入該維的片。判準:越是定義性/事實性(地區/IP/受眾/得獎)給越高權重,偏好性(主題/情緒/風格)給較低。未列出的維度套 dimension_default。"
+  },
+
+  "recall": 40,
+  "pool": 30,
+  "rrf_k": 20,
+  "top_bonus": [0.02, 0.01, 0.005],
+  "weights": { "vector": 1.3, "hyde": 0.2, "bm25": 1.5 },
+  "min_display_score": 0.1,
+  "confidence_tiers": {
+    "high": { "min_cos": 0.52, "band": [0.72, 0.95] },
+    "mid":  { "min_cos": 0.45, "band": [0.45, 0.68] },
+    "low":  { "min_cos": 0.0,  "band": [0.20, 0.42] }
+  },
+
+  "tag_boost_scale": 0.15,
+  "inject_weight_threshold": 1.5,
+
+  "dimension_default": { "mode": "boost", "weight": 0.3 },
+
+  "dimensions": {
+    "region": { "mode": "boost", "weight": 2.0, "_": "國別:定義性,給高權重 → 韓片強壓頂、會注入,但不再硬排除日片" },
+    "ip": { "mode": "boost", "weight": 1.8, "_": "IP/系列:事實性,高權重 + 注入" },
+    "award": { "mode": "boost", "weight": 1.5, "_": "得獎:高權重 + 注入(得獎片本來就要保證出現),不再硬篩清空" },
+    "audience": { "mode": "boost", "weight": 1.5, "_": "受眾:適宜性,高權重 + 注入" },
+    "genre": { "mode": "boost", "weight": 1.0, "_": "類型:強軟訊號,不注入(靠召回)" },
+    "theme": { "mode": "boost", "weight": 0.7, "_": "主題:復仇/成長/家庭…" },
+    "emotion": { "mode": "boost", "weight": 0.6, "_": "情緒:催淚/療癒/燒腦…" },
+    "source": { "mode": "boost", "weight": 0.5, "_": "來源:改編/真人實事" },
+    "era": { "mode": "boost", "weight": 0.5, "_": "年代:古裝/二戰" },
+    "setting": { "mode": "boost", "weight": 0.5, "_": "場景:監獄/法庭/太空" },
+    "content-type": { "mode": "boost", "weight": 0.4, "_": "內容型態:影集/修復/得獎" },
+    "occasion": { "mode": "boost", "weight": 0.4, "_": "節慶/場合:賀歲/聖誕/母親節" },
+    "narrative": { "mode": "boost", "weight": 0.3, "_": "敘事/風格:偽紀錄/黑白/多線" },
+    "curation": { "mode": "boost", "weight": 0.3, "_": "策展人精選" }
+  }
+}

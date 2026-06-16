@@ -1,0 +1,18 @@
+{
+  // mdformat owns formatting; markdownlint here gates only structural issues it
+  // doesn't touch. Style-opinion rules that clash with our doc conventions are
+  // off: bold labels (MD036), bare source URLs (MD034), free-wrap prose
+  // (MD013), inline HTML (MD033), frontmatter-before-h1 (MD041), ADRs reusing
+  // headings (MD024).
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD033": false,
+    "MD041": false,
+    "MD036": false,
+    "MD034": false,
+    "MD040": false,
+    "MD024": { "siblings_only": true }
+  },
+  "ignores": [".venv", "node_modules", "**/.venv/**"]
+}
