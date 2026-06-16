@@ -91,6 +91,7 @@ select = [
     "PLR1714", # repeated-equality-comparison
     "PLR1730", # if-stmt → min/max
     "C901", # mccabe complexity (all functions ≤10; gate keeps it that way)
+    "S",   # flake8-bandit — local SAST (taint-based SSRF/SQLi left to CodeQL/semgrep)
 ]
 ignore = [
     "E501",  # line-too-long (formatter handles)
@@ -104,13 +105,23 @@ ignore = [
     "RUF002", # ambiguous-unicode-character-docstring
     "RUF003", # ambiguous-unicode-character-comment
     "PT018", # composite-assertion (assert a and b — fine in these tests)
+    # flake8-bandit: pattern-only rules that are noisy here. Real taint-based
+    # detection (does USER INPUT reach the sink) is covered by CodeQL + semgrep.
+    "S608", # SQL: f-string queries interpolate STRUCTURE (placeholders/columns),
+            # values are always parameterized (?); no user input reaches the text.
+    "S110", # try-except-pass: intentional best-effort degradation (never block).
+    "S112", # try-except-continue: same — skip-and-continue is deliberate.
+    "S104", # bind 0.0.0.0: intentional for the containerized frontend/backend.
 ]
 
 [tool.ruff.lint.per-file-ignores]
 # Test doubles use class-level mutable attrs intentionally; RUF012 (ClassVar)
 # matters for production classes, which are already clean. Unused args (ARG) are
 # rife in fixtures/lambda doubles by design — gate ARG on source only.
-"backend/tests/**" = ["RUF012", "ARG001", "ARG002", "ARG005"]
+"backend/tests/**" = ["RUF012", "ARG001", "ARG002", "ARG005", "S"]
+# Internal CLI scripts shell out to known commands (uv, the pipeline) — the
+# subprocess/partial-path bandit rules are noise for trusted local tooling.
+"scripts/**" = ["S603", "S607"]
 
 [tool.ruff.format]
 quote-style = "double"

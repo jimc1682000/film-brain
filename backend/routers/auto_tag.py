@@ -239,7 +239,7 @@ async def create_film_from_preview(req: CreateFilmRequest):
         tag_rows = get_film_tags(conn, film_id)
 
     # film_row was just inserted above, so it always exists here.
-    assert film_row is not None
+    assert film_row is not None  # noqa: S101 — documents a just-inserted invariant
     embedded = _embed_film(film_row, tag_rows)
     return CreateFilmResponse(film_id=film_id, saved_tags=saved, embedded=embedded)
 

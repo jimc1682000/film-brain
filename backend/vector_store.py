@@ -43,7 +43,7 @@ def ensure_collection(client: QdrantClient | None = None) -> None:
 def _point_id_for(film_id: str) -> int:
     """Deterministic Qdrant point ID from film_id. Python's hash() is salted
     per-process so it CANNOT be used here — md5 is stable across runs."""
-    digest = hashlib.md5(film_id.encode("utf-8")).digest()
+    digest = hashlib.md5(film_id.encode("utf-8"), usedforsecurity=False).digest()
     return int.from_bytes(digest[:8], "big") & ((1 << 63) - 1)
 
 
