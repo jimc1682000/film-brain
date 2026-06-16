@@ -16,6 +16,7 @@ const zhGroups = [
     { text: "技術決策", link: "/decisions" },
     { text: "評測迭代", link: "/eval" },
     { text: "除錯實錄", link: "/mj-case" },
+    { text: "API 文件", link: "/api" },
   ]},
   { text: "協作 & 方法", items: [
     { text: "協作方式", link: "/collab" },
@@ -40,6 +41,7 @@ const enGroups = [
     { text: "Decisions", link: "/en/decisions" },
     { text: "Eval", link: "/en/eval" },
     { text: "Debugging log", link: "/en/mj-case" },
+    { text: "API reference", link: "/en/api" },
   ]},
   { text: "Collaboration & method", items: [
     { text: "Working with AI", link: "/en/collab" },
