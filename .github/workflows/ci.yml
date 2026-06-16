@@ -72,6 +72,15 @@ jobs:
           print("All non-test modules >= 80% coverage.")
           PY
 
+      - name: OpenAPI schema up to date
+        # The docs site renders site/docs/public/openapi.json (Redoc). Regenerate
+        # from the live app and fail if the committed copy drifted — keeps the
+        # published API reference in lockstep with the code.
+        run: |
+          python -m scripts.dump_openapi
+          git diff --exit-code site/docs/public/openapi.json \
+            || { echo "::error::openapi.json is stale — run: python -m scripts.dump_openapi"; exit 1; }
+
   # Taint-aware SAST (semgrep). Complements ruff's pattern-based `S` rules:
   # catches data-flow issues (incl. the httpx SSRF tripwire in .semgrep/ that
   # the free registry misses). pre-commit runs the local .semgrep/ rules on

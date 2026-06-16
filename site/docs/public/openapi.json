@@ -1,0 +1,3352 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AI Film Library Brain",
+    "description": "CATCHPLAY+ AI-powered film tagging and semantic search",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/films/": {
+      "get": {
+        "tags": [
+          "Films"
+        ],
+        "summary": "List Films",
+        "operationId": "list_films_api_films__get",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilmListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/films/recent-tag-activity": {
+      "get": {
+        "tags": [
+          "Films"
+        ],
+        "summary": "Recent Tag Activity",
+        "description": "Top N films by most recent tag add/update.\n\nRoute placed before the dynamic /{film_id} route so FastAPI does not treat\n'recent-tag-activity' as a film_id.",
+        "operationId": "recent_tag_activity_api_films_recent_tag_activity_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/films/{film_id}": {
+      "get": {
+        "tags": [
+          "Films"
+        ],
+        "summary": "Get Film Detail",
+        "operationId": "get_film_detail_api_films__film_id__get",
+        "parameters": [
+          {
+            "name": "film_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Film Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilmDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Films"
+        ],
+        "summary": "Delete Film Endpoint",
+        "description": "Cascade-delete a film and clean up dependent rows.\n\nDrops film_tags + tag_reviews for this film, unlinks award_nominees\nthat pointed at it (the nominee row itself stays — it's still a real\nnomination, just no longer matched to our library), and removes the\nQdrant vector so semantic search stops surfacing the film. Returns\ndeletion counts so the UI can show a confirmation summary.",
+        "operationId": "delete_film_endpoint_api_films__film_id__delete",
+        "parameters": [
+          {
+            "name": "film_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Film Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tags/": {
+      "get": {
+        "tags": [
+          "Tags"
+        ],
+        "summary": "List Tags",
+        "operationId": "list_tags_api_tags__get",
+        "parameters": [
+          {
+            "name": "dimension",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Dimension"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tags/dimensions": {
+      "get": {
+        "tags": [
+          "Tags"
+        ],
+        "summary": "Dimensions",
+        "operationId": "dimensions_api_tags_dimensions_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DimensionStats"
+                  },
+                  "type": "array",
+                  "title": "Response Dimensions Api Tags Dimensions Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tags/{tag_id}/films": {
+      "get": {
+        "tags": [
+          "Tags"
+        ],
+        "summary": "Films By Tag",
+        "operationId": "films_by_tag_api_tags__tag_id__films_get",
+        "parameters": [
+          {
+            "name": "tag_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Tag Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auto-tag/{film_id}/context": {
+      "get": {
+        "tags": [
+          "Auto-Tag"
+        ],
+        "summary": "Tagging Context",
+        "description": "Return film + taxonomy context for Claude Code to perform tagging locally.",
+        "operationId": "tagging_context_api_auto_tag__film_id__context_get",
+        "parameters": [
+          {
+            "name": "film_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Film Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaggingContextResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auto-tag/{film_id}/save": {
+      "post": {
+        "tags": [
+          "Auto-Tag"
+        ],
+        "summary": "Save Tags",
+        "description": "Persist tag suggestions. Validates tag_ids against registry; skips invalid.",
+        "operationId": "save_tags_api_auto_tag__film_id__save_post",
+        "parameters": [
+          {
+            "name": "film_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Film Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveTagsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaveTagsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auto-tag/preview": {
+      "post": {
+        "tags": [
+          "Auto-Tag"
+        ],
+        "summary": "Auto Tag Preview",
+        "description": "Ad-hoc auto-tag on a raw film dict without DB persistence.\n\nUse case: editor wants to try tagging a film that's not yet in the DB (新片).\nFlow: optional TMDB enrich → LLM tag. No film_tags rows inserted.\nDeclared before /{film_id} so FastAPI matches the literal path first.",
+        "operationId": "auto_tag_preview_api_auto_tag_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AutoTagPreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoTagResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auto-tag/create": {
+      "post": {
+        "tags": [
+          "Auto-Tag"
+        ],
+        "summary": "Create Film From Preview",
+        "description": "Persist a previewed new film + accepted tags into the library.\n\nMirrors the import pipeline's end state: films row + film_tags (source=\"ai\")\n+ a best-effort Qdrant embedding so the film is searchable. film_id is the\nCATCHPLAY+ video UUID when a url is given (matching the catalogue +\ndeduping), otherwise a generated uuid4.\nDeclared before /{film_id} so FastAPI matches the literal path first.",
+        "operationId": "create_film_from_preview_api_auto_tag_create_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFilmRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateFilmResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auto-tag/{film_id}": {
+      "post": {
+        "tags": [
+          "Auto-Tag"
+        ],
+        "summary": "Auto Tag Film",
+        "description": "Backend LLM auto-tagging (single model pass).\n\nRe-analyze just calls this again — a fresh pass with the same model.\nlocale sets the reasoning output language (zh_TW, zh_CN, en, ...).",
+        "operationId": "auto_tag_film_api_auto_tag__film_id__post",
+        "parameters": [
+          {
+            "name": "film_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Film Id"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "zh_TW",
+              "title": "Locale"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoTagResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auto-tag/{film_id}/accept": {
+      "post": {
+        "tags": [
+          "Auto-Tag"
+        ],
+        "summary": "Accept Tags",
+        "description": "Legacy accept endpoint (used by backend LLM flow). Prefer /save.",
+        "operationId": "accept_tags_api_auto_tag__film_id__accept_post",
+        "parameters": [
+          {
+            "name": "film_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Film Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AutoTagAcceptRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/search/": {
+      "post": {
+        "tags": [
+          "Search"
+        ],
+        "summary": "Semantic Search",
+        "description": "Hybrid search: vector + BM25 recall → RRF fusion → optional cross-encoder.\n\nBM25 (lexical, jieba-segmented) rescues exact / proper-noun matches the\nbi-encoder misses; RRF fuses the two; the cross-encoder does final precision\nordering when use_llm_rerank is on (slow on CPU, gated behind the flag).",
+        "operationId": "semantic_search_api_search__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/search/similar/{film_id}": {
+      "get": {
+        "tags": [
+          "Search"
+        ],
+        "summary": "Similar Films",
+        "description": "Return precomputed similar films (full BM25+vector→RRF→CE pipeline run\noffline by scripts/05_compute_similar.py).\n\nThe cross-encoder takes 30-40s per film on the CPU demo box, so doing it at\nrequest time hung the detail page. Precomputed rows make this a cheap lookup.\nFilms not yet precomputed (e.g. just imported) fall back to live raw cosine —\nfast but degraded — until the next recompute.",
+        "operationId": "similar_films_api_search_similar__film_id__get",
+        "parameters": [
+          {
+            "name": "film_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Film Id"
+            }
+          },
+          {
+            "name": "top_k",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 5,
+              "title": "Top K"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/films/{film_id}/reviews": {
+      "post": {
+        "tags": [
+          "Reviews"
+        ],
+        "summary": "Submit Review",
+        "description": "Record a human review action on a film's tag.\n\n- approved: mark film_tag source='human-approved'\n- rejected: delete film_tag row (tag_reviews record retained)\n- modified: delete old tag + insert replacement_tag_id with manual source",
+        "operationId": "submit_review_api_films__film_id__reviews_post",
+        "parameters": [
+          {
+            "name": "film_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Film Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Reviews"
+        ],
+        "summary": "List Reviews",
+        "description": "Return all review actions recorded against a film (most recent first).",
+        "operationId": "list_reviews_api_films__film_id__reviews_get",
+        "parameters": [
+          {
+            "name": "film_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Film Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReviewRecord"
+                  },
+                  "title": "Response List Reviews Api Films  Film Id  Reviews Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/stats": {
+      "get": {
+        "tags": [
+          "Reviews"
+        ],
+        "summary": "Review Stats",
+        "description": "Per-tag reject rate across the library (tags with ≥ min_reviews only).",
+        "operationId": "review_stats_api_reviews_stats_get",
+        "parameters": [
+          {
+            "name": "min_reviews",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 3,
+              "title": "Min Reviews"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TagRejectStat"
+                  },
+                  "title": "Response Review Stats Api Reviews Stats Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/awards/orgs": {
+      "get": {
+        "tags": [
+          "Awards",
+          "awards"
+        ],
+        "summary": "List Orgs",
+        "description": "Return all tracked award organisations.",
+        "operationId": "list_orgs_api_awards_orgs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AwardOrg"
+                  },
+                  "type": "array",
+                  "title": "Response List Orgs Api Awards Orgs Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/awards/ingest": {
+      "post": {
+        "tags": [
+          "Awards",
+          "awards"
+        ],
+        "summary": "Ingest Nominations",
+        "description": "Bulk insert one ceremony's nominations; matches to CATCHPLAY films.",
+        "operationId": "ingest_nominations_api_awards_ingest_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwardIngestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AwardIngestResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/awards/recent-batches": {
+      "get": {
+        "tags": [
+          "Awards",
+          "awards"
+        ],
+        "summary": "Recent Batches",
+        "description": "Latest ceremony batches with distinct-film coverage counts.",
+        "operationId": "recent_batches_api_awards_recent_batches_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2000,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AwardBatchSummary"
+                  },
+                  "title": "Response Recent Batches Api Awards Recent Batches Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/awards/nominees": {
+      "get": {
+        "tags": [
+          "Awards",
+          "awards"
+        ],
+        "summary": "List Nominees",
+        "description": "Nominees (matched + unmatched) with TMDB + library metadata stitched.",
+        "operationId": "list_nominees_api_awards_nominees_get",
+        "parameters": [
+          {
+            "name": "tag_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tag Id"
+            }
+          },
+          {
+            "name": "org_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Org Id"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Year"
+            }
+          },
+          {
+            "name": "film_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Film Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 200,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AwardNominee"
+                  },
+                  "title": "Response List Nominees Api Awards Nominees Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/feedback/pages": {
+      "get": {
+        "tags": [
+          "Feedback"
+        ],
+        "summary": "Api List Pages",
+        "operationId": "api_list_pages_api_feedback_pages_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FeedbackPage"
+                  },
+                  "title": "Response Api List Pages Api Feedback Pages Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/feedback/pages/{page_id}": {
+      "get": {
+        "tags": [
+          "Feedback"
+        ],
+        "summary": "Api Get Page",
+        "operationId": "api_get_page_api_feedback_pages__page_id__get",
+        "parameters": [
+          {
+            "name": "page_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Page Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackPage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/feedback/pages/{page_id}/reanalyze": {
+      "post": {
+        "tags": [
+          "Feedback"
+        ],
+        "summary": "Api Reanalyze",
+        "operationId": "api_reanalyze_api_feedback_pages__page_id__reanalyze_post",
+        "parameters": [
+          {
+            "name": "page_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Page Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReanalyzeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/llm-info": {
+      "get": {
+        "summary": "Llm Info",
+        "description": "Active LLM config — so the UI shows the model that actually runs\ninstead of a hard-coded name (backend/fallback can change via env).",
+        "operationId": "llm_info_api_llm_info_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/llm-health": {
+      "get": {
+        "summary": "Llm Health",
+        "description": "Which LLM path auto-tag will take right now, and why.\n\nThe 8GB CPU box can't run the auto-tag prompt usefully on the local model,\nso tagging prefers a cloud backend guarded by a circuit breaker. This\nsurfaces the live decision (cloud vs local) + the breaker state so the UI —\nand we — can see whether cloud is in play without reading logs.",
+        "operationId": "llm_health_api_llm_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AutoTagAcceptRequest": {
+        "properties": {
+          "tag_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tag Ids"
+          }
+        },
+        "type": "object",
+        "title": "AutoTagAcceptRequest"
+      },
+      "AutoTagPreviewRequest": {
+        "properties": {
+          "title_zh": {
+            "type": "string",
+            "title": "Title Zh"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "original_genre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Original Genre"
+          },
+          "tmdb_overview": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Overview"
+          },
+          "tmdb_genres": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Genres"
+          },
+          "tmdb_keywords": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Keywords"
+          },
+          "tmdb_cast": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Cast"
+          },
+          "tmdb_director": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Director"
+          },
+          "locale": {
+            "type": "string",
+            "title": "Locale",
+            "default": "zh_TW"
+          },
+          "enrich": {
+            "type": "boolean",
+            "title": "Enrich",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "title_zh"
+        ],
+        "title": "AutoTagPreviewRequest",
+        "description": "Ad-hoc auto-tag on a raw film dict without DB persistence."
+      },
+      "AutoTagResponse": {
+        "properties": {
+          "film_id": {
+            "type": "string",
+            "title": "Film Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/TagSuggestion"
+            },
+            "type": "array",
+            "title": "Suggestions"
+          },
+          "model_used": {
+            "type": "string",
+            "title": "Model Used"
+          },
+          "escalated": {
+            "type": "boolean",
+            "title": "Escalated",
+            "default": false
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp"
+          },
+          "enriched_film": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enriched Film"
+          },
+          "warning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warning"
+          }
+        },
+        "type": "object",
+        "required": [
+          "film_id",
+          "title",
+          "suggestions",
+          "model_used"
+        ],
+        "title": "AutoTagResponse"
+      },
+      "AwardBatchSummary": {
+        "properties": {
+          "tag_id": {
+            "type": "string",
+            "title": "Tag Id"
+          },
+          "tag_label_zh_tw": {
+            "type": "string",
+            "title": "Tag Label Zh Tw"
+          },
+          "year": {
+            "type": "integer",
+            "title": "Year"
+          },
+          "org_id": {
+            "type": "string",
+            "title": "Org Id"
+          },
+          "total_count": {
+            "type": "integer",
+            "title": "Total Count"
+          },
+          "matched_count": {
+            "type": "integer",
+            "title": "Matched Count"
+          },
+          "ceremony_nominated_films_total": {
+            "type": "integer",
+            "title": "Ceremony Nominated Films Total",
+            "default": 0
+          },
+          "ceremony_won_films_total": {
+            "type": "integer",
+            "title": "Ceremony Won Films Total",
+            "default": 0
+          },
+          "ceremony_nominated_films_matched": {
+            "type": "integer",
+            "title": "Ceremony Nominated Films Matched",
+            "default": 0
+          },
+          "ceremony_won_films_matched": {
+            "type": "integer",
+            "title": "Ceremony Won Films Matched",
+            "default": 0
+          },
+          "latest_insert": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Latest Insert"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tag_id",
+          "tag_label_zh_tw",
+          "year",
+          "org_id",
+          "total_count",
+          "matched_count",
+          "latest_insert"
+        ],
+        "title": "AwardBatchSummary"
+      },
+      "AwardIngestMatch": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "film_title": {
+            "type": "string",
+            "title": "Film Title"
+          },
+          "person": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Person"
+          },
+          "result": {
+            "type": "string",
+            "title": "Result"
+          },
+          "tag_id": {
+            "type": "string",
+            "title": "Tag Id"
+          },
+          "matched_film_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Matched Film Id"
+          },
+          "matched_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Matched Title"
+          },
+          "match_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Match Score"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "film_title",
+          "result",
+          "tag_id"
+        ],
+        "title": "AwardIngestMatch"
+      },
+      "AwardIngestRequest": {
+        "properties": {
+          "org_id": {
+            "type": "string",
+            "title": "Org Id"
+          },
+          "year": {
+            "type": "integer",
+            "title": "Year"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          },
+          "ceremony_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ceremony Date"
+          },
+          "nominees": {
+            "items": {
+              "$ref": "#/components/schemas/AwardNomineeInput"
+            },
+            "type": "array",
+            "title": "Nominees"
+          }
+        },
+        "type": "object",
+        "required": [
+          "org_id",
+          "year",
+          "source_url",
+          "nominees"
+        ],
+        "title": "AwardIngestRequest",
+        "description": "Bulk payload from award-tracker skill after parsing an official page."
+      },
+      "AwardIngestResponse": {
+        "properties": {
+          "org_id": {
+            "type": "string",
+            "title": "Org Id"
+          },
+          "year": {
+            "type": "integer",
+            "title": "Year"
+          },
+          "total_nominees": {
+            "type": "integer",
+            "title": "Total Nominees"
+          },
+          "matched": {
+            "items": {
+              "$ref": "#/components/schemas/AwardIngestMatch"
+            },
+            "type": "array",
+            "title": "Matched"
+          },
+          "unmatched": {
+            "items": {
+              "$ref": "#/components/schemas/AwardIngestMatch"
+            },
+            "type": "array",
+            "title": "Unmatched"
+          }
+        },
+        "type": "object",
+        "required": [
+          "org_id",
+          "year",
+          "total_nominees",
+          "matched",
+          "unmatched"
+        ],
+        "title": "AwardIngestResponse"
+      },
+      "AwardNominee": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "org_id": {
+            "type": "string",
+            "title": "Org Id"
+          },
+          "tag_id": {
+            "type": "string",
+            "title": "Tag Id"
+          },
+          "year": {
+            "type": "integer",
+            "title": "Year"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "film_title_primary": {
+            "type": "string",
+            "title": "Film Title Primary"
+          },
+          "film_title_alt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Film Title Alt"
+          },
+          "person": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Person"
+          },
+          "result": {
+            "type": "string",
+            "title": "Result"
+          },
+          "tmdb_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Id"
+          },
+          "tmdb_media_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Media Type"
+          },
+          "tmdb_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Title"
+          },
+          "tmdb_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Year"
+          },
+          "tmdb_poster_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Poster Url"
+          },
+          "tmdb_overview": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Overview"
+          },
+          "tmdb_vote_avg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Vote Avg"
+          },
+          "matched_film_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Matched Film Id"
+          },
+          "matched_title_zh": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Matched Title Zh"
+          },
+          "matched_poster_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Matched Poster Url"
+          },
+          "match_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Match Score"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "org_id",
+          "tag_id",
+          "year",
+          "category",
+          "film_title_primary",
+          "result",
+          "created_at"
+        ],
+        "title": "AwardNominee"
+      },
+      "AwardNomineeInput": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "film_title_primary": {
+            "type": "string",
+            "title": "Film Title Primary"
+          },
+          "film_title_alt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Film Title Alt"
+          },
+          "person": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Person"
+          },
+          "result": {
+            "$ref": "#/components/schemas/AwardResult",
+            "default": "nominated"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "film_title_primary"
+        ],
+        "title": "AwardNomineeInput",
+        "description": "One nominee / winner extracted from an official awards page."
+      },
+      "AwardOrg": {
+        "properties": {
+          "org_id": {
+            "type": "string",
+            "title": "Org Id"
+          },
+          "name_en": {
+            "type": "string",
+            "title": "Name En"
+          },
+          "name_zh": {
+            "type": "string",
+            "title": "Name Zh"
+          },
+          "tag_prefix": {
+            "type": "string",
+            "title": "Tag Prefix"
+          },
+          "official_url": {
+            "type": "string",
+            "title": "Official Url"
+          },
+          "ceremony_month": {
+            "type": "integer",
+            "title": "Ceremony Month"
+          },
+          "region": {
+            "type": "string",
+            "title": "Region"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope"
+          },
+          "priority": {
+            "type": "integer",
+            "title": "Priority"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "org_id",
+          "name_en",
+          "name_zh",
+          "tag_prefix",
+          "official_url",
+          "ceremony_month",
+          "region",
+          "scope",
+          "priority"
+        ],
+        "title": "AwardOrg"
+      },
+      "AwardResult": {
+        "type": "string",
+        "enum": [
+          "nominated",
+          "won"
+        ],
+        "title": "AwardResult"
+      },
+      "CreateFilmRequest": {
+        "properties": {
+          "catchplay_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catchplay Url"
+          },
+          "title_zh": {
+            "type": "string",
+            "title": "Title Zh"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "original_genre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Original Genre"
+          },
+          "poster_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Poster Url"
+          },
+          "tmdb_poster_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Poster Url"
+          },
+          "tmdb_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Id"
+          },
+          "tmdb_overview": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Overview"
+          },
+          "tmdb_genres": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Genres"
+          },
+          "tmdb_keywords": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Keywords"
+          },
+          "tmdb_vote_avg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Vote Avg"
+          },
+          "tmdb_cast": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Cast"
+          },
+          "tmdb_director": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Director"
+          },
+          "tags": {
+            "items": {
+              "$ref": "#/components/schemas/SaveTagSuggestion"
+            },
+            "type": "array",
+            "title": "Tags",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "title_zh"
+        ],
+        "title": "CreateFilmRequest",
+        "description": "Persist a previewed new film + its accepted tags into the library.\n\nIf catchplay_url is given, film_id is derived from its video UUID (so it\nmatches the catalogue + dedupes). Otherwise a uuid4 is generated."
+      },
+      "CreateFilmResponse": {
+        "properties": {
+          "film_id": {
+            "type": "string",
+            "title": "Film Id"
+          },
+          "saved_tags": {
+            "type": "integer",
+            "title": "Saved Tags"
+          },
+          "embedded": {
+            "type": "boolean",
+            "title": "Embedded"
+          }
+        },
+        "type": "object",
+        "required": [
+          "film_id",
+          "saved_tags",
+          "embedded"
+        ],
+        "title": "CreateFilmResponse"
+      },
+      "DimensionStats": {
+        "properties": {
+          "dimension": {
+            "type": "string",
+            "title": "Dimension"
+          },
+          "tag_count": {
+            "type": "integer",
+            "title": "Tag Count"
+          },
+          "used_tag_count": {
+            "type": "integer",
+            "title": "Used Tag Count",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "dimension",
+          "tag_count"
+        ],
+        "title": "DimensionStats"
+      },
+      "FeedbackPage": {
+        "properties": {
+          "page_id": {
+            "type": "string",
+            "title": "Page Id"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "open"
+          },
+          "merged_into": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Merged Into"
+          },
+          "resolved_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolved At"
+          },
+          "resolution_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolution Note"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "model_used": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Used"
+          },
+          "consultant_validated": {
+            "type": "boolean",
+            "title": "Consultant Validated",
+            "default": false
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sources",
+            "default": []
+          },
+          "body": {
+            "type": "string",
+            "title": "Body",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "page_id",
+          "kind",
+          "title"
+        ],
+        "title": "FeedbackPage",
+        "description": "A feedback wiki page — frontmatter + markdown body."
+      },
+      "Film": {
+        "properties": {
+          "film_id": {
+            "type": "string",
+            "title": "Film Id"
+          },
+          "title_zh": {
+            "type": "string",
+            "title": "Title Zh"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "catchplay_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catchplay Url"
+          },
+          "poster_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Poster Url"
+          },
+          "original_genre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Original Genre"
+          },
+          "tmdb_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Id"
+          },
+          "tmdb_vote_avg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Vote Avg"
+          }
+        },
+        "type": "object",
+        "required": [
+          "film_id",
+          "title_zh"
+        ],
+        "title": "Film"
+      },
+      "FilmDetail": {
+        "properties": {
+          "film_id": {
+            "type": "string",
+            "title": "Film Id"
+          },
+          "title_zh": {
+            "type": "string",
+            "title": "Title Zh"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "catchplay_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catchplay Url"
+          },
+          "poster_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Poster Url"
+          },
+          "original_genre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Original Genre"
+          },
+          "tmdb_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Id"
+          },
+          "tmdb_vote_avg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Vote Avg"
+          },
+          "description_raw": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Raw"
+          },
+          "tmdb_overview": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Overview"
+          },
+          "tmdb_genres": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Genres"
+          },
+          "tmdb_keywords": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Keywords"
+          },
+          "tmdb_cast": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Cast"
+          },
+          "tmdb_director": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Director"
+          },
+          "tmdb_backdrop_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tmdb Backdrop Url"
+          },
+          "tags": {
+            "items": {
+              "$ref": "#/components/schemas/FilmTag"
+            },
+            "type": "array",
+            "title": "Tags",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "film_id",
+          "title_zh"
+        ],
+        "title": "FilmDetail"
+      },
+      "FilmListResponse": {
+        "properties": {
+          "films": {
+            "items": {
+              "$ref": "#/components/schemas/Film"
+            },
+            "type": "array",
+            "title": "Films"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "films",
+          "total"
+        ],
+        "title": "FilmListResponse"
+      },
+      "FilmTag": {
+        "properties": {
+          "tag_id": {
+            "type": "string",
+            "title": "Tag Id"
+          },
+          "dimension": {
+            "type": "string",
+            "title": "Dimension"
+          },
+          "label_en": {
+            "type": "string",
+            "title": "Label En"
+          },
+          "label_zh_tw": {
+            "type": "string",
+            "title": "Label Zh Tw"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "award_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Award Year"
+          },
+          "award_result": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Award Result"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tag_id",
+          "dimension",
+          "label_en",
+          "label_zh_tw",
+          "confidence",
+          "source"
+        ],
+        "title": "FilmTag"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ReanalyzeRequest": {
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "title": "Prompt",
+            "default": ""
+          },
+          "use_consultant": {
+            "type": "boolean",
+            "title": "Use Consultant",
+            "default": true
+          }
+        },
+        "type": "object",
+        "title": "ReanalyzeRequest"
+      },
+      "ReviewAction": {
+        "type": "string",
+        "enum": [
+          "approved",
+          "rejected",
+          "modified"
+        ],
+        "title": "ReviewAction"
+      },
+      "ReviewRecord": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "film_id": {
+            "type": "string",
+            "title": "Film Id"
+          },
+          "tag_id": {
+            "type": "string",
+            "title": "Tag Id"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "reviewer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "film_id",
+          "tag_id",
+          "action",
+          "created_at"
+        ],
+        "title": "ReviewRecord"
+      },
+      "ReviewRequest": {
+        "properties": {
+          "tag_id": {
+            "type": "string",
+            "title": "Tag Id"
+          },
+          "action": {
+            "$ref": "#/components/schemas/ReviewAction"
+          },
+          "reviewer": {
+            "type": "string",
+            "title": "Reviewer",
+            "default": "editor"
+          },
+          "replacement_tag_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Replacement Tag Id"
+          },
+          "replacement_confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Replacement Confidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tag_id",
+          "action"
+        ],
+        "title": "ReviewRequest"
+      },
+      "ReviewResponse": {
+        "properties": {
+          "film_id": {
+            "type": "string",
+            "title": "Film Id"
+          },
+          "tag_id": {
+            "type": "string",
+            "title": "Tag Id"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "replacement_tag_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Replacement Tag Id"
+          },
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "film_id",
+          "tag_id",
+          "action"
+        ],
+        "title": "ReviewResponse"
+      },
+      "SaveTagSuggestion": {
+        "properties": {
+          "tag_id": {
+            "type": "string",
+            "title": "Tag Id"
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence"
+          },
+          "reasoning": {
+            "type": "string",
+            "title": "Reasoning",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "tag_id",
+          "confidence"
+        ],
+        "title": "SaveTagSuggestion"
+      },
+      "SaveTagsRequest": {
+        "properties": {
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/SaveTagSuggestion"
+            },
+            "type": "array",
+            "title": "Suggestions"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "default": "ai"
+          }
+        },
+        "type": "object",
+        "required": [
+          "suggestions"
+        ],
+        "title": "SaveTagsRequest"
+      },
+      "SaveTagsResponse": {
+        "properties": {
+          "film_id": {
+            "type": "string",
+            "title": "Film Id"
+          },
+          "saved": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Saved"
+          },
+          "invalid": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Invalid"
+          },
+          "total_saved": {
+            "type": "integer",
+            "title": "Total Saved"
+          }
+        },
+        "type": "object",
+        "required": [
+          "film_id",
+          "saved",
+          "invalid",
+          "total_saved"
+        ],
+        "title": "SaveTagsResponse"
+      },
+      "SearchRequest": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "top_k": {
+            "type": "integer",
+            "title": "Top K",
+            "default": 10
+          },
+          "dimension_filters": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dimension Filters"
+          },
+          "min_confidence": {
+            "type": "number",
+            "title": "Min Confidence",
+            "default": 0.6
+          },
+          "min_display_score": {
+            "type": "number",
+            "title": "Min Display Score",
+            "default": 0.1
+          },
+          "use_llm_rerank": {
+            "type": "boolean",
+            "title": "Use Llm Rerank",
+            "default": true
+          },
+          "rerank_pool": {
+            "type": "integer",
+            "title": "Rerank Pool",
+            "default": 20
+          },
+          "understand_only": {
+            "type": "boolean",
+            "title": "Understand Only",
+            "default": false
+          },
+          "exclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Exclude",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "title": "SearchRequest"
+      },
+      "SearchResponse": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/SearchResult"
+            },
+            "type": "array",
+            "title": "Results"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "understanding": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Understanding"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "results",
+          "total"
+        ],
+        "title": "SearchResponse"
+      },
+      "SearchResult": {
+        "properties": {
+          "film_id": {
+            "type": "string",
+            "title": "Film Id"
+          },
+          "title_zh": {
+            "type": "string",
+            "title": "Title Zh"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "poster_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Poster Url"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score"
+          },
+          "matched_tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Matched Tags",
+            "default": []
+          },
+          "description_snippet": {
+            "type": "string",
+            "title": "Description Snippet",
+            "default": ""
+          },
+          "explain": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explain"
+          }
+        },
+        "type": "object",
+        "required": [
+          "film_id",
+          "title_zh",
+          "score"
+        ],
+        "title": "SearchResult"
+      },
+      "Tag": {
+        "properties": {
+          "tag_id": {
+            "type": "string",
+            "title": "Tag Id"
+          },
+          "dimension": {
+            "type": "string",
+            "title": "Dimension"
+          },
+          "label_en": {
+            "type": "string",
+            "title": "Label En"
+          },
+          "label_zh_tw": {
+            "type": "string",
+            "title": "Label Zh Tw"
+          },
+          "label_in_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label In Id"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "default": "migrated"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tag_id",
+          "dimension",
+          "label_en",
+          "label_zh_tw"
+        ],
+        "title": "Tag"
+      },
+      "TagListResponse": {
+        "properties": {
+          "tags": {
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            },
+            "type": "array",
+            "title": "Tags"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tags",
+          "total"
+        ],
+        "title": "TagListResponse"
+      },
+      "TagRejectStat": {
+        "properties": {
+          "tag_id": {
+            "type": "string",
+            "title": "Tag Id"
+          },
+          "dimension": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dimension"
+          },
+          "label_zh_tw": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label Zh Tw"
+          },
+          "total_reviews": {
+            "type": "integer",
+            "title": "Total Reviews"
+          },
+          "rejected": {
+            "type": "integer",
+            "title": "Rejected"
+          },
+          "reject_rate": {
+            "type": "number",
+            "title": "Reject Rate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tag_id",
+          "total_reviews",
+          "rejected",
+          "reject_rate"
+        ],
+        "title": "TagRejectStat"
+      },
+      "TagSuggestion": {
+        "properties": {
+          "tag_id": {
+            "type": "string",
+            "title": "Tag Id"
+          },
+          "dimension": {
+            "type": "string",
+            "title": "Dimension"
+          },
+          "label_zh_tw": {
+            "type": "string",
+            "title": "Label Zh Tw",
+            "default": ""
+          },
+          "label_en": {
+            "type": "string",
+            "title": "Label En",
+            "default": ""
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence"
+          },
+          "reasoning": {
+            "type": "string",
+            "title": "Reasoning",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "tag_id",
+          "dimension",
+          "confidence"
+        ],
+        "title": "TagSuggestion"
+      },
+      "TaggingContextResponse": {
+        "properties": {
+          "film": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Film"
+          },
+          "taxonomy_context": {
+            "type": "string",
+            "title": "Taxonomy Context"
+          },
+          "system_prompt": {
+            "type": "string",
+            "title": "System Prompt"
+          },
+          "output_schema": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Output Schema"
+          }
+        },
+        "type": "object",
+        "required": [
+          "film",
+          "taxonomy_context",
+          "system_prompt",
+          "output_schema"
+        ],
+        "title": "TaggingContextResponse",
+        "description": "Context for Claude Code to perform tagging locally — no backend LLM call."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
