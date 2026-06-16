@@ -12,6 +12,13 @@ on:
     tags: ["v*"]
   workflow_dispatch:
 
+# Serialize image builds so concurrent master pushes can't race on the :master
+# tag (an older/slower build finishing last would otherwise overwrite it).
+# Don't cancel in-progress — let each push publish its immutable :sha- tag.
+concurrency:
+  group: image
+  cancel-in-progress: false
+
 permissions:
   contents: read
   packages: write
