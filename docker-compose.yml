@@ -3,10 +3,18 @@ services:
   # service below downloads the weights into the shared volume on first `up`.
   ollama:
     image: ollama/ollama:latest
+    # Bind to loopback only — the model server has no auth, and the backend
+    # reaches it over the Compose network (ollama:11434), not the host port.
     ports:
-      - "11434:11434"
+      - "127.0.0.1:11434:11434"
     volumes:
       - ollama_models:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"] # hits the API; passes once it's accepting
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
 
   # Pulls bge-m3 once, then exits. backend waits on it completing so the first
   # embed/seed call always finds the model. Re-running `up` is a fast no-op
@@ -15,7 +23,7 @@ services:
     image: ollama/ollama:latest
     depends_on:
       ollama:
-        condition: service_started
+        condition: service_healthy # API ready, not just process started
     environment:
       - OLLAMA_HOST=http://ollama:11434
     entrypoint: ["ollama", "pull", "bge-m3"]
