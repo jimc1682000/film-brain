@@ -27,7 +27,13 @@ import json
 import time
 from pathlib import Path
 
-from ranx import Qrels, Run, compare
+try:
+    from ranx import Qrels, Run, compare
+except ModuleNotFoundError as e:  # eval-only dep, kept out of the runtime image
+    raise SystemExit(
+        "ranx not installed — eval deps are separate from the runtime image.\n"
+        "Install them with:  pip install -r requirements-eval.txt"
+    ) from e
 
 from backend.services import search_config
 from scripts.eval_search import run_eval
