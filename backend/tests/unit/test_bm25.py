@@ -43,6 +43,32 @@ def test_bm25_empty_query_returns_empty(conn):
     assert bm.bm25_search(conn, "！！！", top_k=3) == []
 
 
+def test_index_film_adds_runtime_film(conn):
+    """A film inserted after the startup rebuild is invisible to BM25 until
+    incrementally indexed via index_film (the runtime create/update path)."""
+    conn.execute(
+        "INSERT INTO films(film_id, title_zh, title_en) VALUES (?,?,?)",
+        ("f4", "印度寶萊塢歌舞片", "Bollywood Musical"),
+    )
+    conn.commit()
+    assert "f4" not in [f for f, _ in bm.bm25_search(conn, "寶萊塢", top_k=5)]
+
+    bm.index_film(conn, "f4")
+    conn.commit()
+    assert "f4" in [f for f, _ in bm.bm25_search(conn, "寶萊塢", top_k=5)]
+
+
+def test_index_film_is_idempotent(conn):
+    """Re-indexing the same film must not duplicate its FTS row (DELETE+INSERT)."""
+    bm.index_film(conn, "f1")
+    bm.index_film(conn, "f1")
+    conn.commit()
+    (count,) = conn.execute(
+        "SELECT COUNT(*) FROM films_fts WHERE film_id = ?", ("f1",)
+    ).fetchone()
+    assert count == 1
+
+
 def test_candidate_ids_restricts_results(conn):
     hits = bm.bm25_search(conn, "片", top_k=5, candidate_ids=["f3"])
     ids = [f for f, _ in hits]
