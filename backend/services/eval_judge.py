@@ -56,7 +56,7 @@ def _load() -> dict:
             _cache = json.loads(_CACHE_PATH.read_text(encoding="utf-8"))
         except Exception:
             _cache = {}
-    assert _cache is not None  # set by the block above
+    assert _cache is not None  # noqa: S101 — set by the block above (narrows type)
     return _cache
 
 

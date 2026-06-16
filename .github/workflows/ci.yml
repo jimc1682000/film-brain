@@ -72,6 +72,24 @@ jobs:
           print("All non-test modules >= 80% coverage.")
           PY
 
+  # Taint-aware SAST (semgrep). Complements ruff's pattern-based `S` rules:
+  # catches data-flow issues (incl. the httpx SSRF tripwire in .semgrep/ that
+  # the free registry misses). pre-commit runs the local .semgrep/ rules on
+  # changed files; this runs the full security ruleset on the whole tree.
+  semgrep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install semgrep==1.166.0
+      - name: Semgrep (security)
+        run: >-
+          semgrep scan --config p/security-audit --config .semgrep/
+          --error --metrics off backend frontend scripts
+
   # Real-Qdrant wiring smoke. The `test` job mocks Qdrant everywhere; this runs
   # the vector_store ↔ Qdrant ↔ hybrid path against a live Qdrant service using
   # deterministic fake_embed vectors (no model download, no live HTTP server).

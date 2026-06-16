@@ -220,5 +220,7 @@ ui.run(
     dark=True,  # match catchplay.com/tw which ships dark mode by default
     language="zh-TW",
     favicon=str(Path(__file__).parent / "assets" / "favicon.svg"),  # brand clapperboard mark
-    storage_secret="film-brain-demo",  # enables app.storage.user (style preference)
+    # Signs the app.storage.user cookie (only holds a UI style preference, no
+    # auth/PII) — env-overridable so a deploy isn't stuck on the public default.
+    storage_secret=os.getenv("STORAGE_SECRET", "film-brain-demo"),
 )
