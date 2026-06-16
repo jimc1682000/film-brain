@@ -12,10 +12,9 @@ taxonomy,讓人用「意思」找片(「想哭的時候看的」、「緊張的�
 
 ## 這個 repo 是什麼 — 跟線上 Demo 的差別
 
-| | |
+| 這個 repo(程式碼) | 線上 Demo(站台) |
 | --- | --- |
-| **這個 repo(程式碼)** | **可直接跑、以 mock 為基礎的核心** — FastAPI + NiceGUI + Qdrant + 本地 bge-m3 + cross-encoder。**免金鑰**:搜尋跑在本地模型,不需要 API key。用中性 seed 格式帶入你自己的片。 |
-| **線上 Demo(站台)** | 一個 **展示完整系統跑在真實 CATCHPLAY+ 目錄** 的作品集 — 搜尋重播、評測迭代故事、除錯案例。 |
+| **可直接跑、以 mock 為基礎的核心** — FastAPI + NiceGUI + Qdrant + 本地 bge-m3 + cross-encoder。**免金鑰**:搜尋跑在本地模型,不需要 API key。用中性 seed 格式帶入你自己的片。 | 一個 **展示完整系統跑在真實 CATCHPLAY+ 目錄** 的作品集 — 搜尋重播、評測迭代故事、除錯案例。 |
 
 所以站台展示的有幾件事 **刻意不隨此 repo 出貨**:
 - **目錄 ingest / 爬蟲** 是 *私有的 source adapter*。此 repo 出的是 **通用載入器**(`scripts/seed_from_file.py`)+ **中性 adapter 範本**(`scripts/adapters/example_adapter.py`)+ 一份內附 **mock 資料集** — 用文件化格式(`data/films.seed.schema.json`)帶入你自己的片。
