@@ -1,0 +1,5 @@
+# Frontend (NiceGUI) runtime — talks to the backend over HTTP, so it needs none
+# of the ML / vector / DB stack that requirements.txt carries.
+nicegui>=2.9.0
+httpx>=0.27.0
+python-dotenv>=1.0.1

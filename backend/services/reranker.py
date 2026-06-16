@@ -99,7 +99,8 @@ def _get_model():
         return _model
     with _model_lock:
         if _model is None:
-            from sentence_transformers import CrossEncoder
+            # Optional dep (requirements-st.txt) — absent from the slim image.
+            from sentence_transformers import CrossEncoder  # pyright: ignore[reportMissingImports]
 
             _model = CrossEncoder(_model_name, max_length=512)
     return _model

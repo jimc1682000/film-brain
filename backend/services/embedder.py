@@ -60,9 +60,10 @@ class EmbedService(BaseService):
 
     def _embed_st(self, texts: list[str]) -> list[list[float]]:
         if self._st_model is None:
-            from sentence_transformers import SentenceTransformer
+            # Optional dep (requirements-st.txt) — absent from the slim image.
+            import sentence_transformers as st  # pyright: ignore[reportMissingImports]
 
-            self._st_model = SentenceTransformer(settings.embedding_model)
+            self._st_model = st.SentenceTransformer(settings.embedding_model)
         return self._st_model.encode(texts, normalize_embeddings=True).tolist()
 
     def embed(self, texts: list[str]) -> list[list[float]]:
