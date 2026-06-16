@@ -36,6 +36,9 @@ services:
     restart: "no"
 
   backend:
+    # Slim image (Ollama embedding + RRF ranking). For the CrossEncoder reranker
+    # (ADR 0009), swap to ghcr.io/jimc1682000/film-brain-backend-st:master
+    # (= this slim image + sentence-transformers layered on top).
     image: ghcr.io/jimc1682000/film-brain-backend:master
     ports:
       - "8000:8000"

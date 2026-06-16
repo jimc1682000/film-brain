@@ -33,6 +33,8 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
+      target: slim # Ollama embedding + RRF ranking. For the CrossEncoder
+      # reranker (ADR 0009), use the prebuilt -st image (docker-compose.ghcr.yml).
     ports:
       - "8000:8000"
     volumes:

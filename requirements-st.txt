@@ -1,0 +1,7 @@
+# Optional: sentence-transformers embedding backend + the CrossEncoder reranker
+# (ADR 0009 honest ranking). Pulls torch — install CPU-only torch FIRST (see
+# the `full` target in backend/Dockerfile) to avoid the CUDA stack.
+#   pip install --index-url https://download.pytorch.org/whl/cpu "torch<2.9"
+#   pip install -r requirements-st.txt
+# Without these: embedding uses Ollama (default) and reranking degrades to RRF.
+sentence-transformers>=3.3.0
