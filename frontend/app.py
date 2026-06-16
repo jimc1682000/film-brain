@@ -23,7 +23,6 @@ from frontend.components.film_list import _TIER_CSS, STYLES
 from frontend.i18n import t
 from frontend.pages.auto_tag import auto_tag_page
 from frontend.pages.awards import award_org_page, awards_page
-from frontend.pages.brief import brief_page
 from frontend.pages.browse import browse_page
 from frontend.pages.detail import detail_page
 from frontend.pages.feedback import feedback_page
@@ -140,8 +139,8 @@ def header(active: str = ""):
             # Active link drops text-white so .nav-active's orange isn't
             # overridden by Quasar's !important white.
             ui.link(label, href).classes("nav-active" if href == active else "text-white")
-        # 技術說明 → the public VitePress portfolio site (deeper, maintained docs)
-        # instead of the in-app judge-brief render. Opens in a new tab.
+        # 技術說明 → the public VitePress portfolio site (deeper, maintained
+        # docs). Opens in a new tab.
         ui.link(t("nav.brief"), "https://jimc1682000.github.io/film-brain/", new_tab=True).classes(
             "text-white"
         )
@@ -212,13 +211,6 @@ def feedback():
     header()
     with ui.column().classes("q-pa-lg w-full max-w-6xl mx-auto"):
         feedback_page()
-
-
-@ui.page("/brief")
-def brief():
-    header()
-    with ui.column().classes("q-pa-lg w-full max-w-6xl mx-auto"):
-        brief_page()
 
 
 ui.run(
