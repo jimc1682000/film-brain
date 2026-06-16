@@ -49,44 +49,137 @@ def _search_resp(items):
     return _FakeResp(200, payload={"results": items})
 
 
-# ── catchplay_poster ─────────────────────────────────────────────────────────
+# ── og_image (poster fetch) ──────────────────────────────────────────────────
+# og_image extraction is tested with _safe_get patched (the SSRF-guarded fetch
+# is covered separately below); catchplay_poster is a back-compat alias.
 
 
-def test_catchplay_poster_none_url():
-    assert tl.catchplay_poster(None) is None
+def _patch_fetch(resp=None):
+    return patch.object(tl, "_safe_get", return_value=resp)
 
 
-def test_catchplay_poster_extracts_og_image():
+def test_og_image_none_url():
+    assert tl.og_image(None) is None
+
+
+def test_catchplay_poster_is_alias():
+    assert tl.catchplay_poster is tl.og_image
+
+
+def test_og_image_extracts():
     html = '<meta property="og:image" content="https://img.cdn/poster.jpg" />'
-    with _patch_client(resp=_FakeResp(200, html)):
-        assert tl.catchplay_poster("https://catchplay.com/x") == "https://img.cdn/poster.jpg"
+    with _patch_fetch(_FakeResp(200, html)):
+        assert tl.og_image("https://example.com/x") == "https://img.cdn/poster.jpg"
 
 
-def test_catchplay_poster_non_200():
-    with _patch_client(resp=_FakeResp(404, "nope")):
-        assert tl.catchplay_poster("https://catchplay.com/x") is None
+def test_og_image_non_200():
+    with _patch_fetch(_FakeResp(404, "nope")):
+        assert tl.og_image("https://example.com/x") is None
 
 
-def test_catchplay_poster_no_meta_tag():
-    with _patch_client(resp=_FakeResp(200, "<html>no meta</html>")):
-        assert tl.catchplay_poster("https://catchplay.com/x") is None
+def test_og_image_blocked_url_returns_none():
+    # _safe_get returns None when the URL is unsafe (private host / bad scheme).
+    with _patch_fetch(None):
+        assert tl.og_image("http://10.0.0.1/x") is None
 
 
-def test_catchplay_poster_rejects_global_landing_logo():
+def test_og_image_no_meta_tag():
+    with _patch_fetch(_FakeResp(200, "<html>no meta</html>")):
+        assert tl.og_image("https://example.com/x") is None
+
+
+def test_og_image_rejects_global_landing_logo():
     html = '<meta property="og:image" content="https://img/global-landing-logo.png">'
-    with _patch_client(resp=_FakeResp(200, html)):
-        assert tl.catchplay_poster("https://catchplay.com/x") is None
+    with _patch_fetch(_FakeResp(200, html)):
+        assert tl.og_image("https://example.com/x") is None
 
 
-def test_catchplay_poster_rejects_events_logo():
+def test_og_image_rejects_events_logo():
     html = '<meta property="og:image" content="https://img/events/promo.png">'
-    with _patch_client(resp=_FakeResp(200, html)):
-        assert tl.catchplay_poster("https://catchplay.com/x") is None
+    with _patch_fetch(_FakeResp(200, html)):
+        assert tl.og_image("https://example.com/x") is None
 
 
-def test_catchplay_poster_swallows_http_error():
-    with _patch_client(raises=httpx.HTTPError("boom")):
-        assert tl.catchplay_poster("https://catchplay.com/x") is None
+def test_og_image_swallows_http_error():
+    with patch.object(tl, "_safe_get", side_effect=httpx.HTTPError("boom")):
+        assert tl.og_image("https://example.com/x") is None
+
+
+# ── SSRF guards ──────────────────────────────────────────────────────────────
+
+
+def _addrinfo(ip):
+    return [(2, 1, 6, "", (ip, 0))]
+
+
+def test_is_safe_url_rejects_non_http():
+    assert tl._is_safe_url("file:///etc/passwd") is False
+    assert tl._is_safe_url("ftp://host/x") is False
+    assert tl._is_safe_url("gopher://host") is False
+
+
+def test_is_safe_url_rejects_no_host():
+    assert tl._is_safe_url("https://") is False
+
+
+def test_host_is_public_blocks_internal_ranges():
+    import socket as _socket
+
+    for ip in ("127.0.0.1", "10.0.0.1", "192.168.1.5", "169.254.169.254", "::1"):
+        with patch.object(tl.socket, "getaddrinfo", return_value=_addrinfo(ip)):
+            assert tl._host_is_public("evil.test") is False, ip
+    with patch.object(tl.socket, "getaddrinfo", side_effect=_socket.gaierror):
+        assert tl._host_is_public("nxdomain.test") is False
+
+
+def test_host_is_public_allows_public_ip():
+    with patch.object(tl.socket, "getaddrinfo", return_value=_addrinfo("93.184.216.34")):
+        assert tl._host_is_public("example.com") is True
+
+
+class _RedirectResp:
+    is_redirect = True
+    has_redirect_location = True
+
+    def __init__(self, location):
+        self.next_request = type("Req", (), {"url": location})()
+
+
+class _SeqClient:
+    """httpx.Client stand-in returning queued responses in order."""
+
+    def __init__(self, resps):
+        self._resps = list(resps)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+    def get(self, url, **kw):
+        return self._resps.pop(0)
+
+
+def test_safe_get_follows_safe_redirect():
+    final = _FakeResp(200, "ok")
+    final.is_redirect = False
+    final.has_redirect_location = False
+    seq = _SeqClient([_RedirectResp("https://cdn.example.com/final"), final])
+    with (
+        patch.object(tl, "_host_is_public", return_value=True),
+        patch.object(tl.httpx, "Client", return_value=seq),
+    ):
+        assert tl._safe_get("https://example.com/x").text == "ok"
+
+
+def test_safe_get_blocks_redirect_into_private():
+    seq = _SeqClient([_RedirectResp("http://169.254.169.254/latest/meta-data")])
+    with (
+        patch.object(tl, "_host_is_public", side_effect=lambda h: h != "169.254.169.254"),
+        patch.object(tl.httpx, "Client", return_value=seq),
+    ):
+        assert tl._safe_get("https://example.com/x") is None
 
 
 # ── _format_tmdb_item ────────────────────────────────────────────────────────
