@@ -5,8 +5,6 @@
   "nav.awards": "獎項",
   "nav.api_docs": "API 文件",
   "nav.brief": "技術說明",
-  "brief.toc": "目錄",
-  "brief.missing": "找不到文件 docs/judge-brief.md",
   "common.cancel": "取消",
   "common.save": "儲存",
   "common.add": "加入",
