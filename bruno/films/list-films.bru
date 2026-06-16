@@ -1,0 +1,17 @@
+meta {
+  name: List Films
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/films/?limit=50&offset=0
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.films: isDefined
+  res.body.total: isNumber
+}

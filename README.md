@@ -1,31 +1,58 @@
-# Film Brain — AI 片庫大腦
+# film-brain — AI Film Library Brain
 
-**Live site: https://jimc1682000.github.io/film-brain/**
+Semantic film search + multi-dimension auto-tagging. Turns a flat catalogue into
+a 14-dimension / ~400-tag taxonomy and lets people find films by *meaning*
+("something to cry to", "a tense Korean thriller") instead of exact keywords.
 
-Static portfolio for an AI film-library prototype built at the CATCHPLAY+ Hackathon 2026:
-500+ fixed genre nodes reshaped into a 14-dimension / 400-tag flexible taxonomy, with
-natural-language semantic search that is honest when nothing truly matches and can
-explain every result it returns. English version under [`/en/`](https://jimc1682000.github.io/film-brain/en/).
+Built for the CATCHPLAY+ Hackathon 2026; open-sourced as a runnable, brand-neutral core.
 
-把五百多個固定分類改造成 14 維、400 個標籤的彈性體系 — 編輯用一句話找片,
-AI 查不到會誠實說,查得到講得出為什麼。
+**Live demo / write-up:** https://jimc1682000.github.io/film-brain/
 
-## Pages
+## What this repo is — vs the live demo
 
-| Page | What's inside |
-|---|---|
-| [總覽](https://jimc1682000.github.io/film-brain/) | How the system works — auto-tagging & query pipelines, trust mechanisms, demo GIFs |
-| [搜尋回放](https://jimc1682000.github.io/film-brain/search.html) | Real pipeline outputs for 7 queries, replayed from canned JSON (incl. the honest low-confidence case) |
-| [技術決策](https://jimc1682000.github.io/film-brain/decisions.html) | Stack choices with real rationale, collaboration discipline, major mid-project pivots (ADR digest) |
-| [協作方式](https://jimc1682000.github.io/film-brain/collab.html) | How one engineer + AI built this — written for non-technical teammates (daily loop, guardrails, decomposing problems for AI) |
-| [可帶走 Prompt](https://jimc1682000.github.io/film-brain/prompts.html) | An auto-tagging prompt you can copy into any chatbot — packaging an AI capability with no backend |
-| [凝聚想法](https://jimc1682000.github.io/film-brain/ideation.html) | How to converge scattered hackathon ideas into one buildable project |
-| [MJ 事件](https://jimc1682000.github.io/film-brain/mj-case.html) | A false-100% debugging case study, from symptom to calibrated fix |
-| [評測迭代](https://jimc1682000.github.io/film-brain/eval.html) | v1–v8 tuning story driven by an LLM-as-judge eval harness (nDCG 0.93 → 0.96) |
+| | |
+| --- | --- |
+| **This repo (code)** | The **runnable, mock-based core** — FastAPI + NiceGUI + Qdrant + local bge-m3 + cross-encoder. **Keyless**: search runs on local models, no API key required. Bring your own films via a neutral seed format. |
+| **The live demo (site)** | A portfolio **showcasing the full system run on the real CATCHPLAY+ catalogue** — the search replay, the eval-iteration story, the debugging case studies. |
 
-## Notes
+So a couple of things the showcase describes are **not shipped here**, by design:
+- **Catalogue ingest / scrapers** are a *private source adapter*. This repo ships the **generic loader** (`scripts/seed_from_file.py`) + a **neutral adapter template** (`scripts/adapters/example_adapter.py`) + a bundled **mock dataset** — bring your own films in the documented format (`data/films.seed.schema.json`).
+- **The 45-query eval numbers** (nDCG@5 0.93 → 0.96 on the site) were measured on the *real catalogue*. The repo ships the **same harness** (`scripts/eval_search.py`) + the **same 45-query set** (`data/eval-queries.json` — query strings, LLM-judged at runtime, no gold labels), but the headline numbers only reproduce against the real catalogue; on the bundled mock films the same harness yields different scores.
 
-- Plain HTML/CSS/JS + CDN libs (marked, mermaid, chart.js) — no build chain.
-- Search replay data is genuine pipeline output captured offline; the static site has no backend.
-- Application source code lives in a private repository; this repo is the public showcase.
-- Catalog metadata from public sources (CATCHPLAY+ / TMDB).
+The system is **not coupled to CATCHPLAY** — it runs on any dataset matching the seed schema.
+
+## Quickstart (keyless)
+
+```bash
+docker compose up -d qdrant          # vector DB
+ollama pull bge-m3                    # local embedding model (no API key)
+python -m scripts.seed_from_file data/films.seed.json   # seed the bundled mock films
+uvicorn backend.main:app --port 8000  # backend
+python -m frontend.app                # frontend (separate terminal)
+```
+
+A cloud LLM key (OpenRouter / etc.) is **optional** — it only enriches query
+understanding + auto-tagging; without it those degrade gracefully (search still works).
+
+## Bring your own films
+
+Drop a `data/films.seed.json` matching `data/films.seed.schema.json` (titles map,
+taxonomy tags, optional poster/year/country/cast), then `make seed`. Tags can be
+LLM-filled with `--auto-tag`. See `scripts/adapters/example_adapter.py` for the
+source-adapter contract.
+
+## Architecture
+
+Detailed C4 + UML diagrams under [`docs/architecture/`](docs/architecture/):
+system context, containers, components, Protocol class diagram, the hybrid-search
+pipeline + sequences, the data model (ERD), and deployment. Design decisions are
+in [`docs/adr/`](docs/adr/).
+
+## Tech
+
+FastAPI · NiceGUI · SQLite · Qdrant · BAAI/bge-m3 (local) · bce-reranker cross-encoder ·
+hybrid recall (vector + BM25/FTS5+jieba → RRF) · honest cosine-tier scoring · OpenRouter-free / local-Ollama LLM.
+
+## License
+
+MIT — see [LICENSE](LICENSE).

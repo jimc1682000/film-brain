@@ -1,0 +1,15 @@
+meta {
+  name: Similar Films
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/search/similar/{{sampleFilmId}}?top_k=5
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 501
+}

@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          # ruff pinned to the pre-commit hook's rev (.pre-commit-config.yaml)
+          # so CI's format check can't drift from local hooks across releases.
+          pip install pytest pytest-cov pytest-asyncio pytest-mock ruff==0.15.17
+          pip install pyright==1.1.410
+
+      - name: Lint (ruff)
+        run: ruff check backend
+
+      - name: Format check (ruff)
+        run: ruff format --check backend
+
+      - name: Type check (pyright)
+        run: bash scripts/typecheck.sh
+
+      - name: DRY check (jscpd)
+        run: npx --yes jscpd@5.0.9 --config .jscpd.json
+
+      - name: Tests + total coverage gate (>=80%)
+        run: |
+          pytest backend/tests -q \
+            --cov=backend --cov-report=term-missing \
+            --cov-report=json --cov-fail-under=80
+
+      - name: Per-module coverage gate (every module >=80%)
+        run: |
+          python - <<'PY'
+          import json, sys
+          data = json.load(open("coverage.json"))
+          under = [
+              (f, round(v["summary"]["percent_covered"], 1))
+              for f, v in data["files"].items()
+              if "/tests/" not in f and v["summary"]["percent_covered"] < 80
+          ]
+          if under:
+              print("::error::modules below 80% coverage:")
+              for f, p in sorted(under):
+                  print(f"  {f}: {p}%")
+              sys.exit(1)
+          print("All non-test modules >= 80% coverage.")
+          PY
+
+  # Real-Qdrant wiring smoke. The `test` job mocks Qdrant everywhere; this runs
+  # the vector_store ↔ Qdrant ↔ hybrid path against a live Qdrant service using
+  # deterministic fake_embed vectors (no model download, no live HTTP server).
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      qdrant:
+        image: qdrant/qdrant:latest
+        ports:
+          - 6333:6333
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio pytest-mock
+
+      - name: Wait for Qdrant
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:6333/readyz && ok=1 && break
+            sleep 1
+          done
+          # Fail loudly if Qdrant never came up — otherwise the qdrant-marked
+          # tests would skip and the job would go falsely green.
+          [ "${ok:-}" = 1 ] || { echo "Qdrant never became ready"; exit 1; }
+
+      - name: Integration (real Qdrant)
+        run: pytest backend/tests -m qdrant -q

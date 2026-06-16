@@ -1,0 +1,210 @@
+{
+  "metadata": {
+    "version": "1.1",
+    "updated": "2026-04-20",
+    "note": "18 award orgs tracked by award-tracker module. tag_id pattern: {org_slug}-{category-slug}. Wikipedia `{Nth}_{Org}_Awards` / `{Year}_{Org}` pages often most complete — use `--wiki-url` when official site is SPA / blocked."
+  },
+  "orgs": [
+    {
+      "org_id": "oscars",
+      "name_en": "Academy Awards",
+      "name_zh": "奧斯卡金像獎",
+      "tag_prefix": "oscar",
+      "official_url": "https://www.oscars.org/oscars/ceremonies/{year}",
+      "ceremony_month": 3,
+      "region": "US",
+      "scope": "film",
+      "priority": 1
+    },
+    {
+      "org_id": "golden-globes",
+      "name_en": "Golden Globe Awards",
+      "name_zh": "金球獎",
+      "tag_prefix": "golden-globe",
+      "official_url": "https://goldenglobes.com/nominations/",
+      "ceremony_month": 1,
+      "region": "US",
+      "scope": "film+tv",
+      "priority": 1
+    },
+    {
+      "org_id": "golden-horse",
+      "name_en": "Golden Horse Awards",
+      "name_zh": "金馬獎",
+      "tag_prefix": "golden-horse",
+      "official_url": "https://www.goldenhorse.org.tw/awards/nw/",
+      "ceremony_month": 11,
+      "region": "TW",
+      "scope": "film",
+      "priority": 1
+    },
+    {
+      "org_id": "cannes",
+      "name_en": "Cannes Film Festival",
+      "name_zh": "坎城影展",
+      "tag_prefix": "cannes",
+      "official_url": "https://www.festival-cannes.com/en/retrospective/{year}/",
+      "ceremony_month": 5,
+      "region": "FR",
+      "scope": "film",
+      "priority": 1
+    },
+    {
+      "org_id": "venice",
+      "name_en": "Venice International Film Festival",
+      "name_zh": "威尼斯影展",
+      "tag_prefix": "venice",
+      "official_url": "https://www.labiennale.org/en/cinema/{year}/awards",
+      "ceremony_month": 9,
+      "region": "IT",
+      "scope": "film",
+      "priority": 1
+    },
+    {
+      "org_id": "berlin",
+      "name_en": "Berlin International Film Festival",
+      "name_zh": "柏林影展",
+      "tag_prefix": "berlin",
+      "official_url": "https://www.berlinale.de/en/festival/{year}/awards/main-competition.html",
+      "ceremony_month": 2,
+      "region": "DE",
+      "scope": "film",
+      "priority": 1,
+      "note": "Official site SPA. Prefer `--wiki-url en.wikipedia.org/wiki/{Nth}_Berlin_International_Film_Festival`."
+    },
+    {
+      "org_id": "emmy",
+      "name_en": "Primetime Emmy Awards",
+      "name_zh": "艾美獎",
+      "tag_prefix": "emmy",
+      "official_url": "https://www.emmys.com/awards/nominees-winners/{year}",
+      "ceremony_month": 9,
+      "region": "US",
+      "scope": "tv",
+      "priority": 1
+    },
+    {
+      "org_id": "golden-bell",
+      "name_en": "Golden Bell Awards",
+      "name_zh": "金鐘獎",
+      "tag_prefix": "golden-bell",
+      "official_url": "https://bhuser.bamid.gov.tw/GoldBellAward/",
+      "ceremony_month": 10,
+      "region": "TW",
+      "scope": "tv",
+      "priority": 1
+    },
+    {
+      "org_id": "hk-film-award",
+      "name_en": "Hong Kong Film Awards",
+      "name_zh": "香港電影金像獎",
+      "tag_prefix": "hkfa",
+      "official_url": "https://www.hkfaa.com/winnerlist.html",
+      "ceremony_month": 4,
+      "region": "HK",
+      "scope": "film",
+      "priority": 2
+    },
+    {
+      "org_id": "japan-academy",
+      "name_en": "Japan Academy Film Prize",
+      "name_zh": "日本電影學院獎",
+      "tag_prefix": "japan-academy",
+      "official_url": "https://www.japan-academy-prize.jp/prizes/",
+      "ceremony_month": 3,
+      "region": "JP",
+      "scope": "film",
+      "priority": 2
+    },
+    {
+      "org_id": "taipei-film-award",
+      "name_en": "Taipei Film Awards",
+      "name_zh": "台北電影獎",
+      "tag_prefix": "taipei-film",
+      "official_url": "https://www.taipeiff.taipei/AwardsList.aspx",
+      "ceremony_month": 7,
+      "region": "TW",
+      "scope": "film",
+      "priority": 2
+    },
+    {
+      "org_id": "biff",
+      "name_en": "Busan International Film Festival",
+      "name_zh": "釜山國際影展",
+      "tag_prefix": "biff",
+      "official_url": "https://www.biff.kr/eng/html/award/awards_list.asp",
+      "ceremony_month": 10,
+      "region": "KR",
+      "scope": "film",
+      "priority": 2
+    },
+    {
+      "org_id": "razzies",
+      "name_en": "Golden Raspberry Awards",
+      "name_zh": "金酸梅獎",
+      "tag_prefix": "razzie",
+      "official_url": "https://www.razzies.com/",
+      "ceremony_month": 3,
+      "region": "US",
+      "scope": "film",
+      "priority": 3,
+      "note": "worst-of-year reverse curation"
+    },
+    {
+      "org_id": "sundance",
+      "name_en": "Sundance Film Festival",
+      "name_zh": "日舞影展",
+      "tag_prefix": "sundance",
+      "official_url": "https://www.sundance.org/festivals/sundance-film-festival/awards",
+      "ceremony_month": 1,
+      "region": "US",
+      "scope": "film",
+      "priority": 2
+    },
+    {
+      "org_id": "indie-spirit",
+      "name_en": "Independent Spirit Awards",
+      "name_zh": "獨立精神獎",
+      "tag_prefix": "indie-spirit",
+      "official_url": "https://filmindependent.org/spirit-awards/",
+      "ceremony_month": 3,
+      "region": "US",
+      "scope": "film",
+      "priority": 3
+    },
+    {
+      "org_id": "bafta",
+      "name_en": "British Academy Film Awards",
+      "name_zh": "英國電影學院獎",
+      "tag_prefix": "bafta",
+      "official_url": "https://www.bafta.org/film/awards/winners-nominations",
+      "ceremony_month": 2,
+      "region": "UK",
+      "scope": "film",
+      "priority": 2
+    },
+    {
+      "org_id": "annie",
+      "name_en": "Annie Awards",
+      "name_zh": "安妮獎",
+      "tag_prefix": "annie",
+      "official_url": "https://annieawards.org/nominations/",
+      "ceremony_month": 2,
+      "region": "US",
+      "scope": "animation",
+      "priority": 2
+    },
+    {
+      "org_id": "critics-choice",
+      "name_en": "Critics' Choice Awards",
+      "name_zh": "評論家選擇獎",
+      "tag_prefix": "critics-choice",
+      "official_url": "https://www.criticschoice.com/movie-awards/",
+      "ceremony_month": 1,
+      "region": "US",
+      "scope": "film+tv",
+      "priority": 2,
+      "note": "oscar bellwether"
+    }
+  ]
+}

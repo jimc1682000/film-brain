@@ -1,0 +1,50 @@
+:root {
+  --vp-c-brand-1: #f26f21;
+  --vp-c-brand-2: #ff944c;
+  --vp-c-brand-3: #d4570c;
+  --vp-c-brand-soft: rgba(242, 111, 33, 0.14);
+}
+.dark {
+  --vp-c-brand-1: #ff8845;
+}
+/* hero gradient glow, VitePress-style */
+:root {
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #ff944c, #f26f21);
+  --vp-home-hero-image-background-image: linear-gradient(45deg, #f26f21 30%, #00a3d9);
+  --vp-home-hero-image-filter: blur(48px);
+}
+
+/* "why now" emphasis callout on home */
+.why-now-wrap { max-width: 1152px; margin: 0 auto; padding: 0 24px 8px; }
+.why-now {
+  padding: 16px 20px;
+  border: 1px solid var(--vp-c-brand-1);
+  background: var(--vp-c-brand-soft);
+  border-radius: 12px; line-height: 1.8;
+}
+.why-now .src { color: var(--vp-c-text-2); font-size: .85em; }
+
+/* Mermaid CJK labels: mermaid under-measures Chinese text height. Let the
+   label overflow its (too-short) measured box but keep it VERTICALLY CENTERED
+   on the node so text doesn't sit low / spill downward. */
+.mermaid svg { max-width: 100%; height: auto; }
+.mermaid .node foreignObject { overflow: visible; }
+.mermaid .node foreignObject > div {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1.35 !important;
+}
+.mermaid .nodeLabel { white-space: normal !important; }
+
+/* details note (ADR digest / eval diary) */
+.vp-doc details.note { border: 1px solid var(--vp-c-divider); border-radius: 8px; padding: 8px 16px; margin: 10px 0; background: var(--vp-c-bg-soft); }
+.vp-doc details.note summary { cursor: pointer; font-weight: 700; }
+.vp-doc details.note .turn { color: var(--vp-c-brand-1); }
+
+/* Anchor landing: keep the heading clear of the sticky nav bar. */
+.vp-doc h1, .vp-doc h2, .vp-doc h3, .vp-doc h4 {
+  scroll-margin-top: calc(var(--vp-nav-height, 64px) + 20px);
+}

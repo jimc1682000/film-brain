@@ -1,0 +1,15 @@
+meta {
+  name: Get Film Detail
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/films/{{sampleFilmId}}
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
