@@ -131,3 +131,36 @@ def test_min_display_score_default_drops_below_10_percent(client):
     assert r.status_code == 200, r.text
     ids = [r["film_id"] for r in r.json()["results"]]
     assert "f-low" not in ids
+
+
+def test_per_request_min_display_score_tightens_floor(client):
+    """A high per-request min_display_score must hide mid-band hits the default
+    floor would keep — i.e. the request value is honored, not just the config."""
+    hits = _fake_hits()
+    # Normalised display scores: high=1.0, mid=0.5, low=0.05.
+    reranked = _make_rerank_output(hits, [1.0, 0.5, 0.05])
+
+    app.dependency_overrides[get_reranker] = lambda: _FakeReranker(reranked)
+    try:
+        with (
+            patch("backend.routers.search.get_embed_service") as mock_embed,
+            patch("backend.routers.search.get_qdrant_client", return_value=MagicMock()),
+            patch("backend.routers.search.hybrid_candidates", return_value=_candidates(hits)),
+            patch(
+                "backend.routers.search.expand_query",
+                return_value={"filters": {}, "hyde_text": "", "keywords": []},
+            ),
+        ):
+            mock_embed.return_value.embed_single.return_value = [0.0] * 1024
+            mock_embed.return_value.tag_vector_cache = {}
+
+            r = client.post(
+                "/api/search/",
+                json={"query": "test", "min_display_score": 0.9, "use_llm_rerank": True},
+            )
+    finally:
+        app.dependency_overrides.pop(get_reranker, None)
+
+    assert r.status_code == 200, r.text
+    ids = [r["film_id"] for r in r.json()["results"]]
+    assert ids == ["f-high"], "only the 1.0 hit clears a 0.9 per-request floor"
