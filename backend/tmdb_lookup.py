@@ -68,7 +68,7 @@ def _safe_get(url: str) -> httpx.Response | None:
             if not _is_safe_url(url):
                 return None
             resp = client.get(url)
-            if resp.is_redirect and resp.has_redirect_location:
+            if resp.is_redirect and resp.next_request is not None:
                 url = str(resp.next_request.url)
                 continue
             return resp
