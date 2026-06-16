@@ -1,0 +1,22 @@
+rules:
+  - id: httpx-ssrf-unvalidated-url
+    languages: [python]
+    severity: ERROR
+    message: >
+      Possible SSRF: an httpx/requests fetch of a non-literal URL with redirect
+      following. Validate the host first (reject private/internal IPs) and
+      follow redirects manually — see backend/tmdb_lookup.py _safe_get. The free
+      semgrep registry's SSRF rules don't cover httpx, so this is a local guard.
+    metadata:
+      category: security
+      cwe: "CWE-918: Server-Side Request Forgery (SSRF)"
+    patterns:
+      - pattern-either:
+          - pattern: httpx.get($URL, ..., follow_redirects=True, ...)
+          - pattern: httpx.$M($URL, ..., follow_redirects=True, ...)
+          - pattern: $C.get($URL, ..., follow_redirects=True, ...)
+      # only when the URL is NOT a string literal (a variable / expr)
+      - metavariable-pattern:
+          metavariable: $URL
+          patterns:
+            - pattern-not: "\"...\""
