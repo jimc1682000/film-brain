@@ -63,9 +63,7 @@ def test_index_film_is_idempotent(conn):
     bm.index_film(conn, "f1")
     bm.index_film(conn, "f1")
     conn.commit()
-    (count,) = conn.execute(
-        "SELECT COUNT(*) FROM films_fts WHERE film_id = ?", ("f1",)
-    ).fetchone()
+    (count,) = conn.execute("SELECT COUNT(*) FROM films_fts WHERE film_id = ?", ("f1",)).fetchone()
     assert count == 1
 
 
