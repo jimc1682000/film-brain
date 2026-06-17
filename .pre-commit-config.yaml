@@ -8,6 +8,9 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
+        # Compose overlay uses the `!override` merge tag, which pyyaml safe_load
+        # rejects; `docker compose config` (CI) validates it instead.
+        exclude: ^docker-compose\.staging\.yml$
       - id: check-added-large-files
         args: ['--maxkb=2048']
       - id: check-merge-conflict

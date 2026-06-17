@@ -2,7 +2,7 @@
 # before promoting it to prod. Merge it on top of the GHCR compose and run it as
 # a separate Compose project so it stands up ALONGSIDE prod without colliding:
 #
-#   IMAGE_TAG=v0.1.0 docker compose \
+#   IMAGE_TAG=0.1.0 docker compose \
 #     -f docker-compose.ghcr.yml -f docker-compose.staging.yml \
 #     -p film-brain-staging up -d
 #
@@ -11,22 +11,27 @@
 #
 # Host ports are remapped (1xxxx) so they never clash with a running prod stack;
 # named volumes are namespaced by the -p project, so staging data is separate.
+#
+# `!override` REPLACES the base `ports` list rather than appending to it: Compose
+# merges `ports` by unique {ip,target,published,protocol}, so a plain `18000:8000`
+# would NOT drop the base `8000:8000` and staging would still try to bind the prod
+# port. Requires Compose v2.24+.
 services:
   backend:
-    ports:
+    ports: !override
       - "18000:8000"
 
   frontend:
-    ports:
+    ports: !override
       - "18080:8080"
     environment:
       - BACKEND_URL=http://backend:8000
 
   qdrant:
-    ports:
+    ports: !override
       - "16333:6333"
       - "16334:6334"
 
   ollama:
-    ports:
+    ports: !override
       - "127.0.0.1:11435:11434"
