@@ -1,0 +1,24 @@
+rules:
+  # Log injection: user-influenced value interpolated into a log message via an
+  # inline f-string lets an attacker forge log lines (newlines). Log with %r
+  # placeholders instead (logger.warning("... %r", value)) — repr escapes them.
+  # NOTE: SQL injection is intentionally NOT a custom rule here — our f-string
+  # SQL always parameterizes values (interpolating only code-controlled
+  # structure), so a pattern rule just re-creates a false positive. SQLi taint
+  # is covered by CodeQL (CI) + ruff S608.
+  - id: log-injection-fstring
+    languages: [python]
+    severity: WARNING
+    message: >
+      User-influenced value interpolated into a log message via an inline
+      f-string — log injection risk. Use %r placeholders
+      (logger.warning("... %r", value)) so the value is escaped.
+    metadata: { category: security, cwe: "CWE-117: Log Injection" }
+    patterns:
+      - pattern-either:
+          - pattern: $LOG.debug(f"...", ...)
+          - pattern: $LOG.info(f"...", ...)
+          - pattern: $LOG.warning(f"...", ...)
+          - pattern: $LOG.error(f"...", ...)
+          - pattern: $LOG.exception(f"...", ...)
+          - pattern: $LOG.critical(f"...", ...)
