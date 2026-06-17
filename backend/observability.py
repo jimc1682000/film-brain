@@ -100,14 +100,26 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
         start = time.perf_counter()
-        response = await call_next(request)
+        try:
+            response = await call_next(request)
+        except Exception:
+            # An unhandled route error propagates here BEFORE we'd see a response
+            # (ServerErrorMiddleware turns it into the 500 the client gets). Record
+            # it as a 500 so the error-rate alert catches exactly these — then
+            # re-raise so the normal 500 handling still runs.
+            self._record(request, 500, start)
+            raise
+        self._record(request, response.status_code, start)
+        return response
+
+    @staticmethod
+    def _record(request: Request, status: int, start: float) -> None:
         try:
             path = _route_template(request)
-            REQUESTS.labels(request.method, path, str(response.status_code)).inc()
+            REQUESTS.labels(request.method, path, str(status)).inc()
             LATENCY.labels(request.method, path).observe(time.perf_counter() - start)
         except Exception:  # pragma: no cover - defensive: metrics must not break a request
             logger.debug("metrics recording failed", exc_info=True)
-        return response
 
 
 def metrics_response() -> Response:

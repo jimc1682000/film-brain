@@ -47,6 +47,25 @@ def test_route_template_falls_back_for_unmatched(client):
     assert 'path="unmatched"' in body
 
 
+def test_unhandled_exception_recorded_as_500():
+    # A route that raises must still increment a 500 counter — otherwise the
+    # HighErrorRate alert would miss exactly the production 500s that matter.
+    from fastapi import FastAPI
+    from prometheus_client import generate_latest
+
+    mini = FastAPI()
+    mini.add_middleware(obs.MetricsMiddleware)
+
+    @mini.get("/boom")
+    def _boom():
+        raise RuntimeError("kaboom")
+
+    c = TestClient(mini, raise_server_exceptions=False)
+    assert c.get("/boom").status_code == 500
+    dump = generate_latest().decode()
+    assert 'http_requests_total{method="GET",path="/boom",status="500"}' in dump
+
+
 # ── JSON log formatter ────────────────────────────────────────────────────────
 
 
