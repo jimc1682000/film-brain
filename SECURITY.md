@@ -35,3 +35,24 @@ Reports of "unauthenticated access" or "open ports" on an instance deployed
 against this guidance are expected behavior, not vulnerabilities. Genuine issues
 — dependency CVEs, injection, secret leakage in the codebase, a way to read
 files outside the intended scope — are in scope and welcome.
+
+## LLM security (OWASP LLM Top 10)
+
+LLMs are used for query expansion (user query → tags/keywords/HyDE) and
+auto-tagging (film metadata → tags). Mapping of the applicable risks to the
+mitigations actually in the codebase:
+
+| Risk | Mitigation (where) |
+| --- | --- |
+| **LLM01 Prompt injection** | The LLM output is structured + validated: tags are checked against the tag registry and non-existent ones dropped (`query_expand._parse_expansion` → `TagRegistry.validate_tag_ids`); a JSON schema constrains the response. A crafted query can at worst degrade result quality — it can't escape into code or SQL. Test: `test_query_expand.py::test_valid_expansion_groups_and_drops_hallucinated`. |
+| **LLM02 Insecure output handling** | LLM output is treated as data, never executed. Keywords reach BM25 via a parameterized FTS `MATCH ?` (tokens quoted); tags/HyDE feed search only. The dangerous sinks are gated: `eval`/`exec` by ruff `S307`/`S102`, SQL by CodeQL + parameterized queries, outbound fetch by the `.semgrep/httpx-ssrf` rule, logging by `.semgrep/injection` + `_loggable()`. |
+| **LLM04 Model DoS** | LLM calls are time-bounded with a circuit breaker (auto-tag) and degrade to BM25 (`query_expand._degraded`). No app-level rate limit — bounded by the local/trusted deployment model above. |
+| **LLM06 Sensitive info disclosure** | Prompts carry only the query + the public taxonomy; no secrets/PII. Keys live in `.env` (git-ignored). |
+| **LLM08 Excessive agency** | None — the LLM only *returns* data (tags/keywords/text). It calls no tools, runs no code, and mutates no state. |
+| **LLM09 Overreliance** | Honest confidence scoring (ADR 0009) caps displayed scores; tags are validated; LLM failure degrades gracefully rather than fabricating. |
+
+LLM03 (training-data poisoning), LLM05/07/10 (no fine-tuning, no plugins, hosted
+/local models) don't apply. Note these are runtime/design defenses verified by
+tests — "prompt injection" isn't a statically lintable class, so there's no
+dedicated pre-commit hook for it; the sink coverage above is what guards
+regressions.
