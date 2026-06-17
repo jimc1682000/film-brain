@@ -5,8 +5,11 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from backend.db import init_db
+from backend.observability import MetricsMiddleware, configure_logging, metrics_response
 from backend.routers import auto_tag, awards, feedback, films, reviews, search, tags
 
+# Opt-in structured logging (LOG_FORMAT=json); a no-op otherwise.
+configure_logging()
 logger = logging.getLogger(__name__)
 
 
@@ -112,6 +115,9 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
 )
 
+# Request count + latency metrics on every route (degrades silently on error).
+app.add_middleware(MetricsMiddleware)
+
 app.include_router(films.router, prefix="/api/films", tags=["Films"])
 app.include_router(tags.router, prefix="/api/tags", tags=["Tags"])
 app.include_router(auto_tag.router, prefix="/api/auto-tag", tags=["Auto-Tag"])
@@ -169,3 +175,9 @@ def health():
         "status": "ok",
         "tag_cache_size": getattr(app.state, "tag_cache_size", 0),
     }
+
+
+@app.get("/metrics", include_in_schema=False)
+def metrics():
+    """Prometheus exposition (excluded from the OpenAPI schema)."""
+    return metrics_response()
