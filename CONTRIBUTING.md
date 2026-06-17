@@ -35,9 +35,11 @@ python -m frontend.app
 ```
 
 > One pre-commit hook (`betterleaks`, the staged secret scan) shells out to a
-> `betterleaks` binary that isn't a Python package — install it separately, or
-> skip that hook locally with `SKIP=betterleaks,betterleaks-history git commit …`
-> (CI's GitGuardian check still gates secrets either way).
+> `betterleaks` binary that isn't a Python package — install it separately. You
+> can skip it locally with `SKIP=betterleaks,betterleaks-history git commit …`,
+> but then scan for secrets yourself before pushing: there is no blocking
+> server-side gate (the GitGuardian App flags PRs but is advisory, and `master`
+> is not branch-protected). Keeping the local hook on is the real safety net.
 
 ## Before you open a PR
 
