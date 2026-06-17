@@ -75,7 +75,9 @@ _HIGH_RISK = [
         "system_prompt_leak_ja2",
     ),
     (r"<\|(im_start|im_end|endoftext|system|user|assistant)\|>", "role_hijack_token"),
-    (r"\\n(system|assistant|user)\s*:", "role_hijack_newline"),
+    # Match BOTH a real newline and a literal backslash-n (escaped in the raw
+    # query text) before a role token — either can smuggle a fake turn.
+    (r"(?:\\n|[\r\n])\s*(system|assistant|user)\s*:", "role_hijack_newline"),
 ]
 
 # weight 20
