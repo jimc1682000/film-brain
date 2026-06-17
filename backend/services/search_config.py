@@ -103,6 +103,15 @@ def get_config() -> dict:
             **_DEFAULTS["dimension_default"],
             **raw.get("dimension_default", {}),
         }
+        # Merge prompt_guard nested (incl. its inner `weights`) so a partial
+        # override — e.g. just {"block": 30} — keeps the other keys instead of
+        # dropping them and making prompt_guard.inspect() KeyError on every query.
+        pg_raw = raw.get("prompt_guard", {})
+        cfg["prompt_guard"] = {**_DEFAULTS["prompt_guard"], **pg_raw}
+        cfg["prompt_guard"]["weights"] = {
+            **_DEFAULTS["prompt_guard"]["weights"],
+            **pg_raw.get("weights", {}),
+        }
         _cache.update(mtime=mtime, data=cfg)
     return _cache["data"]
 
