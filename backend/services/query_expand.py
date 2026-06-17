@@ -38,6 +38,13 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
+def _loggable(s: object) -> str:
+    """Strip CR/LF from a user-supplied value before logging it, so it can't
+    forge log lines (log injection)."""
+    return str(s).replace("\r", " ").replace("\n", " ")
+
+
 # Which dims are hard filters vs soft boosts is data-driven (search-config.json,
 # hot-reloaded): filter dims are exclusionary (region/award/…), boost dims are
 # preferential and would over-constrain if ANDed — a long query like
@@ -134,11 +141,11 @@ def _call_expansion_llm(llm, q: str, reg, timeout: float) -> str | None:
             _system_prompt(reg), q, model=select_model(), schema=_SCHEMA, timeout=timeout, meta={}
         )
     except LLMRateLimitError as e:
-        logger.warning("query_expand rate-limited for %r: %s", q, e)
+        logger.warning("query_expand rate-limited for %r: %s", _loggable(q), e)
     except RuntimeError as e:
-        logger.warning("query_expand exhausted for %r: %s", q, e)
+        logger.warning("query_expand exhausted for %r: %s", _loggable(q), e)
     except Exception as e:  # transport / unknown — degrade, don't block
-        logger.warning("query_expand failed for %r: %s", q, e)
+        logger.warning("query_expand failed for %r: %s", _loggable(q), e)
     return None
 
 
@@ -203,7 +210,9 @@ def expand_query(query: str, *, timeout: float = 20.0, llm_client: LLMClient | N
     try:
         data = json.loads(strip_json_fence(raw))
     except json.JSONDecodeError as e:
-        logger.warning("query_expand bad-JSON for %r: %s; raw=%r", q, e, raw[:200])
+        logger.warning(
+            "query_expand bad-JSON for %r: %s; raw=%r", _loggable(q), e, _loggable(raw[:200])
+        )
         return _degraded()
 
     result = _parse_expansion(data, reg)
