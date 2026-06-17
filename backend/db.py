@@ -344,9 +344,41 @@ def get_reviews_for_film(conn: sqlite3.Connection, film_id: str) -> list[dict]:
     return [dict(r) for r in rows]
 
 
+# Columns an upsert may set — the kwargs keys are f-string-interpolated into the
+# SQL, so gate them against this allowlist (values stay parameterized). Rejects
+# any unexpected column name before it can reach the query (SQL-injection guard).
+_AWARD_NOMINEE_COLS = frozenset(
+    {
+        "org_id",
+        "tag_id",
+        "year",
+        "category",
+        "film_title_primary",
+        "film_title_alt",
+        "person",
+        "result",
+        "source_url",
+        "ceremony_date",
+        "tmdb_id",
+        "tmdb_media_type",
+        "tmdb_title",
+        "tmdb_original_title",
+        "tmdb_year",
+        "tmdb_poster_url",
+        "tmdb_overview",
+        "tmdb_vote_avg",
+        "matched_film_id",
+        "match_score",
+    }
+)
+
+
 def upsert_award_nominee(conn: sqlite3.Connection, **kwargs) -> int:
     """Insert-or-update a nominee. Returns rowid of the affected row."""
     cols = list(kwargs.keys())
+    unknown = set(cols) - _AWARD_NOMINEE_COLS
+    if unknown:
+        raise ValueError(f"unknown award_nominees column(s): {sorted(unknown)}")
     placeholders = ", ".join("?" for _ in cols)
     updates = ", ".join(
         f"{c}=excluded.{c}"
