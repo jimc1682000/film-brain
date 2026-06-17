@@ -7,6 +7,8 @@
 #   docker build -f backend/Dockerfile -t fb-backend:slim --target slim .
 #   docker build -f backend/Dockerfile.st --build-arg BASE=fb-backend:slim -t fb-backend:st .
 ARG BASE=ghcr.io/jimc1682000/film-brain-backend:master
+# BASE's default is tagged (:master); the ARG just isn't statically resolvable.
+# hadolint ignore=DL3006
 FROM ${BASE}
 WORKDIR /app # explicit (the base sets it too) — keeps the COPY below unambiguous
 
