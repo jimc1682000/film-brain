@@ -2,14 +2,16 @@
 # One-command rollback to a previously published image tag.
 #
 # The release pipeline (.github/workflows/image.yml) publishes backend/frontend
-# images to GHCR per git tag (:1.2.3) and as :master. This pins the compose
-# stack to a given tag, restarts, and runs the post-deploy smoke check. If the
-# smoke check fails, it reports loudly so you can re-run with a known-good tag.
+# images to GHCR per git tag and as :master. NOTE the image tag has NO leading
+# "v": docker/metadata-action `type=semver,pattern={{version}}` turns git tag
+# `v0.1.0` into image tag `0.1.0`. This pins the compose stack to a given image
+# tag, restarts, and runs the post-deploy smoke check; on failure it reports
+# loudly so you can re-run with a known-good tag.
 #
 # Usage:
 #   scripts/rollback.sh <image-tag> [BASE_URL]
-# Example:
-#   scripts/rollback.sh v0.1.0
+# Example (image tag, not the git tag — no leading v):
+#   scripts/rollback.sh 0.1.0
 #
 # Find available tags on GHCR (packages film-brain-backend / -frontend).
 set -euo pipefail

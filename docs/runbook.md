@@ -46,22 +46,25 @@ curl -fsS localhost:8000/api/llm-health
 | All searches empty | DB not seeded | Seed the dataset (see CONTRIBUTING / Quick Start). |
 | Config change not taking effect | `data/search-config.json` malformed | Tuning hot-reloads on the next search; a malformed/absent file falls back to built-in defaults (search never breaks). Fix the JSON. |
 
-## Rollback (manual)
+## Rollback
 
-The release pipeline tags backend/frontend images per `v*` git tag and as
-`:master`. To roll back, point the compose file at a previous tag and restart:
+The release pipeline tags backend/frontend images per git tag and as `:master`.
+The **image** tag has no leading `v` — `docker/metadata-action`
+`type=semver,pattern={{version}}` turns git tag `v0.1.0` into image tag `0.1.0`.
+
+Scripted (preferred) — pins the tag, restarts, and runs the smoke check:
 
 ```bash
-# Inspect available tags on GHCR, then pin the previous good one, e.g.:
-#   image: ghcr.io/jimc1682000/film-brain-backend:v0.1.0
-docker compose -f docker-compose.ghcr.yml pull
-docker compose -f docker-compose.ghcr.yml up -d
-# Verify:
-curl -fsS localhost:8000/health
+scripts/rollback.sh 0.1.0          # image tag, NOT the git tag (no leading v)
 ```
 
-> A scripted one-command rollback + post-deploy smoke check is tracked in the
-> Delivery & rollback work (see the project issues).
+Manual equivalent — the compose image tag is parametrized (`${IMAGE_TAG:-master}`):
+
+```bash
+IMAGE_TAG=0.1.0 docker compose -f docker-compose.ghcr.yml pull
+IMAGE_TAG=0.1.0 docker compose -f docker-compose.ghcr.yml up -d
+scripts/smoke_check.sh             # /health + /api/llm-health + a canned search
+```
 
 ## Ownership
 

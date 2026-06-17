@@ -5,24 +5,39 @@ gates — please keep them green.
 
 ## Dev setup
 
+The simplest path is Docker — it brings up the backing services and seeds in
+one place:
+
 ```bash
-# Python 3.11+. Install dev deps:
+make up      # backend + frontend + Qdrant + Ollama
+make seed    # seed the bundled mock dataset (no API key needed)
+```
+
+Host-Python path (more setup). The seed and the backend need Qdrant (`:6333`)
+and Ollama (`:11434`, with the `bge-m3` model pulled) reachable first —
+otherwise seeding fails connecting to them:
+
+```bash
+# Python 3.11+. Install dev deps + the hook runner (pre-commit is not in .[dev]):
 pip install -e ".[dev]"
+pip install pre-commit
 
 # Wire the commit-msg + pre-commit hooks (once per clone):
 pre-commit install
 
-# Seed the bundled mock dataset (no API key needed):
+# Start Qdrant + Ollama first (e.g. `docker compose up -d qdrant ollama` and
+# `ollama pull bge-m3`), THEN seed the bundled mock dataset:
 python -m scripts.seed_from_file data/films.seed.json
 
-# Run the backend:
+# Run the backend / frontend (separate terminals):
 uvicorn backend.main:app --reload --port 8000   # http://localhost:8000/api/docs
-
-# Run the frontend (separate terminal):
 python -m frontend.app
 ```
 
-Docker path: `make up` (backend + frontend + Qdrant), `make down`, `make logs`.
+> One pre-commit hook (`betterleaks`, the staged secret scan) shells out to a
+> `betterleaks` binary that isn't a Python package — install it separately, or
+> skip that hook locally with `SKIP=betterleaks,betterleaks-history git commit …`
+> (CI's GitGuardian check still gates secrets either way).
 
 ## Before you open a PR
 
