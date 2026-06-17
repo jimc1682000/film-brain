@@ -249,7 +249,7 @@ def get_recent_tag_activity_films(conn: sqlite3.Connection, limit: int = 10) -> 
 
     Returned `tags` list is ordered by confidence DESC so the UI list-view
     slice (e.g. tags[:5]) shows the most confident signals first rather than
-    arbitrary insertion-order picks — Vero asked "為什麼是這 5 個" because
+    arbitrary insertion-order picks — an editor asked "為什麼是這 5 個" because
     the old GROUP_CONCAT was using SQLite's undefined ordering.
     """
     rows = conn.execute(

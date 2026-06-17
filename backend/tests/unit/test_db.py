@@ -223,7 +223,7 @@ def test_insert_film_tag_and_get_film_tags(test_conn, sample_film, sample_tag):
 def test_get_film_tags_orders_by_confidence_desc(test_conn, sample_film):
     """List-view tag slices (tags[:5] in film_card) must surface the most
     confident signals first, regardless of dimension alphabet order. Fixes
-    Vero's "為什麼是這 5 個" question — previously dim ASC put audience
+    an editor's "為什麼是這 5 個" question — previously dim ASC put audience
     before emotion/theme even when their confidence was much lower.
     """
     insert_tag(test_conn, "audience-kid", "audience", "Kid", "兒童")

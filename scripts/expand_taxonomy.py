@@ -1,4 +1,4 @@
-"""Add Vero-requested fine-grained tags into data/dimension-mapping.json
+"""Add editor-requested fine-grained tags into data/dimension-mapping.json
 and persist them into the live SQLite tags table so /save validation lets
 them through.
 

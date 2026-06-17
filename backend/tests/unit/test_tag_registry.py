@@ -115,8 +115,8 @@ def test_all_tag_ids_count(registry):
 
     Originally 395; Day-4 taxonomy expansion (scripts/expand_taxonomy.py)
     added 5 fine-grained tags (toxic-romance, infidelity-consequence,
-    hardcore, family-drama, family-comedy) requested by Vero on Slack
-    C0ANU854KSQ for the demo category extension.
+    hardcore, family-drama, family-comedy) requested by an editor for the
+    demo category extension.
     """
     assert len(registry.all_tag_ids) == 400
 
