@@ -1,0 +1,38 @@
+# Prometheus alerting rules for the metrics exported at /metrics.
+# Load via prometheus.yml `rule_files:`. Thresholds are starting points — tune
+# against real traffic. Metric names must match backend/observability.py.
+groups:
+  - name: film-brain
+    rules:
+      - alert: LLMCircuitOpen
+        # The cloud-LLM breaker has been open a while → auto-tagging is degraded
+        # (falling back to the bounded local model). Search still works.
+        expr: llm_circuit_open == 1
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "Cloud-LLM circuit breaker open >10m"
+          description: "Auto-tagging is degraded. Check the cloud key/quota and /api/llm-health."
+
+      - alert: HighErrorRate
+        # >5% of requests are 5xx over 5 minutes.
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[5m]))
+            / sum(rate(http_requests_total[5m])) > 0.05
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: "5xx error rate >5%"
+          description: "Backend is returning server errors. Check logs and dependencies (Qdrant/Ollama)."
+
+      - alert: HighLatencyP95
+        # p95 request latency over 5s for 10 minutes. The CPU cross-encoder
+        # rerank is the dominant cost; sustained high p95 may mean cache misses.
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) > 5
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "p95 request latency >5s"
+          description: "Investigate rerank load / cache hit rate / dependency latency."
