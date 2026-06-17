@@ -66,6 +66,17 @@ _DEFAULTS: dict = {
         "award": {"mode": "boost", "weight": 1.5},
         "audience": {"mode": "boost", "weight": 1.5},
     },
+    # Prompt-injection input gate (OWASP LLM01 — backend/services/prompt_guard.py):
+    # score thresholds + per-signal weights. SUSPICIOUS is deliberately wide
+    # ("prefer over-catch") — it only logs/escalates, never hard-denies; BLOCK
+    # stays conservative since it degrades search. Tunable here without a deploy.
+    "prompt_guard": {
+        "block": 50,
+        "suspicious": 10,
+        "weights": {"high": 35, "medium": 20, "base64": 30, "unicode": 25, "char_ratio": 15},
+        "char_ratio_min_len": 30,
+        "char_ratio_threshold": 0.25,
+    },
 }
 
 _lock = threading.Lock()
