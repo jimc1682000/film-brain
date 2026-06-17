@@ -15,5 +15,14 @@ COPY --from=deps /install /usr/local
 COPY backend/ ./backend/
 COPY scripts/ ./scripts/
 COPY data/ ./data/
+# Run as non-root (trivy DS-0002). uid 1000 is the typical first host user, so a
+# bind-mounted ./data owned by that user stays writable; for a different host
+# uid, override with `user:` in compose or chown the host dir (see runbook).
+RUN useradd --uid 1000 --create-home appuser && chown -R appuser:appuser /app
+USER appuser
 EXPOSE 8000
+# Liveness via /health (returns immediately — warmup is backgrounded). No curl
+# in the slim image, so probe with stdlib urllib (trivy DS-0026).
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 CMD \
+    python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health', timeout=2).status == 200 else 1)"
 CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]

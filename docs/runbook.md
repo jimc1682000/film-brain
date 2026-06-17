@@ -23,6 +23,13 @@ docker compose -f docker-compose.ghcr.yml logs -f backend
 
 Local build instead of GHCR: `make up` (uses `docker-compose.yml`).
 
+> **Non-root containers + the `./data` bind mount.** The backend runs as uid
+> 1000 (`appuser`). It writes the SQLite DB / caches into the bind-mounted
+> `./data`, so that host directory must be writable by uid 1000 — it is when the
+> repo was cloned by the host's first user (also uid 1000). If `./data` is owned
+> by another uid, either `chown -R 1000:1000 ./data` or add `user: "<host-uid>"`
+> to the backend service in the compose file.
+
 ## Health checks
 
 | Endpoint | Tells you |

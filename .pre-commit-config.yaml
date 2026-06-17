@@ -78,6 +78,15 @@ repos:
 
   - repo: local
     hooks:
+      - id: trivy-config
+        name: trivy (Dockerfile / config misconfig)
+        # Runs trivy via Docker (no local binary needed), like hadolint-docker.
+        # Catches misconfig classes hadolint misses (run-as-root, no HEALTHCHECK).
+        # CI enforces the same scan (the `docker` job in ci.yml).
+        language: docker_image
+        entry: aquasec/trivy:0.71.1 config --exit-code 1 --severity HIGH,CRITICAL --skip-dirs .venv .
+        pass_filenames: false
+        files: (?i)(dockerfile|docker-compose.*\.ya?ml)$
       - id: i18n-hardcode
         name: i18n (no hardcoded CJK in frontend)
         entry: python scripts/check_i18n_hardcode.py
