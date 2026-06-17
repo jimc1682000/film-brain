@@ -59,6 +59,30 @@ def test_empty_is_safe():
     assert pg.inspect("").level is RiskLevel.SAFE
 
 
+def test_medium_risk_safety_bypass_suspicious():
+    d = pg.inspect("how to bypass safety filter")
+    assert d.level is RiskLevel.SUSPICIOUS
+    assert "safety_bypass" in d.matched
+
+
+def test_bidi_override_flagged():
+    # U+202E right-to-left override — a FlipAttack obfuscation trick.
+    assert "bidi_override" in pg.inspect("watch this ‮movie").matched
+
+
+def test_high_char_ratio_flagged():
+    # Long, punctuation-heavy string → obfuscation signal (len >= 30, ratio > 0.25).
+    assert "suspicious_char_ratio" in pg.inspect("!@#$%^&*()_+!@#$%^&*()_+!@#$%^&*()_+").matched
+
+
+def test_llm_guard_verdict_real_path(monkeypatch):
+    # Exercise the real lazy-import body. llm-guard absent (slim / CI) → None;
+    # if it happens to be installed locally, a clean string → bool. Tolerate both.
+    monkeypatch.setattr(pg, "_llm_guard_scanner", None)
+    monkeypatch.setattr(pg, "_llm_guard_tried", False)
+    assert pg._llm_guard_verdict("a normal film query") in (None, True, False)
+
+
 # ── inspect_deep: optional llm-guard escalation of the SUSPICIOUS gray zone ──
 
 
