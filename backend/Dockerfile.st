@@ -10,7 +10,10 @@ ARG BASE=ghcr.io/jimc1682000/film-brain-backend:master
 # BASE's default is tagged (:master); the ARG just isn't statically resolvable.
 # hadolint ignore=DL3006
 FROM ${BASE}
-WORKDIR /app # explicit (the base sets it too) — keeps the COPY below unambiguous
+# explicit (the base sets it too) — keeps the COPY below unambiguous. The comment
+# MUST be on its own line: Docker treats a mid-line '#' as part of the argument,
+# so "WORKDIR /app # ..." would set the workdir to that whole literal string.
+WORKDIR /app
 
 # CPU-only torch < 2.9 first — 2.9+ pulls the full CUDA stack (~3 GB) on CPU.
 RUN pip install --no-cache-dir \
