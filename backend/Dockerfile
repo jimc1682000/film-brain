@@ -25,4 +25,8 @@ EXPOSE 8000
 # in the slim image, so probe with stdlib urllib (trivy DS-0026).
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 CMD \
     python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health', timeout=2).status == 200 else 1)"
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# --proxy-headers + trust the forwarded IP so per-IP rate limiting (ADR 0025)
+# sees the real client behind Traefik, not the proxy. Safe to trust *: only the
+# proxy can reach the backend (compose network; the port isn't public).
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", \
+     "--proxy-headers", "--forwarded-allow-ips", "*"]

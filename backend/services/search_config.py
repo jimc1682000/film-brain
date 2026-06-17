@@ -77,6 +77,10 @@ _DEFAULTS: dict = {
         "char_ratio_min_len": 30,
         "char_ratio_threshold": 0.25,
     },
+    # Inbound per-IP rate limit on search/similar (ADR 0025). Disabled by default
+    # (internal-demo mode unchanged); an external deployment sets enabled=true.
+    # Fixed window: `limit` requests per `window_seconds` per client IP → 429.
+    "rate_limit": {"enabled": False, "limit": 30, "window_seconds": 60},
 }
 
 _lock = threading.Lock()
@@ -112,6 +116,7 @@ def get_config() -> dict:
             **_DEFAULTS["prompt_guard"]["weights"],
             **pg_raw.get("weights", {}),
         }
+        cfg["rate_limit"] = {**_DEFAULTS["rate_limit"], **raw.get("rate_limit", {})}
         _cache.update(mtime=mtime, data=cfg)
     return _cache["data"]
 
