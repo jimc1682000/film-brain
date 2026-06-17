@@ -48,6 +48,14 @@ repos:
     hooks:
       - id: shellcheck
 
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      # Runs hadolint via Docker (no local binary needed). Matches Dockerfile +
+      # Dockerfile.st. CI enforces the same lint (the `docker` job in ci.yml).
+      - id: hadolint-docker
+        files: (?i)dockerfile
+
   - repo: https://github.com/hukkin/mdformat
     rev: 1.0.0
     hooks:

@@ -8,6 +8,7 @@
 #   docker build -f backend/Dockerfile.st --build-arg BASE=fb-backend:slim -t fb-backend:st .
 ARG BASE=ghcr.io/jimc1682000/film-brain-backend:master
 FROM ${BASE}
+WORKDIR /app # explicit (the base sets it too) — keeps the COPY below unambiguous
 
 # CPU-only torch < 2.9 first — 2.9+ pulls the full CUDA stack (~3 GB) on CPU.
 RUN pip install --no-cache-dir \
