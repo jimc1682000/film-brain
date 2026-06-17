@@ -1,0 +1,32 @@
+# Staging overlay — validate a published image (a tag, or :master) in isolation
+# before promoting it to prod. Merge it on top of the GHCR compose and run it as
+# a separate Compose project so it stands up ALONGSIDE prod without colliding:
+#
+#   IMAGE_TAG=v0.1.0 docker compose \
+#     -f docker-compose.ghcr.yml -f docker-compose.staging.yml \
+#     -p film-brain-staging up -d
+#
+#   scripts/smoke_check.sh http://localhost:18000   # gate before promoting
+#   docker compose -p film-brain-staging down       # tear staging down
+#
+# Host ports are remapped (1xxxx) so they never clash with a running prod stack;
+# named volumes are namespaced by the -p project, so staging data is separate.
+services:
+  backend:
+    ports:
+      - "18000:8000"
+
+  frontend:
+    ports:
+      - "18080:8080"
+    environment:
+      - BACKEND_URL=http://backend:8000
+
+  qdrant:
+    ports:
+      - "16333:6333"
+      - "16334:6334"
+
+  ollama:
+    ports:
+      - "127.0.0.1:11435:11434"
