@@ -171,7 +171,7 @@ class SearchRequest(BaseModel):
     dimension_filters: dict[str, list[str]] | None = None
     min_confidence: float = 0.6
     # Editor-visible floor: drop hits whose final displayed score falls below
-    # this. Distinct from min_confidence (vector cosine pre-rerank). Vero
+    # this. Distinct from min_confidence (vector cosine pre-rerank). An editor
     # specifically asked to hide any result reporting <10% match.
     min_display_score: float = 0.1
     use_llm_rerank: bool = True

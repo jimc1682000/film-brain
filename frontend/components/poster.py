@@ -4,8 +4,8 @@ Both `film_card` and `award_card` reach for a poster URL with a fallback
 chain and reproduce the same placeholder div when no URL is available.
 The award flow has an extra constraint: when the nominee maps to a film
 we own, the CATCHPLAY+ artwork must beat the TMDB still (otherwise the
-awards page renders a different poster than the detail page, which Vero
-caught at 乖狗狗). This helper bakes those rules in one place.
+awards page renders a different poster than the detail page, which an
+editor caught during review). This helper bakes those rules in one place.
 
 Usage:
 
