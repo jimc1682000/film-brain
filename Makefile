@@ -1,4 +1,4 @@
-.PHONY: up down seed test logs clean fmt lint check recompute-similar cov e2e typecheck audit mutation
+.PHONY: up down seed test logs clean fmt lint check recompute-similar cov e2e typecheck audit mutation codeql
 
 up:
 	docker compose up -d
@@ -62,3 +62,18 @@ lint:
 check:
 	ruff format --check backend frontend scripts
 	ruff check backend frontend scripts
+
+# Full local CodeQL scan — parity with the CI codeql.yml (same security-and-
+# quality suite). SLOW: builds a DB (~minutes), on-demand only, NOT a gate; the
+# fast local SAST is ruff S + semgrep. Needs the CodeQL CLI in PATH:
+#   gh extension install github/gh-codeql   (then run `CODEQL='gh codeql' make codeql`)
+#   or download: https://github.com/github/codeql-cli-binaries/releases
+CODEQL ?= codeql
+codeql:
+	@command -v $(firstword $(CODEQL)) >/dev/null 2>&1 || \
+	  { echo "CodeQL CLI not found — install: gh extension install github/gh-codeql"; exit 1; }
+	$(CODEQL) database create .codeql-db --language=python --overwrite --source-root=.
+	$(CODEQL) database analyze .codeql-db --download \
+	  codeql/python-queries:codeql-suites/python-security-and-quality.qls \
+	  --format=sarif-latest --output=codeql-results.sarif
+	@echo "Wrote codeql-results.sarif — open in the VS Code SARIF Viewer."

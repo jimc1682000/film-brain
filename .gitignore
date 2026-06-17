@@ -46,3 +46,7 @@ Genre List.xlsx
 .claude/settings.local.json
 data/mock_demo.db
 data/_*.db
+
+# Local CodeQL scan artifacts (make codeql)
+.codeql-db/
+codeql-results.sarif
