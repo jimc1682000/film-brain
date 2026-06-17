@@ -29,6 +29,7 @@ from backend.llm_client import (
     select_model,
     strip_json_fence,
 )
+from backend.services import prompt_guard
 from backend.services.pinned_lru import PinnedLRU
 from backend.services.search_config import boost_weight, dim_mode
 from backend.tag_registry import TagRegistry
@@ -201,6 +202,27 @@ def expand_query(query: str, *, timeout: float = 20.0, llm_client: LLMClient | N
         return dict(_EMPTY)
     if q in _cache:
         return _cache[q]
+
+    # Prompt-injection input gate (OWASP LLM01). BLOCK → skip the LLM and degrade
+    # to BM25 (never hard-fail search); SUSPICIOUS → log and proceed (the output
+    # is still validated against the registry downstream).
+    guard = prompt_guard.inspect_deep(q)
+    if guard.level is prompt_guard.RiskLevel.BLOCK:
+        logger.warning(
+            "prompt-injection blocked (score=%d %s) for %r",
+            guard.score,
+            guard.matched,
+            _loggable(q),
+        )
+        return _degraded()
+    if guard.level is prompt_guard.RiskLevel.SUSPICIOUS:
+        logger.info(
+            "prompt-injection suspicious (score=%d %s) for %r",
+            guard.score,
+            guard.matched,
+            _loggable(q),
+        )
+
     llm = llm_client or get_llm_client()
     reg = _reg()
 
