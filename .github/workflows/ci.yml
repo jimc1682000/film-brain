@@ -135,3 +135,21 @@ jobs:
 
       - name: Integration (real Qdrant)
         run: pytest backend/tests -m qdrant -q
+
+  # Dockerfile lint (hadolint) + compose-file validation. Containers are part
+  # of the public surface (docker run / compose), so gate them in CI too — not
+  # just the pre-commit hadolint hook (which is bypassable / setup-dependent).
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Hadolint (Dockerfiles)
+        run: |
+          sudo curl -sSL -o /usr/local/bin/hadolint \
+            https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
+          sudo chmod +x /usr/local/bin/hadolint
+          hadolint backend/Dockerfile backend/Dockerfile.st frontend/Dockerfile
+      - name: Compose files valid
+        run: |
+          docker compose -f docker-compose.yml config -q
+          docker compose -f docker-compose.ghcr.yml config -q
