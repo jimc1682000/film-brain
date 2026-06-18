@@ -1,0 +1,35 @@
+# Optional edge: Caddy with HTTP Basic Auth in front of the frontend (ADR 0025).
+# Clean separation — the app carries no auth. Use when you want a self-contained
+# gated deploy of the internal admin/tag console.
+#
+#   # 1. hash a password:
+#   BASIC_AUTH_HASH=$(docker run --rm caddy:2 caddy hash-password -p 'yourpass')
+#   # 2a. standalone public demo — a hostname gets auto-HTTPS for free:
+#   CADDY_SITE_ADDRESS=demo.example.com BASIC_AUTH_HASH="$BASIC_AUTH_HASH" \
+#     docker compose -f docker-compose.ghcr.yml -f docker-compose.caddy.yml up -d
+#   # 2b. behind an existing TLS proxy (e.g. the VPS Traefik: traefik → caddy →
+#   #     frontend) — plain HTTP, let the proxy do TLS:
+#   CADDY_SITE_ADDRESS=:80 ...  (and drop the 443 publish / add the proxy's labels)
+services:
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      frontend:
+        condition: service_started
+    environment:
+      - CADDY_SITE_ADDRESS=${CADDY_SITE_ADDRESS:-:80}
+      - BASIC_AUTH_USER=${BASIC_AUTH_USER:-admin}
+      # Required — Caddy won't start without it (caddy hash-password output).
+      - BASIC_AUTH_HASH=${BASIC_AUTH_HASH:?set BASIC_AUTH_HASH — see docker-compose.caddy.yml header}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

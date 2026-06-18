@@ -30,6 +30,31 @@ Local build instead of GHCR: `make up` (uses `docker-compose.yml`).
 > by another uid, either `chown -R 1000:1000 ./data` or add `user: "<host-uid>"`
 > to the backend service in the compose file.
 
+## Access control (edge auth + rate limit, ADR 0025)
+
+The app has no built-in user auth. Gate it at the edge:
+
+```bash
+# Hash a password, then run the optional Caddy edge (Basic Auth) in front:
+BASIC_AUTH_HASH=$(docker run --rm caddy:2 caddy hash-password -p 'yourpass')
+# standalone public demo — a hostname gets auto-HTTPS:
+CADDY_SITE_ADDRESS=demo.example.com BASIC_AUTH_HASH="$BASIC_AUTH_HASH" \
+  docker compose -f docker-compose.ghcr.yml -f docker-compose.caddy.yml up -d
+```
+
+Topology:
+
+```
+standalone:  Caddy (Basic Auth + auto-TLS) → frontend → backend
+behind Traefik (VPS):  Traefik (TLS) → Caddy (Basic Auth, CADDY_SITE_ADDRESS=:80) → frontend → backend
+                       Traefik routes only /api (search) + public paths to backend; admin paths stay internal
+```
+
+Search rate limit: off by default; enable in `data/search-config.json`
+(`"rate_limit": {"enabled": true, "limit": 30, "window_seconds": 60}`). The
+backend must run with `--proxy-headers` (the image already does) so per-IP limits
+see the real client behind the proxy.
+
 ## Health checks
 
 | Endpoint | Tells you |

@@ -161,3 +161,9 @@ jobs:
           docker run --rm -v "$PWD:/repo:ro" aquasec/trivy:0.71.1 config \
             --exit-code 1 --severity HIGH,CRITICAL --skip-dirs .venv /repo
           docker compose -f docker-compose.ghcr.yml -f docker-compose.staging.yml config -q
+      - name: Caddyfile fmt + validate
+        # Optional edge config (ADR 0025) — keep it formatted + structurally valid.
+        run: |
+          docker run --rm -v "$PWD:/src:ro" -w /src caddy:2 caddy fmt --diff Caddyfile
+          bash scripts/caddy_validate.sh
+          BASIC_AUTH_HASH=dummy docker compose -f docker-compose.ghcr.yml -f docker-compose.caddy.yml config -q
