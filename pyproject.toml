@@ -130,4 +130,11 @@ indent-style = "space"
 
 [build-system]
 requires = ["setuptools>=75"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"
+
+# Flat layout: the importable code lives in these top-level packages (not a
+# src/ dir). Declare them explicitly — setuptools auto-discovery refuses a flat
+# layout with multiple top-level dirs (data/, docs/, site/ … would be ambiguous)
+# and errors out, which is what broke `uv sync`.
+[tool.setuptools.packages.find]
+include = ["backend*", "frontend*", "scripts*"]
