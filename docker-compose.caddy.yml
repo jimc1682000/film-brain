@@ -11,6 +11,22 @@
 #   #     frontend) — plain HTTP, let the proxy do TLS:
 #   CADDY_SITE_ADDRESS=:80 ...  (and drop the 443 publish / add the proxy's labels)
 services:
+  # Stop the base ghcr overlay from publishing the app to the host: it binds
+  # 8000:8000 / 8080:8080, and Compose CONCATENATES `ports` when files are
+  # layered — so without this the Basic Auth on Caddy's 80/443 is bypassable by
+  # hitting :8080 (and the raw backend stays public on :8000). `!override []`
+  # REPLACES the inherited list with nothing; the services stay reachable on the
+  # compose network (Caddy proxies frontend:8080, frontend calls backend:8000).
+  backend:
+    ports: !override []
+  frontend:
+    ports: !override []
+  # Same reasoning: the base overlay publishes Qdrant on 0.0.0.0:6333/6334 (no
+  # auth). In a public edge deploy that exposes the raw vector store — strip it;
+  # the backend reaches it on the compose network (qdrant:6333). (Ollama is
+  # already loopback-bound in the base, so it needs no override.)
+  qdrant:
+    ports: !override []
   caddy:
     image: caddy:2
     restart: unless-stopped
