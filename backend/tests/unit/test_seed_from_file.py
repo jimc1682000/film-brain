@@ -143,6 +143,32 @@ def test_seed_awards_idempotent_on_reseed(test_conn, tmp_path):
     assert first == second == 2
 
 
+def test_seed_awards_repairs_preexisting_null_person_rows(test_conn, tmp_path):
+    """A DB seeded before the person-normalize fix holds NULL-person rows; an
+    in-place reseed must clear them (DELETE-per-ceremony), not leave dups beside
+    the new empty-string rows."""
+    seed_mock_db(test_conn)
+    path = _write_awards(
+        tmp_path,
+        [{"category": "Best Picture", "film_title_primary": "機械叛變", "result": "won"}],
+    )
+    seed_awards(test_conn, path)
+    r = test_conn.execute(
+        "SELECT org_id, tag_id, year, category, film_title_primary FROM award_nominees"
+    ).fetchone()
+    # Simulate a stale pre-patch duplicate: same ceremony, person IS NULL (which
+    # the upsert's conflict key treats as distinct from the new "" row).
+    test_conn.execute(
+        "INSERT INTO award_nominees (org_id, tag_id, year, category, film_title_primary, person, result)"
+        " VALUES (?,?,?,?,?,NULL,'won')",
+        (r["org_id"], r["tag_id"], r["year"], r["category"], r["film_title_primary"]),
+    )
+    test_conn.commit()
+    assert test_conn.execute("SELECT count(*) FROM award_nominees").fetchone()[0] == 2
+    seed_awards(test_conn, path)  # reseed replaces the ceremony
+    assert test_conn.execute("SELECT count(*) FROM award_nominees").fetchone()[0] == 1
+
+
 def test_seed_awards_unknown_org_skipped(test_conn, tmp_path):
     """An unknown org is skipped (warned), never fatal."""
     seed_mock_db(test_conn)

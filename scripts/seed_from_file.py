@@ -102,6 +102,11 @@ def seed_awards(conn: sqlite3.Connection, path: Path) -> int:
     this must run AFTER films are inserted. A missing file is a no-op (awards are
     optional); an unknown org_id is skipped with a warning, never fatal. TMDB
     enrichment degrades to nothing without a key — no network needed.
+
+    Idempotent + repairs dirty data: each ceremony's existing nominees are
+    cleared before re-ingest, so reseeding `data/film_library.db` in place (what
+    `make seed` does) never accumulates duplicates — including pre-existing rows
+    with NULL `person` that the upsert's conflict key can't dedupe.
     """
     from backend.award_manager import get_org, record_nomination
 
@@ -117,6 +122,12 @@ def seed_awards(conn: sqlite3.Connection, path: Path) -> int:
         except KeyError:
             print(f"  ! unknown award org {cer.get('org_id')!r}: skipped", flush=True)
             continue
+        # Replace, don't append: wipe this ceremony's prior rows so a reseed is a
+        # clean slate (repairs any NULL-person duplicates from earlier versions).
+        conn.execute(
+            "DELETE FROM award_nominees WHERE org_id=? AND year=?",
+            (org["org_id"], cer["year"]),
+        )
         for nom in cer.get("nominees", []):
             record_nomination(
                 conn,
