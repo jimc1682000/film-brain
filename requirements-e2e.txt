@@ -1,0 +1,6 @@
+# Browser e2e harness (`make e2e-ui`) — LOCAL-ONLY / opt-in.
+# Never installed in CI or the runtime images; the per-PR suite is the mocked
+# pytest run. These drive a real Chromium against the live frontend+backend to
+# catch render/CSS/SVG regressions the in-process suite can't see.
+playwright>=1.50
+pytest-playwright>=0.5

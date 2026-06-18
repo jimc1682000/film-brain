@@ -47,6 +47,7 @@ http://localhost:8000/api/docs (Swagger UI auto-generated; OpenAPI JSON at `/api
 - `make audit` — pip-audit dependency CVE scan
 - `make mutation` — mutation testing (SLOW, on-demand only)
 - `make e2e` — full-stack smoke (real Qdrant + embedder, local only)
+- `make e2e-ui` — browser smoke (real Chromium vs live UI on mock data, SQLite-only, local only) — catches render/CSS/SVG regressions the in-process suite can't
 
 ## Invariants & Agent Contract
 

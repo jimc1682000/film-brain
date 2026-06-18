@@ -50,3 +50,6 @@ data/_*.db
 # Local CodeQL scan artifacts (make codeql)
 .codeql-db/
 codeql-results.sarif
+
+# Browser e2e-ui screenshot artifacts (make e2e-ui)
+.e2e-ui-artifacts/

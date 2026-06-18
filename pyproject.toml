@@ -120,6 +120,9 @@ ignore = [
 # matters for production classes, which are already clean. Unused args (ARG) are
 # rife in fixtures/lambda doubles by design — gate ARG on source only.
 "backend/tests/**" = ["RUF012", "ARG001", "ARG002", "ARG005", "S"]
+# Browser e2e-ui harness (top-level tests/): same test conventions — asserts
+# (S101) and unused fixture params (ARG) are expected.
+"tests/**" = ["RUF012", "ARG001", "ARG002", "ARG005", "S"]
 # Internal CLI scripts shell out to known commands (uv, the pipeline) — the
 # subprocess/partial-path bandit rules are noise for trusted local tooling.
 "scripts/**" = ["S603", "S607"]
