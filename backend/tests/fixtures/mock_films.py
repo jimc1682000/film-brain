@@ -10,7 +10,8 @@ from __future__ import annotations
 
 import hashlib
 import math
-from urllib.parse import quote
+
+from backend.poster import title_card_data_uri
 
 # film_id, title_zh, title_en, description, original_genre, genre tag_ids
 MOCK_FILMS: list[dict] = [
@@ -138,22 +139,10 @@ def fake_embed(texts: list[str], dim: int = _DIM) -> list[list[float]]:
 
 
 def mock_poster(film_id: str, title: str) -> str:
-    """A self-contained placeholder poster as an SVG data URI.
-
-    No network, no asset files, deterministic — the demo/public repo show a
-    coloured poster card with the film title instead of broken <img> links
-    (the synthetic dataset has no real artwork). Background hue is seeded from
-    film_id so each film looks distinct.
-    """
-    hue = int(hashlib.md5(film_id.encode()).hexdigest()[:2], 16) * 360 // 256
-    svg = (
-        '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450">'
-        f'<rect width="100%" height="100%" fill="hsl({hue},45%,28%)"/>'
-        '<text x="50%" y="50%" fill="#f0f0f0" font-family="sans-serif" '
-        'font-size="26" text-anchor="middle" dominant-baseline="middle">'
-        f"{title}</text></svg>"
-    )
-    return "data:image/svg+xml;utf8," + quote(svg)
+    """Self-contained title-card poster (SVG data URI), hue seeded from film_id.
+    Delegates to the shared production helper so demo + real posterless films
+    render identically."""
+    return title_card_data_uri(title, seed_key=film_id)
 
 
 def seed_mock_db(conn) -> None:

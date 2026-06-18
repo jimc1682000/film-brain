@@ -24,6 +24,7 @@ from pathlib import Path
 
 from backend.config import settings
 from backend.db import init_db, insert_film, insert_film_tag, insert_tag
+from backend.poster import title_card_data_uri
 from backend.tag_registry import TagRegistry
 
 # Locale order used to resolve the primary (display/embed) title from the map.
@@ -57,13 +58,17 @@ def parse_film(raw: dict, valid_tag_ids: set[str]) -> dict:
         else:
             dropped.append(tid)
     country = raw.get("country") or []
+    film_id = raw["id"]
+    title_zh = titles.get("zh") or primary_title(titles)
     return {
-        "film_id": raw["id"],
-        "title_zh": titles.get("zh") or primary_title(titles),
+        "film_id": film_id,
+        "title_zh": title_zh,
         "title_en": titles.get("en"),
         "description": raw.get("description", "") or "",
         "catchplay_url": raw.get("url"),
-        "poster_url": raw.get("poster"),
+        # No real artwork → a deterministic title-card poster (ADR: synthetic
+        # dataset shows a coloured card with the title, not a broken image).
+        "poster_url": raw.get("poster") or title_card_data_uri(title_zh, seed_key=film_id),
         "release_year": raw.get("year"),
         "country_codes": ",".join(country) or None,
         "tmdb_director": raw.get("director"),

@@ -24,13 +24,15 @@ CP_PLACEHOLDER_LOGO = "/assets/cp-logo.png"
 
 
 def _is_real_url(value: str | None) -> bool:
-    """A usable poster URL — not empty, not a lazy-load data: placeholder.
-
-    The catchplay category scraper occasionally captured the 1×1
-    `data:image/gif;base64,…` placeholder; treat those as missing so the
-    CP+ fallback shows instead of a blank box.
+    """A usable poster URL. Accepts http(s) and generated title-card SVGs
+    (`data:image/svg+xml`); rejects the 1×1 lazy-load `data:image/gif…`
+    placeholder the catchplay scraper sometimes captured (treated as missing).
     """
-    return bool(value) and not value.startswith("data:")
+    if not value:
+        return False
+    if value.startswith("data:"):
+        return value.startswith("data:image/svg+xml")
+    return True
 
 
 def render_poster(
