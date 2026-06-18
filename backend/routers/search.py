@@ -7,6 +7,7 @@ from backend.config import settings
 from backend.db import get_db, get_film, get_film_tags
 from backend.interfaces import Reranker, VectorStore
 from backend.models import SearchRequest, SearchResponse, SearchResult
+from backend.ratelimit import rate_limit_search
 from backend.services import get_embed_service
 from backend.services.hybrid import hybrid_candidates
 from backend.services.pinned_lru import PinnedLRU
@@ -457,7 +458,7 @@ def _apply_weighted_boost(candidates: list[dict], requested, excluded_tags, cfg)
     return candidates
 
 
-@router.post("/", response_model=SearchResponse)
+@router.post("/", response_model=SearchResponse, dependencies=[Depends(rate_limit_search)])
 async def semantic_search(req: SearchRequest, reranker: Reranker = Depends(get_reranker)):
     """Hybrid search: vector + BM25 recall → RRF fusion → optional cross-encoder.
 
@@ -545,7 +546,11 @@ async def semantic_search(req: SearchRequest, reranker: Reranker = Depends(get_r
     return _assemble_response(payload, req)
 
 
-@router.get("/similar/{film_id}", response_model=SearchResponse)
+@router.get(
+    "/similar/{film_id}",
+    response_model=SearchResponse,
+    dependencies=[Depends(rate_limit_search)],
+)
 async def similar_films(
     film_id: str, top_k: int = 5, vector_store: VectorStore = Depends(get_vector_store)
 ):
