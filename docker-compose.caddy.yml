@@ -1,0 +1,51 @@
+# Optional edge: Caddy with HTTP Basic Auth in front of the frontend (ADR 0025).
+# Clean separation — the app carries no auth. Use when you want a self-contained
+# gated deploy of the internal admin/tag console.
+#
+#   # 1. hash a password:
+#   BASIC_AUTH_HASH=$(docker run --rm caddy:2 caddy hash-password -p 'yourpass')
+#   # 2a. standalone public demo — a hostname gets auto-HTTPS for free:
+#   CADDY_SITE_ADDRESS=demo.example.com BASIC_AUTH_HASH="$BASIC_AUTH_HASH" \
+#     docker compose -f docker-compose.ghcr.yml -f docker-compose.caddy.yml up -d
+#   # 2b. behind an existing TLS proxy (e.g. the VPS Traefik: traefik → caddy →
+#   #     frontend) — plain HTTP, let the proxy do TLS:
+#   CADDY_SITE_ADDRESS=:80 ...  (and drop the 443 publish / add the proxy's labels)
+services:
+  # Stop the base ghcr overlay from publishing the app to the host: it binds
+  # 8000:8000 / 8080:8080, and Compose CONCATENATES `ports` when files are
+  # layered — so without this the Basic Auth on Caddy's 80/443 is bypassable by
+  # hitting :8080 (and the raw backend stays public on :8000). `!override []`
+  # REPLACES the inherited list with nothing; the services stay reachable on the
+  # compose network (Caddy proxies frontend:8080, frontend calls backend:8000).
+  backend:
+    ports: !override []
+  frontend:
+    ports: !override []
+  # Same reasoning: the base overlay publishes Qdrant on 0.0.0.0:6333/6334 (no
+  # auth). In a public edge deploy that exposes the raw vector store — strip it;
+  # the backend reaches it on the compose network (qdrant:6333). (Ollama is
+  # already loopback-bound in the base, so it needs no override.)
+  qdrant:
+    ports: !override []
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      frontend:
+        condition: service_started
+    environment:
+      - CADDY_SITE_ADDRESS=${CADDY_SITE_ADDRESS:-:80}
+      - BASIC_AUTH_USER=${BASIC_AUTH_USER:-admin}
+      # Required — Caddy won't start without it (caddy hash-password output).
+      - BASIC_AUTH_HASH=${BASIC_AUTH_HASH:?set BASIC_AUTH_HASH — see docker-compose.caddy.yml header}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

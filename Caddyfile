@@ -1,0 +1,27 @@
+# Optional edge for the internal admin/tag console (ADR 0025). HTTP Basic Auth
+# in front of the NiceGUI frontend — clean separation: the app carries no auth.
+# Opt in via docker-compose.caddy.yml. The implementer decides whether to use
+# this, run behind their own proxy, or skip it.
+#
+# Generate the password hash:
+#   docker run --rm caddy:2 caddy hash-password --plaintext 'yourpassword'
+# then set BASIC_AUTH_USER / BASIC_AUTH_HASH (see .env.example).
+{
+	# No admin API surface needed.
+	admin off
+}
+
+# Site address from $CADDY_SITE_ADDRESS:
+#   a hostname (e.g. demo.example.com) → Caddy auto-provisions a Let's Encrypt
+#     cert (the public-demo default — TLS for free).
+#   ":80" / "http://..."             → plain HTTP, for running BEHIND a proxy
+#     that already terminates TLS (e.g. Traefik on the VPS: traefik → caddy → fe).
+{$CADDY_SITE_ADDRESS::80} {
+	# Single-credential Basic Auth gate. The user types it in the browser; the
+	# app never sees auth. To bypass auth entirely, don't use this overlay.
+	basic_auth {
+		{$BASIC_AUTH_USER:admin} {$BASIC_AUTH_HASH}
+	}
+
+	reverse_proxy frontend:8080
+}

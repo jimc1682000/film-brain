@@ -21,13 +21,16 @@ a best-effort basis.
 This project is a **prototype meant to run locally or in a trusted environment**.
 Be aware before deploying it:
 
-- **The API has no authentication or authorization.** Every endpoint is open.
-  Do **not** expose the backend (`:8000`) or frontend (`:8080`) directly to the
-  public internet — run it locally, behind a VPN, or behind your own
-  authenticating proxy.
-- **It is not hardened for untrusted input.** It was built to demonstrate
-  search/tagging quality, not to resist abuse (no rate limiting, no input-size
-  caps beyond the defaults, etc.).
+- **The app has no built-in user auth.** Endpoints are open by default. Access
+  control is provided at the edges (ADR 0025): the admin/tag console (the NiceGUI
+  frontend) is meant to sit behind an HTTP Basic Auth reverse proxy — an opt-in
+  **Caddy** edge ships in the repo (`docker-compose.caddy.yml` + `Caddyfile`),
+  or use your own proxy. Still don't expose the raw backend (`:8000`) / frontend
+  (`:8080`) ports directly; front them. Per-user auth for a public search site is
+  expected to live in that external site, not here.
+- **Search is rate-limited** (per-IP, ADR 0025) — off by default, enabled via
+  `search-config` for an external deployment. Otherwise not hardened for abuse
+  (no input-size caps beyond defaults).
 - **Keys live in `.env`** (git-ignored) and are optional — the core runs keyless
   on local models. Never commit a real key; `.env.example` ships placeholders.
 

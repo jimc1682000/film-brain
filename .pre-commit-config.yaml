@@ -94,6 +94,25 @@ repos:
         entry: aquasec/trivy:0.71.1 config --exit-code 1 --severity HIGH,CRITICAL --skip-dirs .venv .
         pass_filenames: false
         files: (?i)(dockerfile|docker-compose.*\.ya?ml)$
+
+      - id: caddy-fmt
+        name: caddy fmt (Caddyfile)
+        # Formatter via Docker (no local binary), like trivy/hadolint. --diff
+        # exits non-zero on any deviation.
+        language: docker_image
+        entry: caddy:2 caddy fmt --diff Caddyfile
+        pass_filenames: false
+        files: ^Caddyfile$
+
+      - id: caddy-validate
+        name: caddy validate (Caddyfile)
+        # Structural validation via caddy:2 (dummy env in the script satisfies
+        # the {$VAR} placeholders — no real secret needed).
+        language: system
+        entry: bash scripts/caddy_validate.sh
+        pass_filenames: false
+        files: ^Caddyfile$
+
       - id: i18n-hardcode
         name: i18n (no hardcoded CJK in frontend)
         entry: python scripts/check_i18n_hardcode.py
