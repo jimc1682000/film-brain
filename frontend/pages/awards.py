@@ -70,7 +70,7 @@ _AWARDS_CSS = """
 # org_id → TMDb award logo URL (only the awards TMDb actually carries; others
 # fall back to the trophy emoji). Scraped once into award_logos.json.
 _AWARD_LOGOS = json.loads(
-    (Path(__file__).resolve().parent.parent / "award_logos.json").read_text("utf-8")
+    (Path(__file__).resolve().parent.parent / "data" / "award_logos.json").read_text("utf-8")
 )
 
 

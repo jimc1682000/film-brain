@@ -25,20 +25,13 @@ _DEFAULTS: dict = {
     "top_bonus": [0.02, 0.01, 0.005],
     "weights": {"vector": 1.0, "hyde": 0.7, "bm25": 0.8},
     "min_display_score": 0.1,
-    # Out-of-domain gate: if the best candidate's cosine to the USER query
-    # vector (primary_cos, not HyDE) falls below this, the library has no real
-    # match — results are semantic guesses. Calibrated 2026-06: good demo
-    # queries top-1 cluster at 0.49-0.63, "Michael Jackson" at 0.37.
-    "low_confidence_cosine": 0.45,
-    # Display bands: ranking-internal scores are relative (min-max / CE blend),
-    # so the raw top-1 always reads 100% — meaningless to users. Map [0,1] into
-    # a band so the shown % is never a fake perfect score; the low band also
-    # caps tag-boosted hits so an out-of-domain query can't show green.
-    "display_band": {"confident": [0.55, 0.95], "low": [0.3, 0.65]},
     # Confidence tiers keyed off the best query-vector cosine (primary_cos): pick
-    # high/mid/low by min_cos, each mapping to a display band ceiling. Required by
-    # _confidence_tier — kept in _DEFAULTS so an absent/partial config file never
-    # KeyErrors (honours this module's "absent file never breaks search" contract).
+    # high/mid/low by min_cos, each carrying its own display band [floor, ceiling].
+    # Ranking-internal scores are relative (min-max / CE blend) so the raw top-1
+    # always reads 100% — meaningless; the band maps it to an honest %, and the
+    # low tier caps tag-boosted hits so an out-of-domain query can't show green.
+    # Required by _confidence_tier — kept in _DEFAULTS so an absent/partial config
+    # file never KeyErrors (honours "absent file never breaks search").
     "confidence_tiers": {
         "high": {"min_cos": 0.52, "band": [0.72, 0.95]},
         "mid": {"min_cos": 0.45, "band": [0.45, 0.68]},

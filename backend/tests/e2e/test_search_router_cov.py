@@ -320,7 +320,7 @@ def test_degraded_expansion_not_cached(client, seeded_db, base_mocks):
 
 
 def test_low_confidence_tier(client, seeded_db, base_mocks):
-    # primary_cos well below the low_confidence_cosine threshold (0.45)
+    # primary_cos well below the mid tier's min_cos (0.45) -> low confidence tier
     base_mocks.setattr(
         S, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001"], primary_cos=0.1)
     )
