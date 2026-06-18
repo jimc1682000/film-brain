@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "ceremonies": [
+    {
+      "org_id": "oscars",
+      "year": 2025,
+      "source_url": "https://example.com/awards/oscars-2025",
+      "nominees": [
+        { "category": "Best Picture", "film_title_primary": "機械叛變", "result": "won" },
+        { "category": "Best Director", "film_title_primary": "燈塔守候", "person": "Mock Director", "result": "nominated" },
+        { "category": "Best Actor", "film_title_primary": "午夜來電", "person": "Mock Actor", "result": "nominated" },
+        { "category": "Best Visual Effects", "film_title_primary": "雨季的告白", "result": "won" },
+        { "category": "Best Original Screenplay", "film_title_primary": "完美騙局", "result": "nominated" }
+      ]
+    }
+  ]
+}

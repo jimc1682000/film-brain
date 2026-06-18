@@ -23,6 +23,8 @@ docker compose up -d
 
 # Seed data — bring-your-own-films, no API key needed (bundled mock dataset).
 # Any file matching data/films.seed.schema.json works; --auto-tag (LLM) optional.
+# Award nominations from data/awards.seed.json are ingested after films (matched
+# by title → in-library badges on /awards); override --awards FILE, disable ''.
 docker compose exec backend python -m scripts.seed_from_file data/films.seed.json
 
 # Or pull pre-built images from GHCR instead of building locally:
