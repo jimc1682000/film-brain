@@ -139,5 +139,12 @@ build-backend = "setuptools.build_meta"
 # src/ dir). Declare them explicitly — setuptools auto-discovery refuses a flat
 # layout with multiple top-level dirs (data/, docs/, site/ … would be ambiguous)
 # and errors out, which is what broke `uv sync`.
+#
+# Scope: this packaging exists so `uv sync` / `pip install -e .` (EDITABLE) work
+# — the only install paths the project uses (CI + Docker install from
+# requirements*.txt onto the source tree; runtime runs from the repo). A
+# non-editable wheel is NOT a shipping artifact and would omit the frontend data
+# files (award_logos.json, chips.json, assets/*) that frontend.pages read by
+# __file__ — don't `pip install .` non-editable and expect a working frontend.
 [tool.setuptools.packages.find]
 include = ["backend*", "frontend*", "scripts*"]
