@@ -1,4 +1,8 @@
-.PHONY: up down seed test logs clean fmt lint check recompute-similar cov e2e typecheck audit mutation codeql
+.PHONY: up down seed test logs clean fmt lint check recompute-similar cov e2e e2e-ui typecheck audit mutation codeql
+
+# Python used by the local (non-docker) e2e harnesses; override to point at your
+# venv: `make e2e-ui PYTHON=/path/to/venv/bin/python`.
+PYTHON ?= .venv/bin/python
 
 up:
 	docker compose up -d
@@ -42,6 +46,14 @@ cov:
 # Full-stack e2e smoke: real Qdrant + real embedder + live server (local only)
 e2e:
 	bash scripts/e2e_smoke.sh
+
+# Browser e2e-ui: real Chromium vs live frontend+backend on mock data (local
+# only, opt-in). Installs the browser harness deps, then boots + drives the UI.
+# Catches render/CSS/SVG regressions the in-process suite can't see.
+e2e-ui:
+	$(PYTHON) -m pip install -q -r requirements-e2e.txt
+	$(PYTHON) -m playwright install chromium
+	PYTHON=$(PYTHON) bash scripts/e2e_ui.sh
 
 # Static type check (backend source; config in pyproject [tool.pyright])
 typecheck:
