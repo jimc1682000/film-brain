@@ -375,6 +375,12 @@ _AWARD_NOMINEE_COLS = frozenset(
 
 def upsert_award_nominee(conn: sqlite3.Connection, **kwargs) -> int:
     """Insert-or-update a nominee. Returns rowid of the affected row."""
+    # `person` is part of the UNIQUE / ON CONFLICT key, but SQLite treats NULL as
+    # distinct — so a NULL person makes the upsert non-idempotent (re-ingesting
+    # the same person-less nominee inserts a duplicate instead of updating).
+    # Normalise missing person to "" so the conflict key is always non-null.
+    if "person" in kwargs:
+        kwargs["person"] = kwargs["person"] or ""
     cols = list(kwargs.keys())
     unknown = set(cols) - _AWARD_NOMINEE_COLS
     if unknown:

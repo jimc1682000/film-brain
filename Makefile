@@ -1,8 +1,9 @@
 .PHONY: up down seed test logs clean fmt lint check recompute-similar cov e2e e2e-ui typecheck audit mutation codeql
 
-# Python used by the local (non-docker) e2e harnesses; override to point at your
-# venv: `make e2e-ui PYTHON=/path/to/venv/bin/python`.
-PYTHON ?= .venv/bin/python
+# Python used by the local (non-docker) e2e harnesses. Prefer a repo-local
+# .venv, else fall back to python3 (mirrors scripts/e2e_*.sh) so `make e2e-ui`
+# works in host workflows without a .venv. Override: `make e2e-ui PYTHON=…`.
+PYTHON ?= $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)
 
 up:
 	docker compose up -d

@@ -119,6 +119,30 @@ def test_seed_awards_missing_file_is_noop(test_conn, tmp_path):
     assert seed_awards(test_conn, tmp_path / "absent.json") == 0
 
 
+def test_seed_awards_idempotent_on_reseed(test_conn, tmp_path):
+    """Re-running the seed (make seed twice) must not duplicate nominees — incl.
+    person-less ones (Best Picture), whose NULL person used to dodge the upsert's
+    ON CONFLICT and inflate /awards counts on every reseed."""
+    seed_mock_db(test_conn)
+    path = _write_awards(
+        tmp_path,
+        [
+            {"category": "Best Picture", "film_title_primary": "機械叛變", "result": "won"},
+            {
+                "category": "Best Actor",
+                "film_title_primary": "午夜來電",
+                "person": "Mock Actor",
+                "result": "nominated",
+            },
+        ],
+    )
+    seed_awards(test_conn, path)
+    first = test_conn.execute("SELECT count(*) FROM award_nominees").fetchone()[0]
+    seed_awards(test_conn, path)  # reseed
+    second = test_conn.execute("SELECT count(*) FROM award_nominees").fetchone()[0]
+    assert first == second == 2
+
+
 def test_seed_awards_unknown_org_skipped(test_conn, tmp_path):
     """An unknown org is skipped (warned), never fatal."""
     seed_mock_db(test_conn)
