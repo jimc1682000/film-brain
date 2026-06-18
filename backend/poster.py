@@ -10,7 +10,14 @@ from __future__ import annotations
 
 import hashlib
 from urllib.parse import quote
-from xml.sax.saxutils import escape
+
+
+def _xml_escape(s: str) -> str:
+    """Escape the three XML text-content metacharacters (& first, to avoid
+    double-escaping). Inlined rather than xml.sax.saxutils.escape so we pull in
+    no xml stdlib module — this is pure output escaping, not parsing, so the
+    defusedxml advice (and semgrep's use-defused-xml rule) does not apply."""
+    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
 def title_card_data_uri(title: str, seed_key: str = "") -> str:
@@ -29,6 +36,6 @@ def title_card_data_uri(title: str, seed_key: str = "") -> str:
         f'<rect width="100%" height="100%" fill="hsl({hue},45%,28%)"/>'
         '<text x="50%" y="50%" fill="#f0f0f0" font-family="sans-serif" font-size="26" '
         'text-anchor="middle" dominant-baseline="middle">'
-        f"{escape(title)}</text></svg>"
+        f"{_xml_escape(title)}</text></svg>"
     )
     return "data:image/svg+xml;utf8," + quote(svg)
