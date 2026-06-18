@@ -44,6 +44,12 @@ _TIER_CSS = """
     .fl-cell.t2, .fl-cell.t3, .fl-cell.u { flex-basis:calc(50% - 4px); }
   }
   .fl-p { position:relative; aspect-ratio:16/9; border-radius:12px; overflow:hidden; border:1px solid #262626; }
+  /* The poster is a Quasar q-img: it sizes itself to the image's natural ratio
+     (portrait 2:3 for posters + title-cards), so it overflows the 16:9 frame and
+     overflow:hidden clips the lower half — taking the title-card's centred title
+     with it (blank colour tile). Pin the q-img to the frame so object-fit:cover
+     on the inner <img> actually crops to 16:9 with the centre visible. */
+  .fl-p .q-img { position:absolute; inset:0; width:100%; height:100%; }
   .fl-p img { width:100%; height:100%; object-fit:cover; display:block; }
   .fl-p.won { border:2px solid #f2c037; box-shadow:0 0 18px rgba(242,192,55,.22); }
   /* One unified status badge for both score % and award won/nominee. Dark

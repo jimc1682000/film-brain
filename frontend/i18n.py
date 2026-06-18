@@ -9,10 +9,18 @@ string is visible, not blank). `**kwargs` are str.format-ed in.
 from __future__ import annotations
 
 import json
+import os
 from importlib import resources
 
 DEFAULT_LOCALE = "zh_TW"
 _current = DEFAULT_LOCALE
+
+# Brand name stamped on library-ownership labels ("{brand} 有此片", "在 {brand}
+# 觀看"). Defaults to CATCHPLAY+ for the hackathon demo; override with the
+# BRAND_NAME env var to rebrand the UI without touching locale tables. Any
+# locale string containing `{brand}` gets this injected automatically (callers
+# need not pass it) — see `t()`.
+BRAND_NAME = os.getenv("BRAND_NAME", "CATCHPLAY+")
 
 _LOCALE_FILES = {
     "zh_TW": "zh_TW.json",
@@ -42,4 +50,8 @@ def t(key: str, **kwargs) -> str:
     s = table.get(key)
     if s is None:
         s = TRANSLATIONS[DEFAULT_LOCALE].get(key, key)
+    # Auto-supply the brand for any string carrying a `{brand}` placeholder, so
+    # rebranding is a single env var, not edits at every call site.
+    if "{brand}" in s and "brand" not in kwargs:
+        kwargs["brand"] = BRAND_NAME
     return s.format(**kwargs) if kwargs else s

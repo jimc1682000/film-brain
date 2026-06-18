@@ -10,8 +10,7 @@
       "description": "一群朋友受困鬧鬼莊園,卻把每場驚嚇都變成笑料的喜劇。",
       "tags": [
         "comedy"
-      ],
-      "poster": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22300%22%20height%3D%22450%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22hsl%2881%2C45%25%2C28%25%29%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23f0f0f0%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%E7%AC%91%E5%9C%92%E9%A9%9A%E9%AD%82%E5%A4%9C%3C/text%3E%3C/svg%3E"
+      ]
     },
     {
       "id": "mock-002",
@@ -22,8 +21,7 @@
       "description": "刑警追查一連串只在午夜響起的神祕電話,真相步步逼近的驚悚片。",
       "tags": [
         "thriller"
-      ],
-      "poster": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22300%22%20height%3D%22450%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22hsl%28261%2C45%25%2C28%25%29%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23f0f0f0%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%E5%8D%88%E5%A4%9C%E4%BE%86%E9%9B%BB%3C/text%3E%3C/svg%3E"
+      ]
     },
     {
       "id": "mock-003",
@@ -34,8 +32,7 @@
       "description": "兩個錯過十年的人在同一個雨季重逢,試著補回遺失時光的愛情故事。",
       "tags": [
         "romance"
-      ],
-      "poster": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22300%22%20height%3D%22450%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22hsl%28296%2C45%25%2C28%25%29%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23f0f0f0%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%E9%9B%A8%E5%AD%A3%E7%9A%84%E5%91%8A%E7%99%BD%3C/text%3E%3C/svg%3E"
+      ]
     },
     {
       "id": "mock-004",
@@ -46,8 +43,7 @@
       "description": "一艘殖民船的 AI 在深太空甦醒,開始質疑任務目的的科幻作品。",
       "tags": [
         "sci-fi"
-      ],
-      "poster": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22300%22%20height%3D%22450%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22hsl%28165%2C45%25%2C28%25%29%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23f0f0f0%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%E6%98%9F%E7%95%8C%E8%88%AA%E7%B7%9A%3C/text%3E%3C/svg%3E"
+      ]
     },
     {
       "id": "mock-005",
@@ -58,8 +54,7 @@
       "description": "搬進老宅的一家人,發現閣樓裡有不該存在的腳步聲的恐怖片。",
       "tags": [
         "horror"
-      ],
-      "poster": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22300%22%20height%3D%22450%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22hsl%28226%2C45%25%2C28%25%29%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23f0f0f0%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%E7%84%A1%E8%81%B2%E7%9A%84%E9%96%A3%E6%A8%93%3C/text%3E%3C/svg%3E"
+      ]
     },
     {
       "id": "mock-006",
@@ -70,8 +65,7 @@
       "description": "退役賽車手被迫重返街頭,在一夜之間橫越全城的動作片。",
       "tags": [
         "action"
-      ],
-      "poster": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22300%22%20height%3D%22450%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22hsl%28296%2C45%25%2C28%25%29%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23f0f0f0%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%E6%A5%B5%E9%80%9F%E9%80%9A%E7%B7%9D%3C/text%3E%3C/svg%3E"
+      ]
     },
     {
       "id": "mock-007",
@@ -82,8 +76,7 @@
       "description": "獨守燈塔的老人與一封遲到四十年的信,關於原諒的劇情片。",
       "tags": [
         "drama"
-      ],
-      "poster": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22300%22%20height%3D%22450%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22hsl%28144%2C45%25%2C28%25%29%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23f0f0f0%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%E7%87%88%E5%A1%94%E5%AE%88%E5%80%99%3C/text%3E%3C/svg%3E"
+      ]
     },
     {
       "id": "mock-008",
@@ -94,8 +87,7 @@
       "description": "一群騙徒策劃最後一票,卻發現自己才是被設計的犯罪片。",
       "tags": [
         "crime"
-      ],
-      "poster": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22300%22%20height%3D%22450%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22hsl%288%2C45%25%2C28%25%29%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23f0f0f0%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%E5%AE%8C%E7%BE%8E%E9%A8%99%E5%B1%80%3C/text%3E%3C/svg%3E"
+      ]
     },
     {
       "id": "mock-009",
@@ -107,8 +99,7 @@
       "tags": [
         "comedy",
         "romance"
-      ],
-      "poster": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22300%22%20height%3D%22450%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22hsl%2829%2C45%25%2C28%25%29%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23f0f0f0%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%E5%A9%9A%E7%A6%AE%E9%80%83%E5%85%B5%3C/text%3E%3C/svg%3E"
+      ]
     },
     {
       "id": "mock-010",
@@ -120,8 +111,7 @@
       "tags": [
         "sci-fi",
         "action"
-      ],
-      "poster": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22300%22%20height%3D%22450%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22hsl%28316%2C45%25%2C28%25%29%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23f0f0f0%22%20font-family%3D%22sans-serif%22%20font-size%3D%2226%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%E6%A9%9F%E6%A2%B0%E5%8F%9B%E8%AE%8A%3C/text%3E%3C/svg%3E"
+      ]
     }
   ]
 }
