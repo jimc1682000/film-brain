@@ -45,6 +45,10 @@ repos:
         name: validate films.seed.json
         files: ^data/films\.seed\.json$
         args: ["--schemafile", "data/films.seed.schema.json"]
+      - id: check-jsonschema
+        name: validate awards.seed.json
+        files: ^data/awards\.seed\.json$
+        args: ["--schemafile", "data/awards.seed.schema.json"]
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.11.0.1

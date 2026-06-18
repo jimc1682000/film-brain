@@ -7,6 +7,10 @@ repo.
 
     python -m scripts.seed_from_file data/films.seed.json [--auto-tag] [--compute-similar]
 
+Awards: after films, nominations from `data/awards.seed.json` are matched to the
+seeded films by title and ingested (override with --awards FILE, disable with
+--awards ''). A missing awards file is a no-op.
+
 Tags are three-state:
   * present            -> written as film_tags (keyless).
   * absent + --auto-tag -> filled by the LLM AutoTagService (needs a backend).
@@ -91,6 +95,48 @@ def _validate_doc(doc: dict) -> list[dict]:
     return films
 
 
+def seed_awards(conn: sqlite3.Connection, path: Path) -> int:
+    """Ingest award nominations from a neutral awards seed file (best-effort).
+
+    Each nominee is matched to a seeded film by title (record_nomination), so
+    this must run AFTER films are inserted. A missing file is a no-op (awards are
+    optional); an unknown org_id is skipped with a warning, never fatal. TMDB
+    enrichment degrades to nothing without a key — no network needed.
+    """
+    from backend.award_manager import get_org, record_nomination
+
+    if not path.exists():
+        return 0
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    if doc.get("version") != 1:
+        sys.exit(f"unsupported awards seed version: {doc.get('version')!r} (expected 1)")
+    count = 0
+    for cer in doc.get("ceremonies", []):
+        try:
+            org = get_org(cer["org_id"])
+        except KeyError:
+            print(f"  ! unknown award org {cer.get('org_id')!r}: skipped", flush=True)
+            continue
+        for nom in cer.get("nominees", []):
+            record_nomination(
+                conn,
+                org=org,
+                year=cer["year"],
+                category=nom["category"],
+                primary_title=nom["film_title_primary"],
+                alt_title=nom.get("film_title_alt"),
+                person=nom.get("person"),
+                result=nom["result"],
+                source_url=cer.get("source_url"),
+                ceremony_date=cer.get("ceremony_date"),
+            )
+            count += 1
+    conn.commit()
+    if count:
+        print(f"seeded {count} award nominees from {path}", flush=True)
+    return count
+
+
 def _auto_tag(film_row: dict, valid_tag_ids: set[str]) -> list[tuple[str, float]]:
     """LLM-fill tags for a film with none (opt-in; needs a ready LLM backend)."""
     import asyncio
@@ -107,7 +153,13 @@ def _auto_tag(film_row: dict, valid_tag_ids: set[str]) -> list[tuple[str, float]
     return out
 
 
-def seed(path: Path, *, auto_tag: bool = False, compute_similar: bool = False) -> int:
+def seed(
+    path: Path,
+    *,
+    auto_tag: bool = False,
+    compute_similar: bool = False,
+    awards_path: Path | None = None,
+) -> int:
     """Seed SQLite + Qdrant from a neutral seed file. Returns films seeded."""
     from backend import vector_store as vs
     from backend.services.embedder import EmbedService
@@ -153,6 +205,10 @@ def seed(path: Path, *, auto_tag: bool = False, compute_similar: bool = False) -
         ]
         vs.upsert_film_vector(client, f["film_id"], vec, vs.build_film_payload(f, payload_tags))
 
+    # Awards are matched by title, so they must be seeded after the films.
+    if awards_path is not None:
+        seed_awards(conn, awards_path)
+
     conn.close()
     if compute_similar:
         import subprocess
@@ -171,8 +227,18 @@ def main() -> None:
     ap.add_argument("file", nargs="?", default="data/films.seed.json")
     ap.add_argument("--auto-tag", action="store_true", help="LLM-fill tags for films with none")
     ap.add_argument("--compute-similar", action="store_true", help="precompute similar films")
+    ap.add_argument(
+        "--awards",
+        default="data/awards.seed.json",
+        help="award seed file to ingest after films (skipped if missing); --awards '' to disable",
+    )
     args = ap.parse_args()
-    seed(Path(args.file), auto_tag=args.auto_tag, compute_similar=args.compute_similar)
+    seed(
+        Path(args.file),
+        auto_tag=args.auto_tag,
+        compute_similar=args.compute_similar,
+        awards_path=Path(args.awards) if args.awards else None,
+    )
 
 
 if __name__ == "__main__":

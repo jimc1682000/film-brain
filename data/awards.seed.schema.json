@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jimc1682000/film-brain/data/awards.seed.schema.json",
+  "title": "film-brain award seed file",
+  "description": "Bring-your-own-awards seed consumed by scripts/seed_from_file.py (--awards). Each nominee is matched to a seeded film by title; matches surface as in-library badges on /awards. Brand-neutral — any award dataset mapping to this shape works.",
+  "type": "object",
+  "required": ["version", "ceremonies"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "const": 1 },
+    "ceremonies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["org_id", "year", "nominees"],
+        "additionalProperties": false,
+        "properties": {
+          "org_id": { "type": "string", "minLength": 1, "description": "Award org id from the org registry (e.g. \"oscars\"). Unknown ids are skipped with a warning." },
+          "year": { "type": "integer", "description": "Ceremony year." },
+          "source_url": { "type": "string", "description": "Provenance link (optional)." },
+          "ceremony_date": { "type": "string", "description": "ISO date of the ceremony (optional)." },
+          "nominees": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["category", "film_title_primary", "result"],
+              "additionalProperties": false,
+              "properties": {
+                "category": { "type": "string", "minLength": 1, "description": "Award category, e.g. \"Best Picture\"." },
+                "film_title_primary": { "type": "string", "minLength": 1, "description": "Primary title used to match a seeded film." },
+                "film_title_alt": { "type": "string", "description": "Alternate title tried if the primary does not match." },
+                "person": { "type": "string", "description": "Nominated person, for person-scoped categories (optional)." },
+                "result": { "enum": ["nominated", "won"], "description": "Nomination outcome." }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

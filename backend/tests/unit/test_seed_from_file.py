@@ -10,8 +10,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from backend.tests.fixtures.mock_films import MOCK_FILMS
-from scripts.seed_from_file import parse_film, primary_title
+from backend.award_view import list_nominees_with_films
+from backend.tests.fixtures.mock_films import MOCK_FILMS, seed_mock_db
+from scripts.seed_from_file import parse_film, primary_title, seed_awards
 
 _VALID = {"comedy", "drama", "sci-fi", "romance"}
 
@@ -82,3 +83,59 @@ def test_seed_file_in_sync_with_fixture():
         assert sf["titles"]["zh"] == mf["title_zh"]
         assert sf["description"] == mf["description"]
         assert sf["tags"] == mf["tags"]
+
+
+def _write_awards(tmp_path: Path, nominees: list[dict], org_id: str = "oscars") -> Path:
+    p = tmp_path / "awards.seed.json"
+    p.write_text(
+        json.dumps(
+            {"version": 1, "ceremonies": [{"org_id": org_id, "year": 2025, "nominees": nominees}]}
+        ),
+        encoding="utf-8",
+    )
+    return p
+
+
+def test_seed_awards_matches_films_by_title(test_conn, tmp_path):
+    """Nominees whose title matches a seeded film get an in-library match."""
+    seed_mock_db(test_conn)
+    path = _write_awards(
+        tmp_path,
+        [
+            {"category": "Best Picture", "film_title_primary": "機械叛變", "result": "won"},
+            {"category": "Best Actor", "film_title_primary": "午夜來電", "result": "nominated"},
+        ],
+    )
+    assert seed_awards(test_conn, path) == 2
+    by_title = {
+        n.film_title_primary: n for n in list_nominees_with_films(test_conn, org_id="oscars")
+    }
+    assert by_title["機械叛變"].matched_film_id == "mock-010"
+    assert by_title["機械叛變"].result == "won"
+    assert by_title["午夜來電"].matched_film_id == "mock-002"
+
+
+def test_seed_awards_missing_file_is_noop(test_conn, tmp_path):
+    assert seed_awards(test_conn, tmp_path / "absent.json") == 0
+
+
+def test_seed_awards_unknown_org_skipped(test_conn, tmp_path):
+    """An unknown org is skipped (warned), never fatal."""
+    seed_mock_db(test_conn)
+    path = _write_awards(
+        tmp_path,
+        [{"category": "X", "film_title_primary": "機械叛變", "result": "won"}],
+        org_id="not-a-real-org",
+    )
+    assert seed_awards(test_conn, path) == 0
+
+
+def test_awards_seed_titles_in_sync_with_films():
+    """Every data/awards.seed.json nominee title must name a seeded film, so the
+    in-library match fires — guards against the awards/films seeds drifting."""
+    awards = json.loads(Path("data/awards.seed.json").read_text(encoding="utf-8"))
+    assert awards["version"] == 1
+    film_titles = {f["title_zh"] for f in MOCK_FILMS}
+    for cer in awards["ceremonies"]:
+        for nom in cer["nominees"]:
+            assert nom["film_title_primary"] in film_titles, nom["film_title_primary"]
