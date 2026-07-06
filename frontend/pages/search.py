@@ -193,7 +193,6 @@ def search_page(initial_query: str = ""):
                         query,
                         int(top_k_select.value or 10),
                         None,
-                        0.3,
                         True,  # understand_only
                         list(gate["excludes"]),
                     )
@@ -284,7 +283,6 @@ def search_page(initial_query: str = ""):
                         query,
                         int(top_k_select.value or 10),
                         None,
-                        0.3,
                         False,  # understand_only
                         list(gate["excludes"]),
                     )

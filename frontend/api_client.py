@@ -103,14 +103,12 @@ class ApiClient:
         query: str,
         top_k: int = 10,
         dimension_filters: dict | None = None,
-        min_confidence: float = 0.6,
         understand_only: bool = False,
         exclude: list[str] | None = None,
     ) -> dict:
         body = {
             "query": query,
             "top_k": top_k,
-            "min_confidence": min_confidence,
             "understand_only": understand_only,
             "exclude": exclude or [],
         }

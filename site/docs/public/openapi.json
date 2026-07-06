@@ -2968,11 +2968,6 @@
             ],
             "title": "Dimension Filters"
           },
-          "min_confidence": {
-            "type": "number",
-            "title": "Min Confidence",
-            "default": 0.6
-          },
           "min_display_score": {
             "type": "number",
             "title": "Min Display Score",

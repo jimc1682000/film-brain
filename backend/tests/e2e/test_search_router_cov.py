@@ -193,6 +193,32 @@ def test_cache_hit(client, seeded_db, base_mocks):
     assert calls["n"] == 1
 
 
+# ── legacy min_confidence param (removed) ────────────────────────────────────
+
+
+def test_legacy_min_confidence_still_200(client, seeded_db, base_mocks):
+    """Old clients still sending the removed min_confidence knob must get a
+    normal 200 (Pydantic ignores extras) — and NOT fork the heavy-cache key:
+    the same query with a different value is served from the same cache entry."""
+    calls = {"n": 0}
+
+    def _hc(*a, **k):
+        calls["n"] += 1
+        return _candidates(["mock-001"])
+
+    base_mocks.setattr(S, "hybrid_candidates", _hc)
+    r1 = client.post(
+        "/api/search/",
+        json={"query": "舊客戶端", "use_llm_rerank": False, "min_confidence": 0.6},
+    )
+    r2 = client.post(
+        "/api/search/",
+        json={"query": "舊客戶端", "use_llm_rerank": False, "min_confidence": 0.3},
+    )
+    assert r1.status_code == 200 and r2.status_code == 200
+    assert calls["n"] == 1  # one cache entry serves both values
+
+
 # ── exclude path (gate ✕) ────────────────────────────────────────────────────
 
 
@@ -362,7 +388,7 @@ def test_pin_demo_query(seeded_db, base_mocks):
     base_mocks.setattr(S, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001"]))
     import asyncio
 
-    req = SearchRequest(query="釘選", top_k=10, min_confidence=0.3, use_llm_rerank=False)
+    req = SearchRequest(query="釘選", top_k=10, use_llm_rerank=False)
     asyncio.run(S.semantic_search(req))
     assert S.pin_demo_query(req) is True
     # pinning a never-seen query returns False (not in cache)

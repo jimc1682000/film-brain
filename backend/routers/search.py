@@ -138,7 +138,6 @@ def _heavy_cache_key(req: SearchRequest) -> tuple:
     filters = tuple(sorted((d, tuple(sorted(v))) for d, v in (req.dimension_filters or {}).items()))
     return (
         req.query.strip(),
-        round(req.min_confidence, 3),
         req.use_llm_rerank,
         req.rerank_pool,
         filters,

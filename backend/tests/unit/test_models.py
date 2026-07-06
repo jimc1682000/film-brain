@@ -220,25 +220,33 @@ def test_auto_tag_response_with_suggestions():
 
 
 def test_search_request_defaults():
-    """SearchRequest must apply default values for top_k and min_confidence."""
+    """SearchRequest must apply default values for top_k and min_display_score."""
     req = SearchRequest(query="romantic comedy")
     assert req.query == "romantic comedy"
     assert req.top_k == 10
-    assert req.min_confidence == pytest.approx(0.6)
+    assert req.min_display_score == pytest.approx(0.1)
     assert req.dimension_filters is None
 
 
 def test_search_request_accepts_custom_values():
-    """SearchRequest must accept overridden top_k, min_confidence, and dimension_filters."""
+    """SearchRequest must accept overridden top_k, min_display_score, and dimension_filters."""
     req = SearchRequest(
         query="thriller",
         top_k=5,
-        min_confidence=0.8,
+        min_display_score=0.3,
         dimension_filters={"genre": ["crime", "horror"]},
     )
     assert req.top_k == 5
-    assert req.min_confidence == pytest.approx(0.8)
+    assert req.min_display_score == pytest.approx(0.3)
     assert req.dimension_filters == {"genre": ["crime", "horror"]}
+
+
+def test_search_request_ignores_removed_min_confidence():
+    """Old clients may still send the removed min_confidence knob — Pydantic
+    must silently ignore it (extra='ignore' default) instead of erroring."""
+    req = SearchRequest.model_validate({"query": "thriller", "min_confidence": 0.8})
+    assert req.query == "thriller"
+    assert not hasattr(req, "min_confidence")
 
 
 def test_search_request_missing_query_raises():

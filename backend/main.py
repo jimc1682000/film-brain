@@ -84,10 +84,10 @@ async def lifespan(app: FastAPI):
                 _time.sleep(300)  # 1 req / 5 min — keep within OpenRouter free-tier QPS
             try:
                 # Run the FULL pipeline with the SAME params the frontend chip
-                # click sends (top_k=10, min_confidence=0.3) so the result-cache
-                # key matches — a clicked chip then returns from cache (~instant),
-                # skipping the ~7s CPU cross-encoder rerank.
-                req = SearchRequest(query=q, top_k=10, min_confidence=0.3)
+                # click sends so the result-cache key matches — a clicked chip
+                # then returns from cache (~instant), skipping the ~7s CPU
+                # cross-encoder rerank.
+                req = SearchRequest(query=q, top_k=10)
                 _asyncio.run(semantic_search(req))
                 # Pin both cache layers so audience reloop churn can never evict
                 # the demo entries — the stage demo always hits a warm cache.
