@@ -42,7 +42,7 @@ query
 - ✅ CE latency 受控(gated + 預算)。
 - ⚠️ 新依賴 `jieba`。
 - ⚠️ FTS index 啟動時 rebuild(~百列,cheap);與 films 同步靠 `rebuild_fts()`。
-- ⚠️ **similar 有 staleness**:新增片後舊片的 similar 不含新片 → 要重算。三條觸發路徑(canonical = `make recompute-similar`):`scripts/seed_all.py` 尾、`library-doctor` skill、`make recompute-similar`。
+- ⚠️ **similar 有 staleness**:新增片後舊片的 similar 不含新片 → 要重算。三條觸發路徑(canonical = `make recompute-similar`):`scripts/seed_from_file.py --compute-similar` 尾、`library-doctor` skill、`make recompute-similar`。
 - ⚠️ jieba 斷詞對 OOV 片名會誤切(`寄生上流`→`寄生/上流`);用 OR-join 子詞召回緩解,**不**把整片名加進 jieba dict(會變單一 token、子詞查不到),只 pin 短 tag label。
 
 ## 替代方案
