@@ -29,10 +29,14 @@ jobs:
           pip install pyright==1.1.410
 
       - name: Lint (ruff)
+        # TODO: widen to `backend frontend scripts` (= make check) once the
+        # ~15 pre-existing C901 complexity violations in frontend/scripts are
+        # refactored — flipping the switch now would hard-fail every PR.
         run: ruff check backend
 
       - name: Format check (ruff)
-        run: ruff format --check backend
+        # Same scope as `make check` — frontend/scripts are format-clean.
+        run: ruff format --check backend frontend scripts
 
       - name: Type check (pyright)
         run: bash scripts/typecheck.sh
