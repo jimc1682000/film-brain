@@ -27,12 +27,9 @@ from __future__ import annotations
 import logging
 import re
 import time
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from backend.config import settings
-
-if TYPE_CHECKING:
-    from backend.interfaces import LLMClient
 
 logger = logging.getLogger(__name__)
 
@@ -511,12 +508,6 @@ class DefaultLLMClient:
         )
 
 
-_llm_client: DefaultLLMClient | None = None
-
-
-def get_llm_client() -> LLMClient:
-    """Return the process-wide LLMClient (ADR 0021 injection seam)."""
-    global _llm_client
-    if _llm_client is None:
-        _llm_client = DefaultLLMClient()
-    return _llm_client
+# Provider singleton lives in backend.providers (reset_all-able); the alias
+# keeps the historical import path working.
+from backend.providers import get_llm_client as get_llm_client  # noqa: E402

@@ -37,3 +37,9 @@ def pin_demo_query(req: SearchRequest) -> bool:
     """Pin a warmed demo query's heavy-cache entry so reloop-generated user
     queries can never evict it. Same key the request would hit on a chip click."""
     return _heavy_cache.pin(_heavy_cache_key(req))
+
+
+def size() -> int:
+    """Number of cached heavy results — public observability for tests, so
+    they don't reach into the _heavy_cache module-private."""
+    return len(_heavy_cache)

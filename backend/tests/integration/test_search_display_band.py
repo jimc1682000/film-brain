@@ -178,4 +178,4 @@ def test_degraded_expansion_is_not_cached(client):
         mock_embed.return_value.tag_vector_cache = {}
         r = client.post("/api/search/", json={"query": "test", "use_llm_rerank": False})
     assert r.status_code == 200, r.text
-    assert len(_s._heavy_cache) == 0  # degraded → skipped
+    assert _s.size() == 0  # degraded → skipped
