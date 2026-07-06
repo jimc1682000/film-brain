@@ -15,11 +15,12 @@ taxonomy,讓人用「意思」找片(「想哭的時候看的」、「緊張的�
 
 ## 這個 repo 是什麼 — 跟線上 Demo 的差別
 
-| 這個 repo(程式碼) | 線上 Demo(站台) |
-| --- | --- |
+| 這個 repo(程式碼)                                                                                                                                                           | 線上 Demo(站台)                                                                             |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | **可直接跑、以 mock 為基礎的核心** — FastAPI + NiceGUI + Qdrant + 本地 bge-m3 + cross-encoder。**免金鑰**:搜尋跑在本地模型,不需要 API key。用中性 seed 格式帶入你自己的片。 | 一個 **展示完整系統跑在真實 CATCHPLAY+ 目錄** 的作品集 — 搜尋重播、評測迭代故事、除錯案例。 |
 
 所以站台展示的有幾件事 **刻意不隨此 repo 出貨**:
+
 - **目錄 ingest / 爬蟲** 是 *私有的 source adapter*。此 repo 出的是 **通用載入器**(`scripts/seed_from_file.py`)+ **中性 adapter 範本**(`scripts/adapters/example_adapter.py`)+ 一份內附 **mock 資料集** — 用文件化格式(`data/films.seed.schema.json`)帶入你自己的片。
 - **45-query 評測分數**(站上 nDCG@5 0.93 → 0.96)是在 *真實目錄* 上測的。此 repo 出 **同一套 harness**(`scripts/eval_search.py`)+ **同一組 45-query set**(`data/eval-queries.json` — 只放查詢字串、由 LLM 即時評、無 gold label),但這組數字要在真實目錄才復現;跑在內附 mock 片庫上同一套 harness 會得到不同分數。
 
@@ -69,6 +70,15 @@ container、component、Protocol class diagram、hybrid-search pipeline + sequen
 
 FastAPI · NiceGUI · SQLite · Qdrant · BAAI/bge-m3(本地)· bce-reranker cross-encoder ·
 hybrid recall(vector + BM25/FTS5+jieba → RRF)· 誠實 cosine 分層計分 · OpenRouter-free / 本地 Ollama LLM。
+
+## 開發(選配工具)
+
+`pre-commit install` 啟用 hooks。多數 hook 由 pre-commit 自帶或走 Docker,
+但少數是**選配外部工具**,沒裝可以 `SKIP=<hook-id>` 跳過(CI 都有對應關卡兜底):
+
+- `betterleaks`(secret 掃描)— 外部 binary
+- `jscpd`(DRY 檢查)— 需要 node/npx
+- `pyright` / `pip-audit` / `pytest` — 需要 dev 依賴:`pip install -e .[dev]`(或 `uv sync --extra dev`)
 
 ## 授權
 
