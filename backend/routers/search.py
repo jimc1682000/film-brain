@@ -16,9 +16,6 @@ from backend.services.search import (
     run_search,
 )
 from backend.services.search import (
-    pin_demo_query as pin_demo_query,  # re-export: warmup pins via this module
-)
-from backend.services.search import (
     similar_films as similar_films_service,
 )
 from backend.vector_store import get_vector_store

@@ -22,6 +22,7 @@ from backend.db import init_db
 from backend.main import app
 from backend.models import SearchRequest
 from backend.services.reranker import get_reranker
+from backend.services.search import pin_demo_query
 from backend.tests.fixtures.mock_films import fake_embed, seed_mock_db
 from backend.vector_store import get_vector_store
 
@@ -393,10 +394,10 @@ def test_pin_demo_query(seeded_db, base_mocks):
 
     req = SearchRequest(query="釘選", top_k=10, use_llm_rerank=False)
     asyncio.run(S.semantic_search(req))
-    assert S.pin_demo_query(req) is True
+    assert pin_demo_query(req) is True
     # pinning a never-seen query returns False (not in cache)
     other = SearchRequest(query="未出現的查詢", use_llm_rerank=False)
-    assert S.pin_demo_query(other) is False
+    assert pin_demo_query(other) is False
 
 
 # ── similar_films: precomputed rows ──────────────────────────────────────────
