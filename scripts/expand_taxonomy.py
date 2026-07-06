@@ -19,7 +19,7 @@ from pathlib import Path
 # Allow running as `python -m scripts.expand_taxonomy` from project root
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from backend.db import get_db, insert_tag  # noqa: E402
+from backend.db import get_db, insert_tag
 
 NEW_TAGS: list[dict] = [
     {
@@ -55,7 +55,7 @@ NEW_TAGS: list[dict] = [
 
 
 def patch_taxonomy(path: Path = Path("data/dimension-mapping.json")) -> dict:
-    with open(path, encoding="utf-8") as f:
+    with path.open(encoding="utf-8") as f:
         data = json.load(f)
 
     added = 0
@@ -67,7 +67,7 @@ def patch_taxonomy(path: Path = Path("data/dimension-mapping.json")) -> dict:
         dim.setdefault("tags", []).append({"tag_id": new["tag_id"], "labels": new["labels"]})
         added += 1
 
-    with open(path, "w", encoding="utf-8") as f:
+    with path.open("w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
     return {"added": added, "total": len(NEW_TAGS)}

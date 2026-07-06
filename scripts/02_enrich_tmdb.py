@@ -194,7 +194,7 @@ def main():
 
             # Check cache
             if cache_file.exists():
-                with open(cache_file, encoding="utf-8") as f:
+                with cache_file.open(encoding="utf-8") as f:
                     data = json.load(f)
                 _update_film(film_id, data)
                 enriched += 1
@@ -231,7 +231,7 @@ def main():
             data = extract_enrichment(details)
 
             # Cache response
-            with open(cache_file, "w", encoding="utf-8") as f:
+            with cache_file.open("w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
 
             # Update DB

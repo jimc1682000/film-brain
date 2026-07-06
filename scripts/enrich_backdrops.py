@@ -14,9 +14,9 @@ import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from backend.config import settings  # noqa: E402
-from backend.db import get_db  # noqa: E402
-from backend.tmdb_lookup import BACKDROP_PREFIX  # noqa: E402
+from backend.config import settings
+from backend.db import get_db
+from backend.tmdb_lookup import BACKDROP_PREFIX
 
 TMDB_BASE = "https://api.themoviedb.org/3"
 

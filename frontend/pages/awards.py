@@ -256,8 +256,7 @@ def _group_by_ceremony(batches: list[dict], orgs: dict[str, dict]) -> list[dict]
             g["nominated_films_matched"], b.get("ceremony_nominated_films_matched", 0)
         )
         g["won_films_matched"] = max(g["won_films_matched"], b.get("ceremony_won_films_matched", 0))
-        if b["latest_insert"] > g["latest_insert"]:
-            g["latest_insert"] = b["latest_insert"]
+        g["latest_insert"] = max(g["latest_insert"], b["latest_insert"])
         g["categories"].append(b)
     return list(grouped.values())
 
