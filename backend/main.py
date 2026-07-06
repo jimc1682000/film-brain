@@ -58,22 +58,23 @@ async def lifespan(app: FastAPI):
     # clicking a chip during the demo returns from the result cache (~instant) —
     # the dominant cost is the CPU cross-encoder rerank (~7s, Semaphore(1)), not
     # query expansion. Non-blocking: readiness isn't delayed; chips fill in over
-    # the next few minutes. Reads the SAME chips file the frontend renders (mounted
-    # read-only at /app/chips.json) — single source, no drift.
+    # the next few minutes. Reads the SAME chips file the frontend renders
+    # (settings.chips_path; compose mounts it read-only at /app/chips.json and
+    # sets CHIPS_PATH) — single source, no drift.
     # Throttled to 1 req / 5 min: OpenRouter free tier is stable at low QPS but
     # bursting N chips at startup exhausts quota quickly.
     def _warm_demo_chips():
         import asyncio as _asyncio
         import json as _json
         import time as _time
-        from pathlib import Path as _Path
 
+        from backend.config import settings
         from backend.models import SearchRequest
         from backend.routers.search import pin_demo_query, semantic_search
         from backend.services.query_expand import pin_query
 
         try:
-            chips = _json.loads(_Path("/app/chips.json").read_text(encoding="utf-8"))
+            chips = _json.loads(settings.chips_path.read_text(encoding="utf-8"))
         except Exception as e:
             logger.info("Demo-chip warm skipped (no chips file): %s", e)
             return

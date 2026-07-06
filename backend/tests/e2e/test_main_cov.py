@@ -117,10 +117,11 @@ def _stub_warmups(monkeypatch):
     monkeypatch.setattr(rr, "warmup", lambda: True)
 
 
-def test_lifespan_warmup_runs(monkeypatch):
+def test_lifespan_warmup_runs(monkeypatch, tmp_path):
     monkeypatch.setattr(M.threading, "Thread", _SyncThread)
     _stub_warmups(monkeypatch)
-    # No /app/chips.json on this box → _warm_demo_chips hits except-and-return.
+    # Nonexistent chips file → _warm_demo_chips hits except-and-return.
+    monkeypatch.setattr(settings, "chips_path", tmp_path / "no-such-chips.json")
     with TestClient(app) as c:
         r = c.get("/health")
         assert r.status_code == 200
@@ -128,8 +129,9 @@ def test_lifespan_warmup_runs(monkeypatch):
         assert r.json()["tag_cache_size"] == 7
 
 
-def test_lifespan_warmup_failures_swallowed(monkeypatch):
+def test_lifespan_warmup_failures_swallowed(monkeypatch, tmp_path):
     monkeypatch.setattr(M.threading, "Thread", _SyncThread)
+    monkeypatch.setattr(settings, "chips_path", tmp_path / "no-such-chips.json")
     import backend.services as svc
 
     monkeypatch.setattr(
@@ -154,18 +156,8 @@ def test_warm_demo_chips_loop(monkeypatch, tmp_path):
 
     chips_file = tmp_path / "chips.json"
     chips_file.write_text(json.dumps(["搞笑電影"]), encoding="utf-8")
-
-    # Patch pathlib.Path so the read inside _warm_demo_chips finds the chip list.
-    import pathlib
-
-    orig_read_text = pathlib.Path.read_text
-
-    def _fake_read_text(self, *a, **k):
-        if str(self) == "/app/chips.json":
-            return chips_file.read_text(encoding="utf-8")
-        return orig_read_text(self, *a, **k)
-
-    monkeypatch.setattr(pathlib.Path, "read_text", _fake_read_text)
+    # Point the warmup at the temp chip list (settings.chips_path).
+    monkeypatch.setattr(settings, "chips_path", chips_file)
 
     # Sync stub: the warmup does `_asyncio.run(semantic_search(req))`; inside the
     # TestClient's running loop that nested asyncio.run raises (caught by the
@@ -188,17 +180,8 @@ def test_warm_demo_chips_pipeline_error(monkeypatch, tmp_path):
 
     chips_file = tmp_path / "chips.json"
     chips_file.write_text(json.dumps(["壞掉的查詢"]), encoding="utf-8")
-
-    import pathlib
-
-    orig_read_text = pathlib.Path.read_text
-
-    def _fake_read_text(self, *a, **k):
-        if str(self) == "/app/chips.json":
-            return chips_file.read_text(encoding="utf-8")
-        return orig_read_text(self, *a, **k)
-
-    monkeypatch.setattr(pathlib.Path, "read_text", _fake_read_text)
+    # Point the warmup at the temp chip list (settings.chips_path).
+    monkeypatch.setattr(settings, "chips_path", chips_file)
 
     def _boom(req):
         raise RuntimeError("pipeline down")
