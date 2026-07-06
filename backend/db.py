@@ -1,3 +1,13 @@
+"""SQLite schema + migrations + CRUD helpers.
+
+Schema evolution policy: the base SCHEMA below is migration 0 and stays
+frozen + idempotent (CREATE ... IF NOT EXISTS). Any FUTURE schema change is a
+NEW entry appended to MIGRATIONS — never an edit to the base — so existing
+DBs pick it up incrementally via ``PRAGMA user_version`` (see init_db).
+Deliberately no Alembic: the repo's zero-extra-dependency style, and a single
+SQLite file doesn't need a migration framework.
+"""
+
 import sqlite3
 from contextlib import closing, contextmanager
 from pathlib import Path
@@ -114,15 +124,36 @@ CREATE INDEX IF NOT EXISTS idx_similar_films_film ON similar_films(film_id);
 """
 
 
+# Ordered migration scripts; ``PRAGMA user_version`` records how many have been
+# applied. Migration 0 is the idempotent base schema: DBs created before this
+# scaffold existed report user_version=0 with tables already present, and the
+# IF NOT EXISTS base re-runs harmlessly on them — legacy and fresh DBs walk the
+# exact same path. Append-only; keep each script re-runnable where possible so
+# a failed run can simply be retried.
+MIGRATIONS: list[str] = [SCHEMA]
+
+
 def init_db(db_path: Path | None = None) -> None:
-    """Create database and tables if they don't exist."""
+    """Create the database and apply any pending migrations.
+
+    Runs on one connection: reads ``PRAGMA user_version``, executes the not-yet
+    -applied MIGRATIONS tail in order, then bumps user_version to the total —
+    only after every script succeeded, so a mid-run failure leaves the version
+    untouched and the next call retries from the same point.
+    """
     path = db_path or settings.db_path
     path.parent.mkdir(parents=True, exist_ok=True)
     # `with sqlite3.connect(...)` commits the transaction but does NOT close the
     # connection — wrap in closing() so the handle is released (else every
     # init_db call leaks a connection: ResourceWarning under gc).
     with closing(sqlite3.connect(str(path))) as conn:
-        conn.executescript(SCHEMA)
+        row = conn.execute("PRAGMA user_version").fetchone()
+        version = int(row[0]) if row else 0
+        for script in MIGRATIONS[version:]:
+            conn.executescript(script)
+        if version < len(MIGRATIONS):
+            # PRAGMA takes no bind params; len() is a trusted int, not user input.
+            conn.execute(f"PRAGMA user_version = {len(MIGRATIONS)}")
         conn.commit()
 
 
