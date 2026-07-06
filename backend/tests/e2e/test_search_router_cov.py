@@ -1,9 +1,10 @@
-"""Coverage tests for backend.routers.search — heavy deps mocked, DB real.
+"""Coverage tests for the search HTTP surface + service layer — heavy deps
+mocked, DB real.
 
-Mocks the names AS IMPORTED into the search namespace (expand_query,
-hybrid_candidates, rerank_with_cross_encoder, get_qdrant_client,
-get_embed_service). DB stays real against a seeded temp db so strong-inject,
-_assemble_response's get_film, and similar_films SQL run on mock-00x ids.
+Mocks the names AS IMPORTED into the service/planner namespaces (expand_query,
+hybrid_candidates, get_qdrant_client, get_embed_service). DB stays real
+against a seeded temp db so strong-inject, _assemble_response's get_film, and
+similar_films SQL run on mock-00x ids.
 """
 
 from __future__ import annotations
@@ -14,6 +15,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 import backend.routers.search as S
+import backend.services.search.planner as SP
+import backend.services.search.service as SS
 from backend.config import settings
 from backend.db import init_db
 from backend.main import app
@@ -59,8 +62,8 @@ def seeded_db(tmp_path, monkeypatch):
 def base_mocks(monkeypatch):
     """Patch heavy deps to deterministic fakes. expand_query returns a minimal
     non-degraded plan by default; tests override per-case."""
-    monkeypatch.setattr(S, "get_embed_service", lambda: _FakeEmbed())
-    monkeypatch.setattr(S, "get_qdrant_client", lambda: object())
+    monkeypatch.setattr(SS, "get_embed_service", lambda: _FakeEmbed())
+    monkeypatch.setattr(SS, "get_qdrant_client", lambda: object())
 
     def _expand(query, timeout=None):
         return {
@@ -72,7 +75,7 @@ def base_mocks(monkeypatch):
             "award_presence": False,
         }
 
-    monkeypatch.setattr(S, "expand_query", _expand)
+    monkeypatch.setattr(SP, "expand_query", _expand)
     monkeypatch.setattr(settings, "use_query_expansion", True, raising=False)
     # Default: rerank returns None (→ minmax fallback path), injected via the
     # Reranker Protocol seam (ADR 0021) instead of monkeypatching a name.
@@ -114,7 +117,7 @@ def client():
 
 
 def test_understand_only_gate(client, seeded_db, base_mocks):
-    base_mocks.setattr(S, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001"]))
+    base_mocks.setattr(SS, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001"]))
     r = client.post("/api/search/", json={"query": "搞笑的電影", "understand_only": True})
     assert r.status_code == 200
     data = r.json()
@@ -128,7 +131,7 @@ def test_understand_only_gate(client, seeded_db, base_mocks):
 
 def test_normal_search_no_rerank(client, seeded_db, base_mocks):
     base_mocks.setattr(
-        S, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001", "mock-002"])
+        SS, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001", "mock-002"])
     )
     r = client.post(
         "/api/search/",
@@ -146,7 +149,7 @@ def test_normal_search_no_rerank(client, seeded_db, base_mocks):
 
 def test_search_with_rerank(client, seeded_db, base_mocks):
     base_mocks.setattr(
-        S, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001", "mock-002"])
+        SS, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001", "mock-002"])
     )
 
     class _Rr:
@@ -169,7 +172,7 @@ def test_search_with_rerank(client, seeded_db, base_mocks):
 
 def test_search_rerank_returns_none_falls_back(client, seeded_db, base_mocks):
     # rerank requested but CE returns None → minmax fallback still ranks.
-    base_mocks.setattr(S, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001"]))
+    base_mocks.setattr(SS, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001"]))
     r = client.post("/api/search/", json={"query": "x", "use_llm_rerank": True})
     assert r.status_code == 200
 
@@ -184,7 +187,7 @@ def test_cache_hit(client, seeded_db, base_mocks):
         calls["n"] += 1
         return _candidates(["mock-001"])
 
-    base_mocks.setattr(S, "hybrid_candidates", _hc)
+    base_mocks.setattr(SS, "hybrid_candidates", _hc)
     body = {"query": "快取測試", "use_llm_rerank": False}
     r1 = client.post("/api/search/", json=body)
     r2 = client.post("/api/search/", json=body)
@@ -206,7 +209,7 @@ def test_legacy_min_confidence_still_200(client, seeded_db, base_mocks):
         calls["n"] += 1
         return _candidates(["mock-001"])
 
-    base_mocks.setattr(S, "hybrid_candidates", _hc)
+    base_mocks.setattr(SS, "hybrid_candidates", _hc)
     r1 = client.post(
         "/api/search/",
         json={"query": "舊客戶端", "use_llm_rerank": False, "min_confidence": 0.6},
@@ -226,7 +229,7 @@ def test_exclude_penalty(client, seeded_db, base_mocks):
     # mock-001 carries 'comedy'. Exclude 喜劇 → it gets penalized below floor.
     cands = _candidates(["mock-001", "mock-002"])
     cands[0]["tags"] = ["comedy"]
-    base_mocks.setattr(S, "hybrid_candidates", lambda *a, **k: cands)
+    base_mocks.setattr(SS, "hybrid_candidates", lambda *a, **k: cands)
     r = client.post(
         "/api/search/",
         json={"query": "電影", "use_llm_rerank": False, "exclude": ["喜劇"]},
@@ -254,9 +257,9 @@ def test_strong_inject(client, seeded_db, base_mocks):
             "award_presence": False,
         }
 
-    base_mocks.setattr(S, "expand_query", _expand)
+    base_mocks.setattr(SP, "expand_query", _expand)
     # recall returns mock-002 only; mock-001/009 carry 'comedy' → injected.
-    base_mocks.setattr(S, "hybrid_candidates", lambda *a, **k: _candidates(["mock-002"]))
+    base_mocks.setattr(SS, "hybrid_candidates", lambda *a, **k: _candidates(["mock-002"]))
     r = client.post("/api/search/", json={"query": "喜劇地區", "use_llm_rerank": False})
     assert r.status_code == 200
     ids = {res["film_id"] for res in r.json()["results"]}
@@ -275,8 +278,8 @@ def test_strong_inject_skips_excluded(client, seeded_db, base_mocks):
             "award_presence": False,
         }
 
-    base_mocks.setattr(S, "expand_query", _expand)
-    base_mocks.setattr(S, "hybrid_candidates", lambda *a, **k: _candidates(["mock-002"]))
+    base_mocks.setattr(SP, "expand_query", _expand)
+    base_mocks.setattr(SS, "hybrid_candidates", lambda *a, **k: _candidates(["mock-002"]))
     # exclude comedy → injected comedy films should be skipped at inject time
     r = client.post(
         "/api/search/",
@@ -301,10 +304,10 @@ def test_award_presence(client, seeded_db, base_mocks, monkeypatch):
             "award_presence": True,
         }
 
-    base_mocks.setattr(S, "expand_query", _expand)
+    base_mocks.setattr(SP, "expand_query", _expand)
     # award tag id set — patch to a known tag so _add runs the award branch.
-    monkeypatch.setattr(S, "_get_award_tag_ids", lambda: {"drama"})
-    base_mocks.setattr(S, "hybrid_candidates", lambda *a, **k: _candidates(["mock-007"]))
+    monkeypatch.setattr(SP, "_get_award_tag_ids", lambda: {"drama"})
+    base_mocks.setattr(SS, "hybrid_candidates", lambda *a, **k: _candidates(["mock-007"]))
     r = client.post("/api/search/", json={"query": "得獎電影", "use_llm_rerank": False})
     assert r.status_code == 200
     assert r.json()["understanding"]["award_required"] is True
@@ -325,14 +328,14 @@ def test_degraded_expansion_not_cached(client, seeded_db, base_mocks):
             "_degraded": True,
         }
 
-    base_mocks.setattr(S, "expand_query", _expand)
+    base_mocks.setattr(SP, "expand_query", _expand)
     calls = {"n": 0}
 
     def _hc(*a, **k):
         calls["n"] += 1
         return _candidates(["mock-001"])
 
-    base_mocks.setattr(S, "hybrid_candidates", _hc)
+    base_mocks.setattr(SS, "hybrid_candidates", _hc)
     body = {"query": "降級查詢", "use_llm_rerank": False}
     client.post("/api/search/", json=body)
     client.post("/api/search/", json=body)
@@ -348,7 +351,7 @@ def test_degraded_expansion_not_cached(client, seeded_db, base_mocks):
 def test_low_confidence_tier(client, seeded_db, base_mocks):
     # primary_cos well below the mid tier's min_cos (0.45) -> low confidence tier
     base_mocks.setattr(
-        S, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001"], primary_cos=0.1)
+        SS, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001"], primary_cos=0.1)
     )
     r = client.post("/api/search/", json={"query": "冷門", "use_llm_rerank": False})
     assert r.status_code == 200
@@ -359,7 +362,7 @@ def test_low_confidence_tier(client, seeded_db, base_mocks):
 
 
 def test_empty_candidates(client, seeded_db, base_mocks):
-    base_mocks.setattr(S, "hybrid_candidates", lambda *a, **k: [])
+    base_mocks.setattr(SS, "hybrid_candidates", lambda *a, **k: [])
     r = client.post("/api/search/", json={"query": "查無", "use_llm_rerank": False})
     assert r.status_code == 200
     assert r.json()["total"] == 0
@@ -369,7 +372,7 @@ def test_empty_candidates(client, seeded_db, base_mocks):
 
 
 def test_dimension_filters(client, seeded_db, base_mocks):
-    base_mocks.setattr(S, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001"]))
+    base_mocks.setattr(SS, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001"]))
     r = client.post(
         "/api/search/",
         json={
@@ -385,7 +388,7 @@ def test_dimension_filters(client, seeded_db, base_mocks):
 
 
 def test_pin_demo_query(seeded_db, base_mocks):
-    base_mocks.setattr(S, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001"]))
+    base_mocks.setattr(SS, "hybrid_candidates", lambda *a, **k: _candidates(["mock-001"]))
     import asyncio
 
     req = SearchRequest(query="釘選", top_k=10, use_llm_rerank=False)
@@ -434,8 +437,8 @@ def test_similar_films_precomputed_skips_missing(client, seeded_db):
 def test_similar_films_live_fallback(client, seeded_db, monkeypatch):
     # No precomputed rows → live cosine path. Mock qdrant get_film_vector +
     # inject a fake VectorStore via the Protocol seam (ADR 0021).
-    monkeypatch.setattr(S, "get_qdrant_client", lambda: object())
-    monkeypatch.setattr(S, "get_film_vector", lambda client, fid: fake_embed([fid])[0])
+    monkeypatch.setattr(SS, "get_qdrant_client", lambda: object())
+    monkeypatch.setattr(SS, "get_film_vector", lambda client, fid: fake_embed([fid])[0])
 
     class _Vs:
         def search_films(self, client, query_vector, top_k=10, dimension_filters=None):
@@ -456,7 +459,7 @@ def test_similar_films_live_fallback(client, seeded_db, monkeypatch):
 
 
 def test_similar_films_no_vector_404(client, seeded_db, monkeypatch):
-    monkeypatch.setattr(S, "get_qdrant_client", lambda: object())
-    monkeypatch.setattr(S, "get_film_vector", lambda client, fid: None)
+    monkeypatch.setattr(SS, "get_qdrant_client", lambda: object())
+    monkeypatch.setattr(SS, "get_film_vector", lambda client, fid: None)
     r = client.get("/api/search/similar/mock-005")
     assert r.status_code == 404
