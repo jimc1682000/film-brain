@@ -23,10 +23,18 @@ repos:
         args: [--fix]
       - id: ruff-format
 
-  - repo: https://github.com/semgrep/semgrep
-    rev: v1.166.0
+  # semgrep via a local hook: pre-commit builds an isolated venv and
+  # pip-installs the pinned semgrep (no git clone of the semgrep source repo,
+  # which otherwise pulls the semgrep-rules submodule's attack-sample fixtures
+  # into ~/.cache/pre-commit and trips corporate AV). To bump the version, edit
+  # the pin below — the env rebuilds on next run.
+  - repo: local
     hooks:
       - id: semgrep
+        name: semgrep
+        entry: semgrep
+        language: python
+        additional_dependencies: ["semgrep==1.166.0"]
         # Local custom rules only (fast, no registry fetch) — incl. the httpx
         # SSRF tripwire the free registry misses. Full p/security-audit runs in
         # CI (the semgrep job in .github/workflows/ci.yml).
