@@ -10,4 +10,4 @@ sentence-transformers>=3.3.0
 # heuristic gate (backend/services/prompt_guard.py) escalates only its
 # SUSPICIOUS gray zone to this for confirmation; absent (slim), SUSPICIOUS just
 # logs + proceeds. Pulls transformers + a ~400MB model — hence ST-layer only.
-llm-guard>=0.3.0
+llm-guard>=0.3.16
