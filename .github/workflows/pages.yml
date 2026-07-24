@@ -45,3 +45,26 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5
+
+  # 部署成功後通知主站（jimc1682000.github.io）重新組裝，讓 CF canonical 的
+  # /film-brain/ 與 GH mirror 同步更新。需在本 repo 設 secret ASSEMBLE_DISPATCH_TOKEN
+  # （對主站 repo 有 contents:write 的 fine-grained PAT）；未設時自動略過。
+  notify-main:
+    needs: deploy
+    runs-on: ubuntu-latest
+    env:
+      HAS_TOKEN: ${{ secrets.ASSEMBLE_DISPATCH_TOKEN != '' }}
+    steps:
+      - name: Skip notice
+        if: env.HAS_TOKEN != 'true'
+        run: echo "ASSEMBLE_DISPATCH_TOKEN 未設定，略過主站重組通知（改用 workflow_dispatch 手動）。"
+      - name: Trigger main site re-assemble
+        if: env.HAS_TOKEN == 'true'
+        env:
+          TOKEN: ${{ secrets.ASSEMBLE_DISPATCH_TOKEN }}
+        run: |
+          curl -fsSL -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/jimc1682000/jimc1682000.github.io/dispatches \
+            -d '{"event_type":"assemble-site"}'
