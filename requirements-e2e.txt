@@ -2,5 +2,5 @@
 # Never installed in CI or the runtime images; the per-PR suite is the mocked
 # pytest run. These drive a real Chromium against the live frontend+backend to
 # catch render/CSS/SVG regressions the in-process suite can't see.
-playwright>=1.60.0
+playwright>=1.61.0
 pytest-playwright>=0.8.0
