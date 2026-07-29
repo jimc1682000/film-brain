@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Classify Film Brain PRs and apply the narrow auto-merge policy."""
+"""Classify Film Brain PR risk and auto-merge only low-risk changes."""
 
 from __future__ import annotations
 
@@ -10,16 +10,22 @@ import shutil
 import subprocess
 import sys
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
 from fnmatch import fnmatch
 from typing import Any
 
 AUTOMATION_WORKFLOW = "PR merge automation"
 LOOKS_GOOD_MARKER = "film-brain-pr-automation:looks-good"
 CODEX_REVIEW_MARKER = "film-brain-pr-automation:codex-review:"
-MANUAL_REVIEW_MARKER = "film-brain-pr-automation:manual-review:"
 HIGH_RISK_DEPENDENCIES = {"torch"}
-SAFE_FILE_PATTERNS = (
+RISK_LABELS = {
+    "risk:low": ("0E8A16", "Low-risk PR eligible for automation"),
+    "risk:medium": ("FBCA04", "Medium-risk PR requiring human observation"),
+    "risk:high": ("D93F0B", "High-risk PR requiring human review"),
+    "risk:manual-only": ("B60205", "PR must not be merged by automation"),
+}
+CODEX_LABEL = "needs:codex-review"
+CODEX_LABEL_COLOR = "5319E7"
+SAFE_DEPENDENCY_FILE_PATTERNS = (
     "uv.lock",
     "requirements*.txt",
     "site/package-lock.json",
@@ -27,14 +33,29 @@ SAFE_FILE_PATTERNS = (
     ".github/workflows/*.yml",
     ".github/workflows/*.yaml",
 )
-STRUCTURAL_FILE_PATTERNS = (
+DOCS_FILE_PATTERNS = (
+    "*.md",
+    "README*.md",
+    ".github/*.md",
+    "docs/**/*.md",
+)
+HIGH_RISK_FILE_PATTERNS = (
+    ".github/workflows/*",
+    "Dockerfile",
+    "**/Dockerfile",
+    "docker-compose*.yml",
+    "docker-compose*.yaml",
+    "backend/config.py",
     "backend/db.py",
-    "backend/services/search/*",
-    "backend/routers/search.py",
-    "backend/models.py",
     "backend/interfaces.py",
+    "backend/llm_client.py",
+    "backend/models.py",
+    "backend/routers/search.py",
+    "backend/services/search/*",
     "docs/adr/*",
 )
+MANUAL_ONLY_TITLE_KEYWORDS = ("migration", "security", "auth", "rate limit", "stacked")
+HIGH_RISK_TITLE_KEYWORDS = ("breaking", "database", "db", "deploy", "refactor")
 DRY_RUN = os.getenv("DRY_RUN") == "1"
 GH_BIN = shutil.which("gh")
 if GH_BIN is None:
@@ -44,7 +65,9 @@ if GH_BIN is None:
 
 @dataclass
 class Decision:
-    action: str
+    risk: str
+    automerge: bool
+    request_codex_review: bool
     reason: str
 
 
@@ -65,10 +88,6 @@ def run_gh(*args: str, input_text: str | None = None) -> str:
 def gh_json(*args: str) -> Any:
     output = run_gh(*args)
     return json.loads(output) if output.strip() else None
-
-
-def parse_time(value: str) -> datetime:
-    return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(UTC)
 
 
 def pr_numbers(repo: str) -> list[int]:
@@ -106,6 +125,10 @@ def load_pr(repo: str, number: int) -> dict[str, Any]:
                 "headRefName",
                 "headRefOid",
                 "isDraft",
+                "labels",
+                "additions",
+                "deletions",
+                "changedFiles",
                 "mergeable",
                 "files",
                 "commits",
@@ -169,10 +192,18 @@ def files(pr: dict[str, Any]) -> list[str]:
     return [item["path"] for item in pr.get("files", [])]
 
 
+def changed_lines(pr: dict[str, Any]) -> int:
+    return int(pr.get("additions") or 0) + int(pr.get("deletions") or 0)
+
+
 def all_files_match(paths: list[str], patterns: tuple[str, ...]) -> bool:
     return bool(paths) and all(
         any(fnmatch(path, pattern) for pattern in patterns) for path in paths
     )
+
+
+def any_file_matches(paths: list[str], patterns: tuple[str, ...]) -> bool:
+    return any(any(fnmatch(path, pattern) for pattern in patterns) for path in paths)
 
 
 def has_green_checks(pr: dict[str, Any]) -> tuple[bool, str]:
@@ -233,36 +264,11 @@ def issue_comments(repo: str, number: int) -> list[dict[str, Any]]:
     return gh_json("api", f"repos/{repo}/issues/{number}/comments", "--paginate")
 
 
-def review_comments(repo: str, number: int) -> list[dict[str, Any]]:
-    return gh_json("api", f"repos/{repo}/pulls/{number}/comments", "--paginate")
-
-
-def reviews(repo: str, number: int) -> list[dict[str, Any]]:
-    return gh_json("api", f"repos/{repo}/pulls/{number}/reviews", "--paginate")
-
-
 def find_marker_comment(repo: str, number: int, marker: str) -> dict[str, Any] | None:
     for comment in issue_comments(repo, number):
         if marker in (comment.get("body") or ""):
             return comment
     return None
-
-
-def comments_after_review_marker(repo: str, number: int, marker_time: datetime) -> int:
-    count = 0
-    for comment in issue_comments(repo, number):
-        if parse_time(comment["created_at"]) > marker_time and "film-brain-pr-automation:" not in (
-            comment.get("body") or ""
-        ):
-            count += 1
-    for comment in review_comments(repo, number):
-        if parse_time(comment["created_at"]) > marker_time:
-            count += 1
-    for review in reviews(repo, number):
-        submitted_at = review.get("submitted_at")
-        if submitted_at and parse_time(submitted_at) > marker_time:
-            count += 1
-    return count
 
 
 def comment(repo: str, number: int, body: str) -> None:
@@ -271,6 +277,139 @@ def comment(repo: str, number: int, body: str) -> None:
         print(f"#{number}: dry-run comment - {first_line}")
         return
     run_gh("pr", "comment", str(number), "--repo", repo, "--body", body)
+
+
+def ensure_labels(repo: str) -> None:
+    if DRY_RUN:
+        print("dry-run label setup")
+        return
+    for name, (color, description) in RISK_LABELS.items():
+        run_gh(
+            "label",
+            "create",
+            name,
+            "--repo",
+            repo,
+            "--color",
+            color,
+            "--description",
+            description,
+            "--force",
+        )
+    run_gh(
+        "label",
+        "create",
+        CODEX_LABEL,
+        "--repo",
+        repo,
+        "--color",
+        CODEX_LABEL_COLOR,
+        "--description",
+        "Codex review has been requested for this PR",
+        "--force",
+    )
+
+
+def current_label_names(pr: dict[str, Any]) -> set[str]:
+    return {label["name"] for label in pr.get("labels", [])}
+
+
+def add_label(repo: str, number: int, label: str) -> None:
+    if DRY_RUN:
+        print(f"#{number}: dry-run add label - {label}")
+        return
+    run_gh("pr", "edit", str(number), "--repo", repo, "--add-label", label)
+
+
+def remove_label(repo: str, number: int, label: str) -> None:
+    if DRY_RUN:
+        print(f"#{number}: dry-run remove label - {label}")
+        return
+    run_gh("pr", "edit", str(number), "--repo", repo, "--remove-label", label)
+
+
+def sync_labels(repo: str, pr: dict[str, Any], decision: Decision) -> None:
+    number = pr["number"]
+    existing = current_label_names(pr)
+    for label in RISK_LABELS:
+        if label == decision.risk and label not in existing:
+            add_label(repo, number, label)
+        elif label != decision.risk and label in existing:
+            remove_label(repo, number, label)
+    if decision.request_codex_review and CODEX_LABEL not in existing:
+        add_label(repo, number, CODEX_LABEL)
+    elif not decision.request_codex_review and CODEX_LABEL in existing:
+        remove_label(repo, number, CODEX_LABEL)
+
+
+def is_manual_only(pr: dict[str, Any], default_branch: str) -> bool:
+    title = (pr.get("title") or "").lower()
+    if pr["baseRefName"] != default_branch:
+        return True
+    return any(word in title for word in MANUAL_ONLY_TITLE_KEYWORDS)
+
+
+def is_high_risk(pr: dict[str, Any]) -> bool:
+    title = (pr.get("title") or "").lower()
+    if any(word in title for word in HIGH_RISK_TITLE_KEYWORDS):
+        return True
+    return any_file_matches(files(pr), HIGH_RISK_FILE_PATTERNS)
+
+
+def classify(pr: dict[str, Any], default_branch: str) -> Decision:
+    if pr["isDraft"]:
+        return Decision("risk:manual-only", False, False, "draft PR")
+    if is_manual_only(pr, default_branch):
+        return Decision("risk:manual-only", False, True, "stacked or manual-only PR")
+
+    pr_files = files(pr)
+    if not is_dependabot(pr):
+        if is_high_risk(pr):
+            return Decision(
+                "risk:high",
+                False,
+                True,
+                "sensitive path or structural keyword; human review required",
+            )
+        if all_files_match(pr_files, DOCS_FILE_PATTERNS) and changed_lines(pr) <= 100:
+            return Decision("risk:low", True, False, "small docs-only PR")
+        if len(pr_files) <= 3 and changed_lines(pr) <= 150:
+            return Decision("risk:medium", False, True, "small non-dependency PR")
+        return Decision("risk:high", False, True, "larger non-dependency PR")
+
+    names = dependency_names(pr)
+    if is_major_update(pr) or names & HIGH_RISK_DEPENDENCIES:
+        return Decision("risk:high", False, True, "major or high-risk dependency update")
+    if all_files_match(pr_files, SAFE_DEPENDENCY_FILE_PATTERNS):
+        return Decision(
+            "risk:low",
+            True,
+            False,
+            "low-risk Dependabot patch/minor lockfile or workflow update",
+        )
+    return Decision(
+        "risk:medium",
+        False,
+        True,
+        "Dependabot PR changes files outside the low-risk allowlist",
+    )
+
+
+def request_review_once(repo: str, pr: dict[str, Any], decision: Decision) -> bool:
+    marker = f"{CODEX_REVIEW_MARKER}{pr['headRefOid']}"
+    if find_marker_comment(repo, pr["number"], marker):
+        return False
+    comment(
+        repo,
+        pr["number"],
+        (
+            "@codex review\n\n"
+            f"{decision.risk} PR. Automation will not merge this PR. "
+            "Please review the diff and leave findings if anything needs changes.\n\n"
+            f"<!-- {marker} -->"
+        ),
+    )
+    return True
 
 
 def merge(repo: str, pr: dict[str, Any]) -> None:
@@ -292,48 +431,12 @@ def merge(repo: str, pr: dict[str, Any]) -> None:
     )
 
 
-def is_manual_structural(pr: dict[str, Any], default_branch: str) -> bool:
-    title = (pr.get("title") or "").lower()
-    if pr["baseRefName"] != default_branch:
-        return True
-    if any(word in title for word in ["refactor", "migration", "db", "database"]):
-        return True
-    return any(
-        any(fnmatch(path, pattern) for pattern in STRUCTURAL_FILE_PATTERNS) for path in files(pr)
-    )
-
-
-def classify(pr: dict[str, Any], default_branch: str) -> Decision:
-    if pr["isDraft"]:
-        return Decision("skip", "draft PR")
+def merge_if_clean(repo: str, pr: dict[str, Any]) -> None:
+    number = pr["number"]
     green, check_reason = has_green_checks(pr)
     if not green:
-        return Decision("skip", check_reason)
-    if not is_dependabot(pr):
-        if is_manual_structural(pr, default_branch):
-            return Decision(
-                "manual_review_only",
-                "structural or stacked PR; request Codex review but never auto-merge",
-            )
-        return Decision("skip", "non-Dependabot PR outside the auto-merge policy")
-    names = dependency_names(pr)
-    if is_major_update(pr) or names & HIGH_RISK_DEPENDENCIES:
-        return Decision("codex_review_then_merge", "major or high-risk dependency update")
-    if all_files_match(files(pr), SAFE_FILE_PATTERNS):
-        return Decision("merge", "low-risk Dependabot patch/minor lockfile or workflow update")
-    return Decision("skip", "Dependabot PR changes files outside the low-risk allowlist")
-
-
-def request_review_once(repo: str, pr: dict[str, Any], marker_prefix: str, body: str) -> bool:
-    marker = f"{marker_prefix}{pr['headRefOid']}"
-    if find_marker_comment(repo, pr["number"], marker):
-        return False
-    comment(repo, pr["number"], f"@codex review\n\n{body}\n\n<!-- {marker} -->")
-    return True
-
-
-def merge_if_clean(repo: str, pr: dict[str, Any], success_message: str) -> None:
-    number = pr["number"]
+        print(f"#{number}: skip - {check_reason}")
+        return
     if pr["mergeable"] != "MERGEABLE":
         print(f"#{number}: skip - mergeable is {pr['mergeable']}")
         return
@@ -342,74 +445,27 @@ def merge_if_clean(repo: str, pr: dict[str, Any], success_message: str) -> None:
         print(f"#{number}: skip - {threads} unresolved review thread(s)")
         return
     merge(repo, pr)
-    print(f"#{number}: {success_message}")
+    print(f"#{number}: merged")
 
 
-def handle_high_risk_dependabot(repo: str, pr: dict[str, Any], wait_minutes: int) -> None:
-    requested = request_review_once(
-        repo,
-        pr,
-        CODEX_REVIEW_MARKER,
-        (
-            "High-risk Dependabot update. Automation will merge only after "
-            "green checks, no unresolved review threads, no new comments "
-            "after this review request, and the review wait window has elapsed."
-        ),
-    )
-    if requested:
-        print(f"#{pr['number']}: requested Codex review")
-        return
-
-    number = pr["number"]
-    marker = find_marker_comment(repo, number, f"{CODEX_REVIEW_MARKER}{pr['headRefOid']}")
-    if marker is None:
-        print(f"#{number}: skip - Codex review marker missing")
-        return
-    marker_time = parse_time(marker["created_at"])
-    wait_until = marker_time + timedelta(minutes=wait_minutes)
-    if datetime.now(UTC) < wait_until:
-        print(f"#{number}: skip - waiting until {wait_until.isoformat()}")
-        return
-    if comments_after_review_marker(repo, number, marker_time):
-        print(f"#{number}: skip - comments appeared after Codex review request")
-        return
-    merge_if_clean(repo, pr, "merged after Codex review wait")
-
-
-def handle_manual_review(repo: str, pr: dict[str, Any]) -> None:
-    requested = request_review_once(
-        repo,
-        pr,
-        MANUAL_REVIEW_MARKER,
-        (
-            "Manual-only structural or stacked PR. Per the dotfiles "
-            "CONTRIBUTING policy, this PR needs review and the 30-minute "
-            "comment window, but automation will not merge it."
-        ),
-    )
-    if requested:
-        print(f"#{pr['number']}: requested Codex review; manual merge required")
-
-
-def handle_pr(repo: str, default_branch: str, wait_minutes: int, number: int) -> None:
+def handle_pr(repo: str, default_branch: str, number: int) -> None:
     pr = load_pr(repo, number)
     decision = classify(pr, default_branch)
-    print(f"#{number}: {decision.action} - {decision.reason}")
+    print(f"#{number}: {decision.risk} - {decision.reason}")
+    sync_labels(repo, pr, decision)
 
-    if decision.action == "merge":
-        merge_if_clean(repo, pr, "merged")
-    elif decision.action == "codex_review_then_merge":
-        handle_high_risk_dependabot(repo, pr, wait_minutes)
-    elif decision.action == "manual_review_only":
-        handle_manual_review(repo, pr)
+    if decision.automerge:
+        merge_if_clean(repo, pr)
+    elif decision.request_codex_review and request_review_once(repo, pr, decision):
+        print(f"#{number}: requested Codex review")
 
 
 def main() -> None:
     repo = os.environ["GITHUB_REPOSITORY"]
     default_branch = os.getenv("DEFAULT_BRANCH", "master")
-    wait_minutes = int(os.getenv("REVIEW_WAIT_MINUTES", "30"))
+    ensure_labels(repo)
     for number in pr_numbers(repo):
-        handle_pr(repo, default_branch, wait_minutes, number)
+        handle_pr(repo, default_branch, number)
 
 
 if __name__ == "__main__":

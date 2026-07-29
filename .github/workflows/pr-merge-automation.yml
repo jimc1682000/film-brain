@@ -27,7 +27,6 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || github.token }}
       GITHUB_REPOSITORY: ${{ github.repository }}
       DEFAULT_BRANCH: master
-      REVIEW_WAIT_MINUTES: "30"
       PR_NUMBER: ${{ github.event.pull_request.number || '' }}
     steps:
       - name: Checkout automation script only
