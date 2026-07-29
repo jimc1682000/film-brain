@@ -25,6 +25,7 @@ RISK_LABELS = {
 }
 CODEX_LABEL = "needs:codex-review"
 CODEX_LABEL_COLOR = "5319E7"
+DEFAULT_TRUSTED_COMMENT_AUTHORS = ("github-actions[bot]", "jimc1682000")
 SAFE_DEPENDENCY_FILE_PATTERNS = (
     "uv.lock",
     "requirements*.txt",
@@ -41,6 +42,20 @@ DOCS_FILE_PATTERNS = (
 )
 HIGH_RISK_FILE_PATTERNS = (
     ".github/workflows/*",
+    "Dockerfile",
+    "**/Dockerfile",
+    "docker-compose*.yml",
+    "docker-compose*.yaml",
+    "backend/config.py",
+    "backend/db.py",
+    "backend/interfaces.py",
+    "backend/llm_client.py",
+    "backend/models.py",
+    "backend/routers/search.py",
+    "backend/services/search/*",
+    "docs/adr/*",
+)
+DEPENDABOT_STRUCTURAL_FILE_PATTERNS = (
     "Dockerfile",
     "**/Dockerfile",
     "docker-compose*.yml",
@@ -164,28 +179,37 @@ def dependency_names(pr: dict[str, Any]) -> set[str]:
     return {name.lower() for name in names}
 
 
-def parse_versions(title: str) -> tuple[tuple[int, ...], tuple[int, ...]] | None:
-    version = r"[vV]?[><=~^ ]*(\d+(?:\.\d+){0,2})"
-    match = re.search(rf"\bfrom\s+{version}\s+to\s+{version}\b", title)
-    if not match:
-        return None
-    before = tuple(int(part) for part in match.group(1).split("."))
-    after = tuple(int(part) for part in match.group(2).split("."))
-    return before, after
-
-
-def is_major_update(pr: dict[str, Any]) -> bool:
-    text = "\n".join(
+def dependency_update_text(pr: dict[str, Any]) -> str:
+    return "\n".join(
         [
             pr.get("title") or "",
             pr.get("body") or "",
             "\n".join(commit.get("messageBody") or "" for commit in pr.get("commits", [])),
         ]
-    ).lower()
+    )
+
+
+def parse_version_pairs(text: str) -> list[tuple[tuple[int, ...], tuple[int, ...]]]:
+    version = r"[vV]?[><=~^ ]*(\d+(?:\.\d+){0,2})"
+    return [
+        (
+            tuple(int(part) for part in match.group(1).split(".")),
+            tuple(int(part) for part in match.group(2).split(".")),
+        )
+        for match in re.finditer(rf"\bfrom\s+{version}\s+to\s+{version}\b", text)
+    ]
+
+
+def is_major_update(pr: dict[str, Any]) -> bool:
+    text = dependency_update_text(pr).lower()
     if "version-update:semver-major" in text:
         return True
-    versions = parse_versions(pr.get("title") or "")
-    return bool(versions and versions[0][0] != versions[1][0])
+    return any(before[0] != after[0] for before, after in parse_version_pairs(text))
+
+
+def is_unparseable_grouped_update(pr: dict[str, Any]) -> bool:
+    title = (pr.get("title") or "").lower()
+    return " group " in title and not parse_version_pairs(dependency_update_text(pr))
 
 
 def files(pr: dict[str, Any]) -> list[str]:
@@ -234,39 +258,63 @@ def has_green_checks(pr: dict[str, Any]) -> tuple[bool, str]:
 def unresolved_threads(repo: str, number: int) -> int:
     owner, name = repo.split("/", 1)
     query = """
-    query($owner: String!, $name: String!, $number: Int!) {
+    query($owner: String!, $name: String!, $number: Int!, $cursor: String) {
       repository(owner: $owner, name: $name) {
         pullRequest(number: $number) {
-          reviewThreads(first: 100) {
+          reviewThreads(first: 100, after: $cursor) {
             nodes { isResolved }
+            pageInfo { hasNextPage endCursor }
           }
         }
       }
     }
     """
-    data = gh_json(
-        "api",
-        "graphql",
-        "-f",
-        f"query={query}",
-        "-F",
-        f"owner={owner}",
-        "-F",
-        f"name={name}",
-        "-F",
-        f"number={number}",
-    )
-    nodes = data["data"]["repository"]["pullRequest"]["reviewThreads"]["nodes"]
-    return sum(1 for node in nodes if not node["isResolved"])
+    total = 0
+    cursor: str | None = None
+    while True:
+        args = [
+            "api",
+            "graphql",
+            "-f",
+            f"query={query}",
+            "-F",
+            f"owner={owner}",
+            "-F",
+            f"name={name}",
+            "-F",
+            f"number={number}",
+        ]
+        if cursor is not None:
+            args.extend(["-F", f"cursor={cursor}"])
+        data = gh_json(*args)
+        threads = data["data"]["repository"]["pullRequest"]["reviewThreads"]
+        total += sum(1 for node in threads["nodes"] if not node["isResolved"])
+        page_info = threads["pageInfo"]
+        if not page_info["hasNextPage"]:
+            return total
+        cursor = page_info["endCursor"]
 
 
 def issue_comments(repo: str, number: int) -> list[dict[str, Any]]:
     return gh_json("api", f"repos/{repo}/issues/{number}/comments", "--paginate")
 
 
+def trusted_comment_authors() -> set[str]:
+    raw_authors = os.getenv("AUTOMATION_COMMENT_AUTHORS")
+    if raw_authors:
+        return {author.strip() for author in raw_authors.split(",") if author.strip()}
+    return set(DEFAULT_TRUSTED_COMMENT_AUTHORS)
+
+
+def has_exact_marker(comment: dict[str, Any], marker: str) -> bool:
+    return f"<!-- {marker} -->" in (comment.get("body") or "")
+
+
 def find_marker_comment(repo: str, number: int, marker: str) -> dict[str, Any] | None:
+    trusted_authors = trusted_comment_authors()
     for comment in issue_comments(repo, number):
-        if marker in (comment.get("body") or ""):
+        author = comment.get("user", {}).get("login")
+        if author in trusted_authors and has_exact_marker(comment, marker):
             return comment
     return None
 
@@ -356,6 +404,39 @@ def is_high_risk(pr: dict[str, Any]) -> bool:
     return any_file_matches(files(pr), HIGH_RISK_FILE_PATTERNS)
 
 
+def classify_dependabot(pr: dict[str, Any], pr_files: list[str]) -> Decision:
+    names = dependency_names(pr)
+    if any_file_matches(pr_files, DEPENDABOT_STRUCTURAL_FILE_PATTERNS):
+        return Decision(
+            "risk:high",
+            False,
+            True,
+            "Dependabot PR changes structural files",
+        )
+    if is_unparseable_grouped_update(pr):
+        return Decision(
+            "risk:high",
+            False,
+            True,
+            "grouped Dependabot PR without parseable version changes",
+        )
+    if is_major_update(pr) or names & HIGH_RISK_DEPENDENCIES:
+        return Decision("risk:high", False, True, "major or high-risk dependency update")
+    if all_files_match(pr_files, SAFE_DEPENDENCY_FILE_PATTERNS):
+        return Decision(
+            "risk:low",
+            True,
+            False,
+            "low-risk Dependabot patch/minor lockfile or workflow update",
+        )
+    return Decision(
+        "risk:medium",
+        False,
+        True,
+        "Dependabot PR changes files outside the low-risk allowlist",
+    )
+
+
 def classify(pr: dict[str, Any], default_branch: str) -> Decision:
     if pr["isDraft"]:
         return Decision("risk:manual-only", False, False, "draft PR")
@@ -377,22 +458,7 @@ def classify(pr: dict[str, Any], default_branch: str) -> Decision:
             return Decision("risk:medium", False, True, "small non-dependency PR")
         return Decision("risk:high", False, True, "larger non-dependency PR")
 
-    names = dependency_names(pr)
-    if is_major_update(pr) or names & HIGH_RISK_DEPENDENCIES:
-        return Decision("risk:high", False, True, "major or high-risk dependency update")
-    if all_files_match(pr_files, SAFE_DEPENDENCY_FILE_PATTERNS):
-        return Decision(
-            "risk:low",
-            True,
-            False,
-            "low-risk Dependabot patch/minor lockfile or workflow update",
-        )
-    return Decision(
-        "risk:medium",
-        False,
-        True,
-        "Dependabot PR changes files outside the low-risk allowlist",
-    )
+    return classify_dependabot(pr, pr_files)
 
 
 def request_review_once(repo: str, pr: dict[str, Any], decision: Decision) -> bool:

@@ -28,6 +28,7 @@ jobs:
       GITHUB_REPOSITORY: ${{ github.repository }}
       DEFAULT_BRANCH: master
       PR_NUMBER: ${{ github.event.pull_request.number || '' }}
+      AUTOMATION_COMMENT_AUTHORS: github-actions[bot],jimc1682000
     steps:
       - name: Checkout automation script only
         uses: actions/checkout@v7
