@@ -80,3 +80,17 @@ but not sufficient — see the ranking-quality note below.
 
 - Bugs / features: open an issue.
 - Security: see [SECURITY.md](SECURITY.md).
+
+## PR merge automation
+
+`.github/workflows/pr-merge-automation.yml` applies this narrow policy:
+
+- Every PR is classified with one risk label: `risk:low`, `risk:medium`,
+  `risk:high`, or `risk:manual-only`.
+- Only `risk:low` PRs merge automatically after all checks are green and there
+  are no unresolved review threads. The workflow comments `Looks Good` before
+  squash-merging with the current head SHA.
+- All other risks request `@codex review` for the current head and add
+  `needs:codex-review`, but never merge automatically. Follow the dotfiles
+  CONTRIBUTING rule manually: if a comment appears, either fix it or reply with
+  the reason it should not be adopted before merging.
