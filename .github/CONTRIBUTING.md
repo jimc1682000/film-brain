@@ -80,3 +80,19 @@ but not sufficient — see the ranking-quality note below.
 
 - Bugs / features: open an issue.
 - Security: see [SECURITY.md](SECURITY.md).
+
+## PR merge automation
+
+`.github/workflows/pr-merge-automation.yml` applies only this narrow policy:
+
+- Low-risk Dependabot patch/minor lockfile or workflow bumps: merge automatically
+  after all checks are green and there are no unresolved review threads. The
+  workflow comments `Looks Good` before squash-merging with the current head SHA.
+- High-risk Dependabot updates, including major updates and `torch`: request
+  `@codex review`, wait 30 minutes, require green checks, require no unresolved
+  review threads, and require no new comments after the review request before
+  merging.
+- Structural, DB/migration, refactor, or stacked PRs: request `@codex review`
+  for the current head, but never merge automatically. Follow the dotfiles
+  CONTRIBUTING rule manually: if a comment appears, either fix it or reply with
+  the reason it should not be adopted before merging.
