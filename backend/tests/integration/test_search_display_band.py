@@ -56,10 +56,10 @@ def _candidates(primary_cos: float):
 
 def _search(client, candidates):
     with (
-        patch("backend.routers.search.get_embed_service") as mock_embed,
-        patch("backend.routers.search.get_qdrant_client", return_value=MagicMock()),
-        patch("backend.routers.search.hybrid_candidates", return_value=candidates),
-        patch("backend.routers.search.expand_query", return_value=dict(_EXPAND)),
+        patch("backend.services.search.service.get_embed_service") as mock_embed,
+        patch("backend.services.search.service.get_qdrant_client", return_value=MagicMock()),
+        patch("backend.services.search.service.hybrid_candidates", return_value=candidates),
+        patch("backend.services.search.planner.expand_query", return_value=dict(_EXPAND)),
     ):
         mock_embed.return_value.embed_single.return_value = [0.0] * 1024
         mock_embed.return_value.tag_vector_cache = {}
@@ -113,10 +113,10 @@ def test_excluded_tag_film_dropped(client):
     cands = _candidates(primary_cos=0.6)
     cands[0]["tags"] = ["horror"]  # the top hit is the excluded direction
     with (
-        patch("backend.routers.search.get_embed_service") as mock_embed,
-        patch("backend.routers.search.get_qdrant_client", return_value=MagicMock()),
-        patch("backend.routers.search.hybrid_candidates", return_value=cands),
-        patch("backend.routers.search.expand_query", return_value=dict(_EXPAND)),
+        patch("backend.services.search.service.get_embed_service") as mock_embed,
+        patch("backend.services.search.service.get_qdrant_client", return_value=MagicMock()),
+        patch("backend.services.search.service.hybrid_candidates", return_value=cands),
+        patch("backend.services.search.planner.expand_query", return_value=dict(_EXPAND)),
     ):
         mock_embed.return_value.embed_single.return_value = [0.0] * 1024
         mock_embed.return_value.tag_vector_cache = {}
@@ -138,11 +138,11 @@ def test_low_confidence_cap_survives_tag_boost(client):
     cands = _candidates(primary_cos=0.37)
     cands[0]["tags"] = ["american"]  # region dim → strong boost weight
     with (
-        patch("backend.routers.search.get_embed_service") as mock_embed,
-        patch("backend.routers.search.get_qdrant_client", return_value=MagicMock()),
-        patch("backend.routers.search.hybrid_candidates", return_value=cands),
+        patch("backend.services.search.service.get_embed_service") as mock_embed,
+        patch("backend.services.search.service.get_qdrant_client", return_value=MagicMock()),
+        patch("backend.services.search.service.hybrid_candidates", return_value=cands),
         patch(
-            "backend.routers.search.expand_query",
+            "backend.services.search.planner.expand_query",
             return_value={**_EXPAND, "boost_tags": [["american", 2.0]]},
         ),
     ):
@@ -163,14 +163,14 @@ def test_hyde_text_surfaces_in_understanding(client):
 def test_degraded_expansion_is_not_cached(client):
     """If the LLM expansion degrades (rate-limit/error), the result must NOT be
     cached — else an empty 'AI understanding' gets pinned until restart."""
-    from backend.routers import search as _s
+    from backend.services.search import cache as _s
 
     with (
-        patch("backend.routers.search.get_embed_service") as mock_embed,
-        patch("backend.routers.search.get_qdrant_client", return_value=MagicMock()),
-        patch("backend.routers.search.hybrid_candidates", return_value=_candidates(0.6)),
+        patch("backend.services.search.service.get_embed_service") as mock_embed,
+        patch("backend.services.search.service.get_qdrant_client", return_value=MagicMock()),
+        patch("backend.services.search.service.hybrid_candidates", return_value=_candidates(0.6)),
         patch(
-            "backend.routers.search.expand_query",
+            "backend.services.search.planner.expand_query",
             return_value={**_EXPAND, "_degraded": True},
         ),
     ):
@@ -178,4 +178,4 @@ def test_degraded_expansion_is_not_cached(client):
         mock_embed.return_value.tag_vector_cache = {}
         r = client.post("/api/search/", json={"query": "test", "use_llm_rerank": False})
     assert r.status_code == 200, r.text
-    assert len(_s._heavy_cache) == 0  # degraded → skipped
+    assert _s.size() == 0  # degraded → skipped

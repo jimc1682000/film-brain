@@ -169,10 +169,10 @@ class SearchRequest(BaseModel):
     query: str
     top_k: int = 10
     dimension_filters: dict[str, list[str]] | None = None
-    min_confidence: float = 0.6
     # Editor-visible floor: drop hits whose final displayed score falls below
-    # this. Distinct from min_confidence (vector cosine pre-rerank). An editor
-    # specifically asked to hide any result reporting <10% match.
+    # this. An editor specifically asked to hide any result reporting <10% match.
+    # (An old `min_confidence` knob was removed — nothing consumed it, but it
+    # leaked into the heavy-cache key; Pydantic ignores it if old clients send it.)
     min_display_score: float = 0.1
     use_llm_rerank: bool = True
     rerank_pool: int = 20

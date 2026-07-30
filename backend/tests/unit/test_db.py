@@ -54,6 +54,81 @@ def test_init_db_creates_indexes(test_db):
 
 
 # ---------------------------------------------------------------------------
+# user_version migrations
+# ---------------------------------------------------------------------------
+
+
+def _user_version(db_path) -> int:
+    conn = sqlite3.connect(str(db_path))
+    try:
+        return int(conn.execute("PRAGMA user_version").fetchone()[0])
+    finally:
+        conn.close()
+
+
+def test_init_db_fresh_db_sets_user_version(test_db):
+    """A brand-new DB ends up at user_version == len(MIGRATIONS)."""
+    import backend.db as db_mod
+
+    assert _user_version(test_db) == len(db_mod.MIGRATIONS)
+
+
+def test_init_db_legacy_db_adopts_versioning(tmp_path):
+    """A pre-scaffold DB (tables exist, user_version=0) is adopted in place:
+    the idempotent base re-runs harmlessly, data survives, version is bumped."""
+    import backend.db as db_mod
+    from backend.db import init_db
+
+    legacy = tmp_path / "legacy.db"
+    conn = sqlite3.connect(str(legacy))
+    conn.executescript(db_mod.SCHEMA)  # hand-made old DB: schema, no version
+    conn.execute(
+        "INSERT INTO films (film_id, title_zh) VALUES (?, ?)",
+        ("legacy-001", "老片"),
+    )
+    conn.commit()
+    conn.close()
+    assert _user_version(legacy) == 0
+
+    init_db(legacy)
+
+    assert _user_version(legacy) == len(db_mod.MIGRATIONS)
+    conn = sqlite3.connect(str(legacy))
+    row = conn.execute("SELECT title_zh FROM films WHERE film_id = 'legacy-001'").fetchone()
+    conn.close()
+    assert row[0] == "老片"  # existing data untouched
+
+
+def test_init_db_repeated_runs_idempotent(test_db):
+    """Re-running init_db on an up-to-date DB is a no-op (no error, same version)."""
+    import backend.db as db_mod
+    from backend.db import init_db
+
+    init_db(test_db)
+    init_db(test_db)
+    assert _user_version(test_db) == len(db_mod.MIGRATIONS)
+
+
+def test_init_db_applies_only_pending_migrations(test_db, monkeypatch):
+    """An already-initialized DB applies just the appended MIGRATIONS tail."""
+    import backend.db as db_mod
+    from backend.db import init_db
+
+    base_count = len(db_mod.MIGRATIONS)
+    extra = "CREATE TABLE IF NOT EXISTS migration_probe (id INTEGER PRIMARY KEY);"
+    monkeypatch.setattr(db_mod, "MIGRATIONS", [*db_mod.MIGRATIONS, extra])
+    init_db(test_db)
+
+    conn = sqlite3.connect(str(test_db))
+    tables = {
+        r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
+    }
+    conn.close()
+    assert "migration_probe" in tables
+    assert _user_version(test_db) == base_count + 1
+
+
+# ---------------------------------------------------------------------------
 # Tag CRUD
 # ---------------------------------------------------------------------------
 

@@ -150,7 +150,7 @@ def test_lifespan_warmup_failures_swallowed(monkeypatch, tmp_path):
 
 def test_warm_demo_chips_loop(monkeypatch, tmp_path):
     """Exercise the chips loop body: one chip → no sleep(300), runs the full
-    pipeline (mocked) + pin helpers."""
+    pipeline (mocked service call) + pin helpers."""
     monkeypatch.setattr(M.threading, "Thread", _SyncThread)
     _stub_warmups(monkeypatch)
 
@@ -159,15 +159,12 @@ def test_warm_demo_chips_loop(monkeypatch, tmp_path):
     # Point the warmup at the temp chip list (settings.chips_path).
     monkeypatch.setattr(settings, "chips_path", chips_file)
 
-    # Sync stub: the warmup does `_asyncio.run(semantic_search(req))`; inside the
-    # TestClient's running loop that nested asyncio.run raises (caught by the
-    # except branch) — a sync stub avoids leaking an unawaited coroutine.
-    def _fake_search(req):
+    def _fake_search(req, reranker):
         return None
 
-    monkeypatch.setattr("backend.routers.search.semantic_search", _fake_search)
-    monkeypatch.setattr("backend.routers.search.pin_demo_query", lambda req: True)
-    monkeypatch.setattr("backend.services.query_expand.pin_query", lambda q: None)
+    monkeypatch.setattr("backend.services.demo_warmup.run_search", _fake_search)
+    monkeypatch.setattr("backend.services.demo_warmup.pin_demo_query", lambda req: True)
+    monkeypatch.setattr("backend.services.demo_warmup.pin_query", lambda q: None)
 
     with TestClient(app) as c:
         assert c.get("/health").status_code == 200
@@ -183,12 +180,12 @@ def test_warm_demo_chips_pipeline_error(monkeypatch, tmp_path):
     # Point the warmup at the temp chip list (settings.chips_path).
     monkeypatch.setattr(settings, "chips_path", chips_file)
 
-    def _boom(req):
+    def _boom(req, reranker):
         raise RuntimeError("pipeline down")
 
-    monkeypatch.setattr("backend.routers.search.semantic_search", _boom)
-    monkeypatch.setattr("backend.routers.search.pin_demo_query", lambda req: True)
-    monkeypatch.setattr("backend.services.query_expand.pin_query", lambda q: None)
+    monkeypatch.setattr("backend.services.demo_warmup.run_search", _boom)
+    monkeypatch.setattr("backend.services.demo_warmup.pin_demo_query", lambda req: True)
+    monkeypatch.setattr("backend.services.demo_warmup.pin_query", lambda q: None)
 
     with TestClient(app) as c:
         assert c.get("/health").status_code == 200

@@ -143,9 +143,7 @@ async def run_eval(k: int, rerank: bool) -> tuple[dict, dict, int, int]:
                 print(f"  -- reset backend after {i} queries --", flush=True)
                 reset_backend()
                 wait_backend_ready()
-            resp = await semantic_search(
-                SearchRequest(query=q, top_k=k, min_confidence=0.3, use_llm_rerank=rerank)
-            )
+            resp = await semantic_search(SearchRequest(query=q, top_k=k, use_llm_rerank=rerank))
             qr: dict[str, int] = {}
             rn: dict[str, float] = {}
             for r in resp.results:

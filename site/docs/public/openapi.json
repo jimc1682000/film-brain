@@ -602,7 +602,7 @@
           "Search"
         ],
         "summary": "Semantic Search",
-        "description": "Hybrid search: vector + BM25 recall → RRF fusion → optional cross-encoder.\n\nBM25 (lexical, jieba-segmented) rescues exact / proper-noun matches the\nbi-encoder misses; RRF fuses the two; the cross-encoder does final precision\nordering when use_llm_rerank is on (slow on CPU, gated behind the flag).",
+        "description": "Hybrid search: vector + BM25 recall → RRF fusion → optional cross-encoder.\n\nSee backend.services.search.service.run_search for the pipeline details.",
         "operationId": "semantic_search_api_search__post",
         "requestBody": {
           "content": {
@@ -644,7 +644,7 @@
           "Search"
         ],
         "summary": "Similar Films",
-        "description": "Return precomputed similar films (full BM25+vector→RRF→CE pipeline run\noffline by scripts/05_compute_similar.py).\n\nThe cross-encoder takes 30-40s per film on the CPU demo box, so doing it at\nrequest time hung the detail page. Precomputed rows make this a cheap lookup.\nFilms not yet precomputed (e.g. just imported) fall back to live raw cosine —\nfast but degraded — until the next recompute.",
+        "description": "Precomputed similar films, with a live raw-cosine fallback for films not\nyet precomputed. See backend.services.search.service.similar_films.",
         "operationId": "similar_films_api_search_similar__film_id__get",
         "parameters": [
           {
@@ -2967,11 +2967,6 @@
               }
             ],
             "title": "Dimension Filters"
-          },
-          "min_confidence": {
-            "type": "number",
-            "title": "Min Confidence",
-            "default": 0.6
           },
           "min_display_score": {
             "type": "number",

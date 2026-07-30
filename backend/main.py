@@ -52,51 +52,15 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.warning("Cross-encoder warmup failed: %s", e)
 
-        _warm_demo_chips()
+        # Warm the demo chips through the FULL search pipeline (service call,
+        # not the HTTP handler) so clicking a chip during the demo returns from
+        # the result cache (~instant) — the dominant cost is the CPU
+        # cross-encoder rerank (~7s, Semaphore(1)), not query expansion.
+        # Non-blocking: readiness isn't delayed; chips fill in over the next
+        # few minutes. Loop + throttling live in services.demo_warmup.
+        from backend.services.demo_warmup import warm_demo_chips
 
-    # Warm the demo chips through the FULL search pipeline in the background so
-    # clicking a chip during the demo returns from the result cache (~instant) —
-    # the dominant cost is the CPU cross-encoder rerank (~7s, Semaphore(1)), not
-    # query expansion. Non-blocking: readiness isn't delayed; chips fill in over
-    # the next few minutes. Reads the SAME chips file the frontend renders
-    # (settings.chips_path; compose mounts it read-only at /app/chips.json and
-    # sets CHIPS_PATH) — single source, no drift.
-    # Throttled to 1 req / 5 min: OpenRouter free tier is stable at low QPS but
-    # bursting N chips at startup exhausts quota quickly.
-    def _warm_demo_chips():
-        import asyncio as _asyncio
-        import json as _json
-        import time as _time
-
-        from backend.config import settings
-        from backend.models import SearchRequest
-        from backend.routers.search import pin_demo_query, semantic_search
-        from backend.services.query_expand import pin_query
-
-        try:
-            chips = _json.loads(settings.chips_path.read_text(encoding="utf-8"))
-        except Exception as e:
-            logger.info("Demo-chip warm skipped (no chips file): %s", e)
-            return
-        warmed = 0
-        for i, q in enumerate(chips):
-            if i > 0:
-                _time.sleep(300)  # 1 req / 5 min — keep within OpenRouter free-tier QPS
-            try:
-                # Run the FULL pipeline with the SAME params the frontend chip
-                # click sends (top_k=10, min_confidence=0.3) so the result-cache
-                # key matches — a clicked chip then returns from cache (~instant),
-                # skipping the ~7s CPU cross-encoder rerank.
-                req = SearchRequest(query=q, top_k=10, min_confidence=0.3)
-                _asyncio.run(semantic_search(req))
-                # Pin both cache layers so audience reloop churn can never evict
-                # the demo entries — the stage demo always hits a warm cache.
-                pin_demo_query(req)
-                pin_query(q)
-                warmed += 1
-            except Exception as e:
-                logger.info("Demo-chip warm failed for %r: %s", q, e)
-        print(f"[startup] Demo-chip full-search warmed: {warmed}/{len(chips)} queries", flush=True)
+        warm_demo_chips()
 
     threading.Thread(target=_bg_warmup, daemon=True).start()
     yield

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import hashlib
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import (
@@ -16,9 +16,6 @@ from qdrant_client.models import (
 )
 
 from backend.config import settings
-
-if TYPE_CHECKING:
-    from backend.interfaces import VectorStore
 
 
 def get_qdrant_client() -> QdrantClient:
@@ -185,17 +182,6 @@ class QdrantVectorStore:
         )
 
 
-_vector_store: QdrantVectorStore | None = None
-
-
-def get_vector_store() -> VectorStore:
-    """Return the process-wide VectorStore (ADR 0021 injection seam).
-
-    Consumers depend on the `VectorStore` Protocol and resolve the concrete impl
-    through this provider, so a fake can be injected (param / FastAPI override)
-    without monkeypatching the module function.
-    """
-    global _vector_store
-    if _vector_store is None:
-        _vector_store = QdrantVectorStore()
-    return _vector_store
+# Provider singleton lives in backend.providers (reset_all-able); the alias
+# keeps the historical import path + FastAPI Depends identity working.
+from backend.providers import get_vector_store as get_vector_store  # noqa: E402

@@ -14,12 +14,8 @@ Fails open: on model load / inference error, returns input order unchanged.
 from __future__ import annotations
 
 import threading
-from typing import TYPE_CHECKING
 
 from backend.db import get_db
-
-if TYPE_CHECKING:
-    from backend.interfaces import Reranker
 
 _model = None
 _model_lock = threading.Lock()
@@ -232,17 +228,6 @@ class CrossEncoderReranker:
         return rerank_with_cross_encoder(query, candidates)
 
 
-_reranker: CrossEncoderReranker | None = None
-
-
-def get_reranker() -> Reranker:
-    """Return the process-wide Reranker (ADR 0021 injection seam).
-
-    Consumers depend on the `Reranker` Protocol and resolve the concrete impl
-    through this provider, so a fake can be injected (FastAPI dependency
-    override / direct param) without monkeypatching the module function.
-    """
-    global _reranker
-    if _reranker is None:
-        _reranker = CrossEncoderReranker()
-    return _reranker
+# Provider singleton lives in backend.providers (reset_all-able); the alias
+# keeps the historical import path + FastAPI Depends identity working.
+from backend.providers import get_reranker as get_reranker  # noqa: E402

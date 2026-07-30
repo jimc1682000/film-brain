@@ -40,7 +40,11 @@ http://localhost:8000/api/docs (Swagger UI auto-generated; OpenAPI JSON at `/api
 
 ## Key Commands
 
-- `python -m scripts.seed_all` — Run full data pipeline
+- `python -m scripts.seed_from_file data/films.seed.json` — Run data pipeline
+  (DB schema + taxonomy + films + awards + embeddings; `--auto-tag` LLM-fills
+  missing tags, `--compute-similar` precomputes similar films)
+- `python -m scripts.05_compute_similar` — Recompute similar-films table
+  (canonical wrapper: `make recompute-similar`)
 - `python -m pytest backend/tests/ -v` — Run all tests
 - `make up` — Start Docker containers (qdrant + ollama + backend + frontend)
 - `make check` — ruff lint + format check

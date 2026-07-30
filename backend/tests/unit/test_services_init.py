@@ -11,13 +11,11 @@ from backend import services
 @pytest.fixture(autouse=True)
 def _reset_singletons():
     """Clear cached singletons so each test re-runs the lazy-load + guard."""
-    services._auto_tag = None
-    services._feedback = None
-    services._embed = None
+    from backend.providers import reset_all
+
+    reset_all()
     yield
-    services._auto_tag = None
-    services._feedback = None
-    services._embed = None
+    reset_all()
 
 
 def test_assert_llm_or_503_raises_http_503(monkeypatch):

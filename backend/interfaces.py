@@ -22,7 +22,7 @@ class Embedder(Protocol):
     """Turns text into vectors. Impl: services.embedder.EmbedService."""
 
     # Per-tag vectors cached after warmup; the search path reads it to score
-    # tag relevance without re-embedding (see routers.search._rerank_tags).
+    # tag relevance without re-embedding (see services.search.ranking._rerank_tags).
     tag_vector_cache: dict[str, list[float]]
 
     def embed(self, texts: list[str]) -> list[list[float]]: ...

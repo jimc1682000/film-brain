@@ -80,11 +80,13 @@ def test_min_display_score_filters_low_post_rerank(client):
     app.dependency_overrides[get_reranker] = lambda: _FakeReranker(reranked)
     try:
         with (
-            patch("backend.routers.search.get_embed_service") as mock_embed,
-            patch("backend.routers.search.get_qdrant_client", return_value=MagicMock()),
-            patch("backend.routers.search.hybrid_candidates", return_value=_candidates(hits)),
+            patch("backend.services.search.service.get_embed_service") as mock_embed,
+            patch("backend.services.search.service.get_qdrant_client", return_value=MagicMock()),
             patch(
-                "backend.routers.search.expand_query",
+                "backend.services.search.service.hybrid_candidates", return_value=_candidates(hits)
+            ),
+            patch(
+                "backend.services.search.planner.expand_query",
                 return_value={"filters": {}, "hyde_text": "", "keywords": []},
             ),
         ):
@@ -113,11 +115,13 @@ def test_min_display_score_default_drops_below_10_percent(client):
     app.dependency_overrides[get_reranker] = lambda: _FakeReranker(reranked)
     try:
         with (
-            patch("backend.routers.search.get_embed_service") as mock_embed,
-            patch("backend.routers.search.get_qdrant_client", return_value=MagicMock()),
-            patch("backend.routers.search.hybrid_candidates", return_value=_candidates(hits)),
+            patch("backend.services.search.service.get_embed_service") as mock_embed,
+            patch("backend.services.search.service.get_qdrant_client", return_value=MagicMock()),
             patch(
-                "backend.routers.search.expand_query",
+                "backend.services.search.service.hybrid_candidates", return_value=_candidates(hits)
+            ),
+            patch(
+                "backend.services.search.planner.expand_query",
                 return_value={"filters": {}, "hyde_text": "", "keywords": []},
             ),
         ):
@@ -143,11 +147,13 @@ def test_per_request_min_display_score_tightens_floor(client):
     app.dependency_overrides[get_reranker] = lambda: _FakeReranker(reranked)
     try:
         with (
-            patch("backend.routers.search.get_embed_service") as mock_embed,
-            patch("backend.routers.search.get_qdrant_client", return_value=MagicMock()),
-            patch("backend.routers.search.hybrid_candidates", return_value=_candidates(hits)),
+            patch("backend.services.search.service.get_embed_service") as mock_embed,
+            patch("backend.services.search.service.get_qdrant_client", return_value=MagicMock()),
             patch(
-                "backend.routers.search.expand_query",
+                "backend.services.search.service.hybrid_candidates", return_value=_candidates(hits)
+            ),
+            patch(
+                "backend.services.search.planner.expand_query",
                 return_value={"filters": {}, "hyde_text": "", "keywords": []},
             ),
         ):

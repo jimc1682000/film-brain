@@ -8,17 +8,19 @@ from backend.main import app
 
 
 @pytest.fixture(autouse=True)
-def _clear_search_result_cache():
-    """Reset the search router's in-process result cache between tests.
+def _reset_providers():
+    """Reset provider singletons + in-process caches between tests.
 
-    The cache keys on (query, knobs); tests that reuse the same query under
-    different mocks would otherwise get a stale cached response.
+    The heavy search cache keys on (query, knobs); tests that reuse the same
+    query under different mocks would otherwise get a stale cached response.
+    reset_all() is the one public switch (backend.providers) — no test should
+    poke module-private singleton state directly.
     """
-    from backend.routers import search as _search
+    from backend.providers import reset_all
 
-    _search._heavy_cache.clear()
+    reset_all()
     yield
-    _search._heavy_cache.clear()
+    reset_all()
 
 
 @pytest.fixture
