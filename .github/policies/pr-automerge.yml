@@ -1,0 +1,39 @@
+# film-brain overrides for jimc1682000/repo-policy shared defaults.
+# List keys are unioned with the shared policy.
+
+high_risk_dependencies:
+  - torch
+
+high_risk_file_patterns:
+  - ".github/workflows/*"
+  - "backend/db.py"
+  - "backend/interfaces.py"
+  - "backend/llm_client.py"
+  - "backend/models.py"
+  - "backend/routers/search.py"
+  - "backend/services/search/*"
+  - "docs/adr/*"
+
+dependabot_structural_file_patterns:
+  - "backend/db.py"
+  - "backend/interfaces.py"
+  - "backend/llm_client.py"
+  - "backend/models.py"
+  - "backend/routers/search.py"
+  - "backend/services/search/*"
+  - "docs/adr/*"
+
+# Keep film-brain-specific lockfile / site package paths explicit.
+safe_dependency_file_patterns:
+  - "uv.lock"
+  - "requirements*.txt"
+  - "site/package-lock.json"
+  - "site/package.json"
+  - ".github/workflows/*.yml"
+  - ".github/workflows/*.yaml"
+
+trusted_comment_authors:
+  - jimc1682000
+
+allowed_merge_actors:
+  - jimc1682000
