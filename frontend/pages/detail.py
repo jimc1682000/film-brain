@@ -74,10 +74,9 @@ def _render_tag_section(film: dict) -> None:
     }
 
     def _unified_for_edit() -> list[dict]:
-        tags = merge_saved_and_suggestions(
+        return merge_saved_and_suggestions(
             state["saved"], state["suggestions"] + state["manual_adds"]
         )
-        return tags
 
     def _reset_edit_state() -> None:
         unified = _unified_for_edit()
@@ -196,11 +195,8 @@ def _render_tag_section(film: dict) -> None:
             for t in state["saved"]
             if t.get("tag_id") in state["initial"] and t["tag_id"] not in state["checked"]
         ]
-        to_accept: list[str] = []
         saved_ids = {t.get("tag_id") for t in state["saved"]}
-        for tid in state["checked"]:
-            if tid not in saved_ids:
-                to_accept.append(tid)
+        to_accept: list[str] = [tid for tid in state["checked"] if tid not in saved_ids]
         if not to_reject and not to_accept:
             ui.label(t("detail.no_changes")).classes("text-caption text-grey q-mt-sm")
             return

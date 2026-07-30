@@ -15,11 +15,12 @@ Built for the CATCHPLAY+ Hackathon 2026; open-sourced as a runnable, brand-neutr
 
 ## What this repo is — vs the live demo
 
-| This repo (code) | The live demo (site) |
-| --- | --- |
+| This repo (code)                                                                                                                                                                                              | The live demo (site)                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | The **runnable, mock-based core** — FastAPI + NiceGUI + Qdrant + local bge-m3 + cross-encoder. **Keyless**: search runs on local models, no API key required. Bring your own films via a neutral seed format. | A portfolio **showcasing the full system run on the real CATCHPLAY+ catalogue** — the search replay, the eval-iteration story, the debugging case studies. |
 
 So a couple of things the showcase describes are **not shipped here**, by design:
+
 - **Catalogue ingest / scrapers** are a *private source adapter*. This repo ships the **generic loader** (`scripts/seed_from_file.py`) + a **neutral adapter template** (`scripts/adapters/example_adapter.py`) + a bundled **mock dataset** — bring your own films in the documented format (`data/films.seed.schema.json`).
 - **The 45-query eval numbers** (nDCG@5 0.93 → 0.96 on the site) were measured on the *real catalogue*. The repo ships the **same harness** (`scripts/eval_search.py`) + the **same 45-query set** (`data/eval-queries.json` — query strings, LLM-judged at runtime, no gold labels), but the headline numbers only reproduce against the real catalogue; on the bundled mock films the same harness yields different scores.
 
@@ -72,6 +73,16 @@ in [`docs/adr/`](docs/adr/).
 
 FastAPI · NiceGUI · SQLite · Qdrant · BAAI/bge-m3 (local) · bce-reranker cross-encoder ·
 hybrid recall (vector + BM25/FTS5+jieba → RRF) · honest cosine-tier scoring · OpenRouter-free / local-Ollama LLM.
+
+## Development (optional tooling)
+
+`pre-commit install` wires the hooks. Most hooks are self-contained (pre-commit
+managed or Docker-based), but a few are **optional external tools** — skip with
+`SKIP=<hook-id>` if you don't have them (CI runs the equivalent gates):
+
+- `betterleaks` (secret scan) — external binary
+- `jscpd` (DRY check) — needs node/npx
+- `pyright` / `pip-audit` / `pytest` — need the dev extras: `pip install -e .[dev]` (or `uv sync --extra dev`)
 
 ## License
 

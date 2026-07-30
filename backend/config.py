@@ -8,7 +8,9 @@ class Settings(BaseSettings):
     data_dir: Path = Path("data")
     db_path: Path = Path("data/film_library.db")
     dimension_mapping_path: Path = Path("data/dimension-mapping.json")
-    test_data_path: Path = Path("data/test-data-catchplay.json")
+    # Demo-chip queries warmed at startup (same file the frontend renders).
+    # Compose mounts it read-only at /app/chips.json and points here via env.
+    chips_path: Path = Path("frontend/chips.json")
     tmdb_cache_dir: Path = Path("data/tmdb_enriched")
     feedback_dir: Path = Path("data/feedback")
 

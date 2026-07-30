@@ -129,6 +129,9 @@ repos:
 
       - id: betterleaks
         name: betterleaks (staged secret scan)
+        # External binary (not pip-installable) — see the "optional dev tools"
+        # note in README. Contributors without it can `SKIP=betterleaks` commit;
+        # CI-side secret scanning still covers the tree.
         entry: betterleaks git --no-banner --redact --staged
         language: system
         pass_filenames: false
@@ -144,7 +147,8 @@ repos:
         name: pyright (backend source)
         # Config (include/exclude tests/mode) in pyproject [tool.pyright]; the
         # wrapper passes --pythonpath so pyright resolves this env's deps.
-        entry: env PYENV_VERSION=python3-boto3 bash scripts/typecheck.sh
+        # Needs `pyright` in the current env (dev extra: pip install -e .[dev]).
+        entry: bash scripts/typecheck.sh
         language: system
         pass_filenames: false
         files: ^backend/.*\.py$
@@ -153,6 +157,8 @@ repos:
         name: jscpd (copy-paste / DRY)
         # Config (path/ignore/minTokens/threshold) lives in .jscpd.json. Pinned
         # to match CI. Type-mandated parallels carry a # jscpd:ignore-start block.
+        # Needs node/npx (see the "optional dev tools" note in README); CI runs
+        # the same check, so `SKIP=jscpd` locally is safe.
         entry: npx --yes jscpd@5.0.9 --config .jscpd.json
         language: system
         pass_filenames: false
@@ -162,8 +168,9 @@ repos:
         name: pip-audit (dependency CVE scan)
         # CVE-2025-3000: torch (transitive via sentence-transformers) — no fix
         # version published; ignored with tracking, gate stays live for the rest.
+        # Needs `pip-audit` in the current env (dev extra: pip install -e .[dev]).
         entry: >-
-          env PYENV_VERSION=python3-boto3 python -m pip_audit
+          python -m pip_audit
           -r requirements.txt --ignore-vuln CVE-2025-3000
         language: system
         pass_filenames: false
@@ -171,7 +178,8 @@ repos:
 
       - id: pytest
         name: pytest (backend)
-        entry: env PYENV_VERSION=python3-boto3 python -m pytest backend/tests/ -q
+        # Needs `pytest` in the current env (dev extra: pip install -e .[dev]).
+        entry: python -m pytest backend/tests/ -q
         language: system
         pass_filenames: false
         stages: [pre-push]

@@ -20,6 +20,7 @@ import json
 import sys
 import time
 from collections import defaultdict
+from pathlib import Path
 
 from backend.db import get_db
 from backend.validators.award_validator import (
@@ -95,7 +96,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  {k:11s}: {counters[k]}")
 
     if args.json:
-        with open(args.json, "w") as f:
+        with Path(args.json).open("w") as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
         print(f"\nFull report → {args.json}")
 

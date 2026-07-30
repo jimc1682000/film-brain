@@ -190,7 +190,7 @@ def wiki_intro(title: str) -> str:
         timeout=15,
     )
     pages = r.json().get("query", {}).get("pages", {})
-    for _, p in pages.items():
+    for p in pages.values():
         return p.get("extract", "") or ""
     return ""
 
