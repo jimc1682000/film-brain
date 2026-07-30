@@ -27,7 +27,7 @@ recompute-similar:
 # image deliberately ships no test deps, so `docker compose exec backend pytest`
 # is no longer a thing.
 test:
-	python -m pytest backend/tests/ -v
+	$(PYTHON) -m pytest backend/tests/ -v
 
 logs:
 	docker compose logs -f
@@ -45,7 +45,7 @@ fmt:
 
 # Local test coverage (per-module >=80% gate is enforced in CI)
 cov:
-	python -m pytest backend/tests -q --cov=backend --cov-report=term-missing --cov-fail-under=80
+	$(PYTHON) -m pytest backend/tests -q --cov=backend --cov-report=term-missing --cov-fail-under=80
 
 # Full-stack e2e smoke: real Qdrant + real embedder + live server (local only)
 e2e:
