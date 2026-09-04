@@ -34,7 +34,7 @@ jobs:
     uses: jimc1682000/repo-policy/.github/workflows/pr-automerge.yml@v1.3
     with:
       default_branch: master
-      policy_ref: v1.1
+      policy_ref: v1.3
       pr_number: ${{ inputs.pr_number || github.event.pull_request.number || '' }}
       policy_override_path: .github/policies/pr-automerge.yml
       automation_comment_authors: github-actions[bot],jimc1682000
