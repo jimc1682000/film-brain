@@ -73,6 +73,10 @@ hybrid recall(vector + BM25/FTS5+jieba → RRF)· 誠實 cosine 分層計分 · 
 
 ## 開發(選配工具)
 
+網站套件由 Dependabot 每週檢查，小版本與修補版本更新合併成一張 PR；重大版本更新另開 PR。
+每張 PR 與推送到 `master` 的 CI 都會用 Node 20 執行網站的 `npm ci` 與 VitePress build，
+建置失敗會讓 CI 失敗。正式網站部署仍由 Pages workflow 負責。
+
 `pre-commit install` 啟用 hooks。多數 hook 由 pre-commit 自帶或走 Docker,
 但少數是**選配外部工具**,沒裝可以 `SKIP=<hook-id>` 跳過(CI 都有對應關卡兜底):
 
