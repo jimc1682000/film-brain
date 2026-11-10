@@ -57,6 +57,10 @@ http://localhost:8000/api/docs (Swagger UI auto-generated; OpenAPI JSON at `/api
 
 ## Invariants & Agent Contract
 
+**網站依賴與建置**：Dependabot 每週檢查 `site/` 的 npm 套件，minor／patch 更新合併成一張 PR。
+CI 在每張 PR 與推送到 `master` 時，以 Node 20 執行網站的 `npm ci` 與 VitePress build；
+這個 job 僅使用 `contents: read`，部署由 Pages workflow 負責。
+
 Hold these across any change; they encode decisions that are expensive to
 rediscover. Verify before declaring done.
 
