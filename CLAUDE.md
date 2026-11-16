@@ -61,6 +61,12 @@ http://localhost:8000/api/docs (Swagger UI auto-generated; OpenAPI JSON at `/api
 CI 在每張 PR 與推送到 `master` 時，以 Node 20 執行網站的 `npm ci` 與 VitePress build；
 這個 job 僅使用 `contents: read`，部署由 Pages workflow 負責。
 
+**網站不得依賴 eval**：主站以不含 `'unsafe-eval'` 的 CSP 提供 `/film-brain/`。VitePress
+site config 裡的函式會被序列化進每頁、載入時以 `new Function()` 還原，因此 config
+不可含可列舉的函式。中文斷詞 tokenizer 放在 `site/docs/.vitepress/cjk-tokenize.js`，
+由 config（不可列舉屬性，供建索引）與 theme `enhanceApp`（瀏覽器端）共用；
+輸出 HTML 若仍含 `_vp-fn_`，`buildEnd` 會讓 build 失敗。
+
 Hold these across any change; they encode decisions that are expensive to
 rediscover. Verify before declaring done.
 
