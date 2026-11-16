@@ -1,4 +1,7 @@
+import fs from "node:fs";
+import path from "node:path";
 import { withMermaid } from "vitepress-plugin-mermaid";
+import { cjkTokenize } from "./cjk-tokenize.js";
 
 // One source of truth for the three groups, reused by nav dropdowns + sidebar.
 const zhGroups = [
@@ -51,7 +54,29 @@ const enGroups = [
   ]},
 ];
 
+// CSP: VitePress serializes every function in site config into each page and
+// revives it with `new Function()`, which a CSP without 'unsafe-eval' blocks —
+// leaving __VP_SITE_DATA__ undefined and breaking mermaid, nav and search.
+// The serializer walks Object.keys(), so a non-enumerable `options` stays out
+// of the pages while the build-time indexer (direct property read) still sees
+// it. The browser gets the same tokenizer back in theme/index.js.
+const miniSearch = { searchOptions: { fuzzy: 0.2, prefix: true, combineWith: "AND" } };
+Object.defineProperty(miniSearch, "options", { value: { tokenize: cjkTokenize }, enumerable: false });
+
+// Fail the build if any page would still need eval to boot (e.g. a function
+// added to config, or a VitePress upgrade changing how options are read).
+function assertNoSerializedFunctions(dir) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const file = path.join(dir, entry.name);
+    if (entry.isDirectory()) assertNoSerializedFunctions(file);
+    else if (file.endsWith(".html") && fs.readFileSync(file, "utf8").includes("_vp-fn_")) {
+      throw new Error(`${file} contains a serialized function (_vp-fn_); it needs 'unsafe-eval' under CSP`);
+    }
+  }
+}
+
 export default withMermaid({
+  buildEnd: (siteConfig) => assertNoSerializedFunctions(siteConfig.outDir),
   base: "/film-brain/",
   title: "Film Brain",
   description: "AI 片庫大腦 — 語意搜尋、誠實匹配、可解釋結果",
@@ -63,21 +88,7 @@ export default withMermaid({
     search: {
       provider: "local",
       options: {
-        miniSearch: {
-          // MiniSearch tokenizes on word boundaries — Chinese has none, so
-          // "運作" never matches "運作原理". Split CJK into single characters
-          // (indexed + queried the same way) so Chinese search works.
-          options: {
-            tokenize: (text) =>
-              text
-                .toLowerCase()
-                .split(/[^\p{L}\p{N}]+/u)
-                .flatMap((t) =>
-                  /[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]/.test(t) ? Array.from(t) : t ? [t] : []
-                ),
-          },
-          searchOptions: { fuzzy: 0.2, prefix: true, combineWith: "AND" },
-        },
+        miniSearch,
       },
     },
     socialLinks: [{ icon: "github", link: "https://github.com/jimc1682000/film-brain" }],
